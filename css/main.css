@@ -1,3 +1,4 @@
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -15,6 +16,7 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+/* Header */
 header {
     text-align: center;
 }
@@ -24,6 +26,7 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Section Styles */
 section {
     text-align: center;
 }
@@ -44,6 +47,7 @@ a:hover {
     background-color: #555;
 }
 
+/* Footer */
 footer {
     text-align: center;
     padding: 20px;
@@ -54,6 +58,7 @@ footer {
     width: 100%;
 }
 
+/* Night Mode */
 .night-mode {
     background-color: #333;
     color: white;
@@ -63,15 +68,23 @@ footer {
     background-color: #555;
 }
 
+/* Toggle Night Mode Button */
 button {
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     background-color: #333;
     color: white;
     border: none;
-    border-radius: 5px;
-    margin-top: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 button:hover {
