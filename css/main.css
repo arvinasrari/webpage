@@ -14,6 +14,7 @@ body {
     align-items: center;
     height: 100vh;
     transition: background-color 0.3s, color 0.3s;
+    overflow: hidden; /* To prevent scrolling when the button is positioned */
 }
 
 /* Header */
@@ -73,13 +74,13 @@ button {
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background-color: #333;
     color: white;
     border: none;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
     transition: background-color 0.3s;
     display: flex;
@@ -89,4 +90,8 @@ button {
 
 button:hover {
     background-color: #555;
+}
+
+button:focus {
+    outline: none;
 }
