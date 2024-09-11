@@ -14,7 +14,7 @@ body {
     align-items: center;
     height: 100vh;
     transition: background-color 0.3s, color 0.3s;
-    overflow: hidden; /* To prevent scrolling when the button is positioned */
+    overflow: hidden; /* Prevent scrolling */
 }
 
 /* Header */
@@ -30,20 +30,94 @@ h1 {
 /* Section Styles */
 section {
     text-align: center;
+    margin-top: 30px;
 }
 
+/* Circle-shaped links */
 a {
     display: inline-block;
     margin: 10px;
-    padding: 10px 20px;
-    font-size: 20px;
+    width: 120px;
+    height: 120px;
+    font-size: 18px;
     background-color: #333;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.2s;
+    position: relative;
 }
 
+/* Not Serious - Shoots up and disappears faster */
+a.not-serious.fall {
+    animation: shootUp 0.8s ease forwards; /* Speed up the animation */
+}
+
+/* Serious - Shoots right and disappears faster */
+a.serious.fall {
+    animation: shootRight 0.8s ease forwards; /* Speed up the animation */
+}
+
+/* Super Serious - Falls and bounces like a ball */
+a.super-serious.fall {
+    animation: fallAnimation 2s ease forwards;
+}
+
+/* Shoot up animation */
+@keyframes shootUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(-500px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-700px); /* Move further out of screen */
+        opacity: 0; /* Fade out */
+    }
+}
+
+/* Shoot right animation */
+@keyframes shootRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    80% {
+        transform: translateX(500px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(700px); /* Move further out of screen */
+        opacity: 0; /* Fade out */
+    }
+}
+
+/* Fall and bounce animation (Super Serious) */
+@keyframes fallAnimation {
+    0% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(500px); /* Fall down */
+    }
+    60% {
+        transform: translateY(-100px); /* Bounce up */
+    }
+    80% {
+        transform: translateY(50px); /* Small bounce */
+    }
+    100% {
+        transform: translateY(0); /* Return to original position */
+    }
+}
+
+/* Hover effect */
 a:hover {
     background-color: #555;
 }

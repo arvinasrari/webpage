@@ -12,6 +12,19 @@
         function toggleNightMode() {
             document.body.classList.toggle('night-mode');
         }
+
+        // Function to trigger the specific animation and delay redirection
+        function bounceRedirect(event, url, className) {
+            event.preventDefault(); // Prevent immediate redirection
+
+            // Add 'fall' class along with specific animation class to trigger the animation
+            event.target.classList.add('fall', className);
+
+            // Delay the redirection by 2 seconds to allow the animation to complete
+            setTimeout(function() {
+                window.location.href = url;
+            }, 2000);
+        }
     </script>
 </head>
 <body>
@@ -20,13 +33,13 @@
     </header>
 
     <section>
-        <p>Select one of the options below:</p>
-        <a href="not-serious.html">Not Serious</a>
-        <a href="serious.html">Serious</a>
-        <a href="please-hire-me.html">Super Serious (Please Hire Me)</a>
+        
+        <a href="not-serious.html" onclick="bounceRedirect(event, 'not-serious.html', 'not-serious')">Not Serious</a>
+        <a href="serious.html" onclick="bounceRedirect(event, 'serious.html', 'serious')">Serious</a>
+        <a href="please-hire-me.html" onclick="bounceRedirect(event, 'please-hire-me.html', 'super-serious')">Super Serious</a>
     </section>
 
-    <!-- Night Mode Toggle Button -->
+    <!-- Night Mode Toggle Button with Moon Emoji -->
     <button onclick="toggleNightMode()">🌙</button>
 
     <footer>
