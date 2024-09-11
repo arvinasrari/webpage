@@ -3,42 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Serious Page">
-    <title>Serious</title>
+    <meta name="description" content="Arvin Asrari's CV">
+    <title>Arvin Asrari - CV</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background-color: #f4f4f4;
-        }
 
-        h1 {
-            color: #333;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        p {
-            margin-top: 20px;
-        }
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
 
-        a {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
+header {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
 
-        a:hover {
-            background-color: #555;
-        }
+header h1 {
+    margin-bottom: 10px;
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+header nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+    margin: 20px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
     </style>
+
 </head>
 <body>
-    <h1>Serious, huh?</h1>
-    <p>You're on the right track! Let's dive into some cool stuff.</p>
-    <a href="index.html">Go Back to Main Page</a>
+    <header>
+        <h1>Arvin Asrari</h1>
+        <p>Cybersecurity Expert | Researcher | IT Specialist</p>
+        <nav>
+            <ul>
+                <li><a href="#about">About Me</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#languages">Languages</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>As a dedicated cybersecurity graduate student with hands-on research experience, I am deeply committed to advancing my academic journey through a PhD and further contributing to cutting-edge research. My passion for discovering innovative solutions drives my eagerness to remain in academia, where I can continue to enhance security practices while collaborating on impactful projects.</p>
+    </section>
+
+    <section id="education">
+        <h2>Education</h2>
+        <ul>
+            <li><strong>Master of Applied Science in Information Systems Security</strong>, Concordia University, Montreal, Canada (Jan 2023 - Present) – GPA: 3.670</li>
+            <li><strong>Bachelor of Science in Computer Engineering - Information Technology</strong>, Tehran Azad University, Tehran, Iran (Sep 2016 - Jul 2021) – GPA: 16.23/20</li>
+        </ul>
+    </section>
+
+    <section id="experience">
+        <h2>Experience</h2>
+        <ul>
+            <li><strong>Research Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)</li>
+            <li><strong>Teaching Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)</li>
+            <li><strong>Software Engineer</strong>, Rayan Pardaz Kavosh, Tehran, Iran (Mar 2022 - Dec 2022)</li>
+            <li><strong>IT Technician</strong>, Barad Innovators Co., Tehran, Iran (Sep 2021 - Dec 2021)</li>
+            <li><strong>IT Internship</strong>, Iranian Information Technology Organization, Tehran, Iran (May 2020 - Jan 2021)</li>
+        </ul>
+    </section>
+
+    <section id="projects">
+        <h2>Projects</h2>
+        <ul>
+            <li><strong>Kernel Module Projects</strong>: Developed multiple kernel modules for function redirection, ARM64 instruction modification, and kernel panic triggers.</li>
+            <li><strong>APK Encryption Analysis</strong>: Automated APK encryption analysis using radare2 and adb for dynamic analysis.</li>
+            <li><strong>Kite-based Wi-Fi and LoRa Communication System</strong>: Developed a Wi-Fi and LoRa communication system using Raspberry Pi and ESP32.</li>
+            <li><strong>Docker Version Checker</strong>: Automated Docker version checking and updating process on Debian-based systems.</li>
+        </ul>
+    </section>
+
+    <section id="skills">
+        <h2>Skills</h2>
+        <ul>
+            <li><strong>Programming & Scripting</strong>: Python, C/C++, JavaScript, PHP, HTML/CSS, Assembly, MATLAB, SQL, Shell Scripting</li>
+            <li><strong>Tools & Technologies</strong>: Linux (Ubuntu, Debian), Docker, Git, Ghidra, Radare2, Binwalk, QEMU, SQLmap</li>
+        </ul>
+    </section>
+
+    <section id="languages">
+        <h2>Languages</h2>
+        <ul>
+            <li><strong>English</strong>: Professional proficiency (IELTS: 7.0)</li>
+            <li><strong>Persian</strong>: Native proficiency</li>
+            <li><strong>French</strong>: Professional proficiency (B1)</li>
+            <li><strong>German</strong>: Professional proficiency (B2)</li>
+        </ul>
+    </section>
+
+    <section id="contact">
+        <h2>Contact</h2>
+        <p>Email: <a href="mailto:arvin@asrar.io">arvin@asrar.io</a></p>
+        <p>GitHub: <a href="https://github.com/arvinasrari">github.com/arvinasrari</a></p>
+        <p>LinkedIn: <a href="https://linkedin.com/in/arvin-asrari">linkedin.com/in/arvin-asrari</a></p>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Arvin Asrari</p>
+    </footer>
 </body>
 </html>
