@@ -7,6 +7,12 @@
     <title>Arvin Asrari - How Serious Are You?</title>
     <!-- Link to external CSS file -->
     <link rel="stylesheet" href="css/main.css">
+    <script>
+        // Night mode toggle script
+        function toggleNightMode() {
+            document.body.classList.toggle('night-mode');
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -18,6 +24,8 @@
         <a href="not-serious.html">Not Serious</a>
         <a href="serious.html">Serious</a>
         <a href="please-hire-me.html">Super Serious (Please Hire Me)</a>
+        <!-- Night Mode Toggle Button -->
+        <button onclick="toggleNightMode()">Toggle Night Mode</button>
     </section>
 
     <footer>
