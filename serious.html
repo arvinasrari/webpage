@@ -3,148 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Arvin Asrari's CV">
-    <title>Arvin Asrari - CV</title>
+    <meta name="description" content="Arvin Asrari - Cybersecurity Expert">
+    <title>Arvin Asrari - Portfolio</title>
+
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Styling the page -->
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background-color: #f7f7f7;
+            color: #333;
+        }
 
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    background-color: #f4f4f4;
-    color: #333;
-}
+        /* Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
 
-header {
-    background: #333;
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
-}
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
 
-header h1 {
-    margin-bottom: 10px;
-}
+        nav ul li {
+            margin: 0 20px;
+        }
 
-header nav ul {
-    list-style: none;
-    padding: 0;
-}
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
 
-header nav ul li {
-    display: inline;
-    margin: 0 10px;
-}
+        nav ul li a:hover {
+            color: #ddd;
+        }
 
-header nav ul li a {
-    color: #fff;
-    text-decoration: none;
-}
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: url('https://source.unsplash.com/random/1600x900') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+        }
 
-section {
-    padding: 20px;
-    margin: 20px;
-    background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: fadeInDown 1.5s ease;
+        }
 
-footer {
-    text-align: center;
-    padding: 10px;
-    background: #333;
-    color: #fff;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        .hero a {
+            display: inline-block;
+            padding: 10px 30px;
+            background-color: #ff9800;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .hero a:hover {
+            background-color: #e67e22;
+        }
+
+        /* Keyframes for animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* About Section */
+        section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .about {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .about img {
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .about .content {
+            max-width: 600px;
+        }
+
+        .about h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .about p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* Responsive Design */
+        @media(max-width: 768px) {
+            .about {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about img {
+                width: 300px;
+                margin-bottom: 20px;
+            }
+        }
 
     </style>
-
 </head>
 <body>
-    <header>
-        <h1>Arvin Asrari</h1>
-        <p>Cybersecurity Expert | Researcher | IT Specialist</p>
-        <nav>
-            <ul>
-                <li><a href="#about">About Me</a></li>
-                <li><a href="#education">Education</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#languages">Languages</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Me</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="home">
+        <div>
+            <h1>Welcome to Arvin Asrari's Portfolio</h1>
+            <p>Cybersecurity Expert | Researcher | IT Specialist</p>
+            <a href="#about">Learn More</a>
+        </div>
+    </div>
+
+    <!-- About Section -->
     <section id="about">
-        <h2>About Me</h2>
-        <p>As a dedicated cybersecurity graduate student with hands-on research experience, I am deeply committed to advancing my academic journey through a PhD and further contributing to cutting-edge research. My passion for discovering innovative solutions drives my eagerness to remain in academia, where I can continue to enhance security practices while collaborating on impactful projects.</p>
+        <h2 class="section-title">About Me</h2>
+        <div class="about">
+            <img src="https://source.unsplash.com/400x400/?cybersecurity" alt="Cybersecurity Image">
+            <div class="content">
+                <h2>Arvin Asrari</h2>
+                <p>I am a cybersecurity expert with a deep focus on academic research. My work involves enhancing system security through innovative solutions and practical implementation. I aim to contribute to cutting-edge research and look forward to furthering my academic journey.</p>
+            </div>
+        </div>
     </section>
 
-    <section id="education">
-        <h2>Education</h2>
-        <ul>
-            <li><strong>Master of Applied Science in Information Systems Security</strong>, Concordia University, Montreal, Canada (Jan 2023 - Present) – GPA: 3.670</li>
-            <li><strong>Bachelor of Science in Computer Engineering - Information Technology</strong>, Tehran Azad University, Tehran, Iran (Sep 2016 - Jul 2021) – GPA: 16.23/20</li>
-        </ul>
-    </section>
-
-    <section id="experience">
-        <h2>Experience</h2>
-        <ul>
-            <li><strong>Research Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)</li>
-            <li><strong>Teaching Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)</li>
-            <li><strong>Software Engineer</strong>, Rayan Pardaz Kavosh, Tehran, Iran (Mar 2022 - Dec 2022)</li>
-            <li><strong>IT Technician</strong>, Barad Innovators Co., Tehran, Iran (Sep 2021 - Dec 2021)</li>
-            <li><strong>IT Internship</strong>, Iranian Information Technology Organization, Tehran, Iran (May 2020 - Jan 2021)</li>
-        </ul>
-    </section>
-
-    <section id="projects">
-        <h2>Projects</h2>
-        <ul>
-            <li><strong>Kernel Module Projects</strong>: Developed multiple kernel modules for function redirection, ARM64 instruction modification, and kernel panic triggers.</li>
-            <li><strong>APK Encryption Analysis</strong>: Automated APK encryption analysis using radare2 and adb for dynamic analysis.</li>
-            <li><strong>Kite-based Wi-Fi and LoRa Communication System</strong>: Developed a Wi-Fi and LoRa communication system using Raspberry Pi and ESP32.</li>
-            <li><strong>Docker Version Checker</strong>: Automated Docker version checking and updating process on Debian-based systems.</li>
-        </ul>
-    </section>
-
-    <section id="skills">
-        <h2>Skills</h2>
-        <ul>
-            <li><strong>Programming & Scripting</strong>: Python, C/C++, JavaScript, PHP, HTML/CSS, Assembly, MATLAB, SQL, Shell Scripting</li>
-            <li><strong>Tools & Technologies</strong>: Linux (Ubuntu, Debian), Docker, Git, Ghidra, Radare2, Binwalk, QEMU, SQLmap</li>
-        </ul>
-    </section>
-
-    <section id="languages">
-        <h2>Languages</h2>
-        <ul>
-            <li><strong>English</strong>: Professional proficiency (IELTS: 7.0)</li>
-            <li><strong>Persian</strong>: Native proficiency</li>
-            <li><strong>French</strong>: Professional proficiency (B1)</li>
-            <li><strong>German</strong>: Professional proficiency (B2)</li>
-        </ul>
-    </section>
-
-    <section id="contact">
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:arvin@asrar.io">arvin@asrar.io</a></p>
-        <p>GitHub: <a href="https://github.com/arvinasrari">github.com/arvinasrari</a></p>
-        <p>LinkedIn: <a href="https://linkedin.com/in/arvin-asrari">linkedin.com/in/arvin-asrari</a></p>
-    </section>
-
+    <!-- Footer -->
     <footer>
         <p>&copy; 2024 Arvin Asrari</p>
     </footer>
+
 </body>
 </html>
