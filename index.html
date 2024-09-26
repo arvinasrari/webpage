@@ -573,7 +573,13 @@ nav ul li a:hover {
                 } else {
                     details.style.display = "block";
                 }
-            });
+            // JavaScript for mobile navigation toggle
+const mobileMenu = document.getElementById('mobile-menu');
+const navList = document.querySelector('.nav-list');
+
+mobileMenu.addEventListener('click', () => {
+    navList.classList.toggle('active');
+});
         });
     </script>
 
