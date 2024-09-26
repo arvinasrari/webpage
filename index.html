@@ -559,29 +559,31 @@ nav ul li a:hover {
     </footer>
 --->
     
-  <script>
-        // Select all the <strong> elements with class 'toggle'
-        document.querySelectorAll('.toggle').forEach(function(toggleElement) {
-            toggleElement.addEventListener('click', function() {
-                // Toggle the 'active' class on the clicked <strong> element
-                this.classList.toggle('active');
+<script>
+    // Select all the <strong> elements with class 'toggle'
+    document.querySelectorAll('.toggle').forEach(function(toggleElement) {
+        toggleElement.addEventListener('click', function() {
+            // Toggle the 'active' class on the clicked <strong> element
+            this.classList.toggle('active');
 
-                // Find the next sibling <ul> (the details section) and toggle its visibility
-                const details = this.nextElementSibling;
-                if (details.style.display === "block") {
-                    details.style.display = "none";
-                } else {
-                    details.style.display = "block";
-                }
-            // JavaScript for mobile navigation toggle
-const mobileMenu = document.getElementById('mobile-menu');
-const navList = document.querySelector('.nav-list');
+            // Find the next sibling <ul> (the details section) and toggle its visibility
+            const details = this.nextElementSibling;
+            if (details.style.display === "block") {
+                details.style.display = "none";
+            } else {
+                details.style.display = "block";
+            }
+        }); // <-- This closing bracket was missing
+    });
 
-mobileMenu.addEventListener('click', () => {
-    navList.classList.toggle('active');
-});
-        });
-    </script>
+    // JavaScript for mobile navigation toggle
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navList = document.querySelector('.nav-list');
+
+    mobileMenu.addEventListener('click', () => {
+        navList.classList.toggle('active');
+    });
+</script>
 
 </body>
 </html>
