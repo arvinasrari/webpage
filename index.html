@@ -11,202 +11,226 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <!-- Styling the page -->
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+   <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            background-color: #f7f7f7;
-            color: #333;
-        }
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+        scroll-behavior: smooth;
+    }
 
-        /* Navigation Bar */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: #333;
-            color: #fff;
-            padding: 10px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
+    /* Navigation Bar */
+    nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: #333;
+        color: #fff;
+        padding: 15px 0; /* Increased padding for better spacing */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-        }
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        nav ul li {
-            margin: 0 20px;
-        }
+    nav ul li {
+        margin: 0 20px;
+    }
 
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 18px; /* Adjusted for better readability */
+        transition: color 0.3s ease;
+    }
 
-        nav ul li a:hover {
-            color: #ddd;
-        }
+    nav ul li a:hover {
+        color: #ddd;
+    }
 
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            background: url('https://source.unsplash.com/random/1600x900') center/cover no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #fff;
-        }
+    /* Hero Section */
+    .hero {
+        height: 100vh;
+        background: url('https://source.unsplash.com/random/1600x900') center/cover no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        padding: 20px; /* Added padding for better spacing on small screens */
+    }
 
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: fadeInDown 1.5s ease;
-        }
+    .hero h1 {
+        font-size: 48px;
+        margin-bottom: 20px;
+        animation: fadeInDown 1.5s ease;
+    }
 
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            animation: fadeInUp 1.5s ease;
-        }
+    .hero p {
+        font-size: 18px;
+        margin-bottom: 30px;
+        animation: fadeInUp 1.5s ease;
+    }
 
-        .hero a {
-            display: inline-block;
-            padding: 10px 30px;
-            background-color: #ff9800;
-            color: #fff;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.3s ease;
-        }
+    .hero a {
+        display: inline-block;
+        padding: 12px 35px; /* Increased padding for a bigger button */
+        background-color: #ff9800;
+        color: #fff;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
 
-        .hero a:hover {
-            background-color: #e67e22;
-        }
+    .hero a:hover {
+        background-color: #e67e22;
+    }
 
-        /* Keyframes for animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+    /* Keyframes for animations */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        /* Section Styling */
-        section {
-            padding: 60px 0;
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 32px;
-            font-weight: 600;
-            color: #333;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        .section-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    /* Section Styling */
+    section {
+        padding: 80px 0; /* Increased padding for better spacing between sections */
+    }
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            color: #333;
-        }
+    .section-title {
+        text-align: center;
+        margin-bottom: 50px; /* Increased margin for better visual balance */
+        font-size: 32px;
+        font-weight: 600;
+        color: #333;
+        text-transform: uppercase; /* Added for a more uniform look */
+    }
 
-        p, li {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 10px;
-        }
+    .section-content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
 
-        ul {
-            list-style: none;
-        }
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: #333;
+    }
 
-        li {
-            margin-bottom: 10px;
-        }
+    p, li {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 10px;
+        line-height: 1.8; /* Increased line-height for better readability */
+    }
 
-        /* About Section */
+    ul {
+        list-style: none;
+    }
+
+    li {
+        margin-bottom: 15px; /* Increased spacing between list items */
+    }
+
+    /* About Section */
+    .about {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .about img {
+        width: 400px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease; /* Added transition for hover effect */
+    }
+
+    .about img:hover {
+        transform: scale(1.05); /* Scale image on hover for a subtle effect */
+    }
+
+    .about .content {
+        max-width: 600px;
+    }
+
+    /* Footer */
+    footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+        margin-top: 40px;
+    }
+
+    footer p {
+        font-size: 16px;
+    }
+
+    /* Responsive Design */
+    @media(max-width: 768px) {
         .about {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
+            flex-direction: column;
+            text-align: center;
         }
 
         .about img {
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-bottom: 20px;
         }
 
-        .about .content {
-            max-width: 600px;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: #fff;
+        nav ul {
+            flex-direction: column;
             text-align: center;
-            padding: 20px 0;
         }
 
-        /* Responsive Design */
-        @media(max-width: 768px) {
-            .about {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .about img {
-                width: 300px;
-                margin-bottom: 20px;
-            }
-
-            nav ul {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            nav ul li {
-                margin: 10px 0;
-            }
+        nav ul li {
+            margin: 10px 0;
         }
 
-    </style>
+        .hero h1 {
+            font-size: 36px;
+        }
+
+        .hero p {
+            font-size: 16px;
+        }
+    }
+</style>
+
 </head>
 <body>
 
@@ -257,72 +281,73 @@
 
     <!-- Experience Section -->
 <!-- Experience Section -->
-<section id="experience">
-    <h2 class="section-title">Experience</h2>
-    <div class="section-content">
-        <ul>
-            <li>
-                <strong>Research Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)
-                <ul>
-                    <li>Conducting research on memory corruption and Android kernel vulnerabilities, with a focus on proximity vulnerabilities in wireless drivers.</li>
-                    <li>Developing a framework to emulate Android Wi‐Fi drivers by collecting snapshots from memory and CPU, and applying selective fuzzing techniques to identify vulnerabilities.</li>
-                    <li><strong>Technical Skills:</strong> Linux, Kernel, C, Fuzzing, Python, Aircrack‐ng, Speed‐HPC.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Teaching Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)
-                <ul>
-                    <li>Tutored and instructed lab sessions for master’s courses, enhancing communication and mentorship skills.</li>
-                    <li>Facilitated lab sessions, guided students through complex technical concepts, and graded assignments with precision.</li>
-                    <li>Adapted to various teaching situations, improving problem‐solving and communication skills.</li>
-                    <li><strong>Technical Skills:</strong> Machine Learning, Linux, Java, Python, HPC System Administration, Jupyter Notebook, Wireshark, Frida.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Participant</strong>, Northsec 2024 CTF Competition, Montreal, Canada (2024)
-                <ul>
-                    <li>Competed in the Northsec 2024 Capture The Flag (CTF) competition, gaining hands‐on experience in cybersecurity challenges.</li>
-                    <li>Focused on brute force and SQL injection techniques, developing a custom dictionary for brute force attacks, and demonstrating strong analytical, problem‐solving, and innovative skills.</li>
-                    <li><strong>Technical Skills:</strong> SQLmap, Linux, Bash, SQL, Soldering, Binary Analysis, Nmap.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Participant</strong>, Athack Hackathon 2024, Montreal, Canada (2024)
-                <ul>
-                    <li>Secured 10th place out of 100 teams, demonstrating teamwork, problem-solving, and resilience under pressure.</li>
-                    <li>Participated in encryption and hashing challenges, effectively applying knowledge and self‐study skills.</li>
-                    <li>Successfully broke encryptions and identified embedded flags, showcasing technical aptitude and perseverance.</li>
-                    <li><strong>Technical Skills:</strong> Linux, Encryption, Bash, Radar2, Ghidra, Static Analysis, Binary Analysis.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Software Engineer</strong>, Rayan Pardaz Kavosh, Tehran, Iran (Mar 2022 - Dec 2022)
-                <ul>
-                    <li>Implemented Business Process Management Systems (BPMS) and Deep Digital Process Automation to optimize workflows for banks and businesses.</li>
-                    <li>Designed processes, debugged code, and analyzed data, leading to improved operational efficiency and accuracy.</li>
-                    <li><strong>Technical Skills:</strong> Python, C, Linux, Git, BIZAGI.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>IT Technician</strong>, Barad Innovators Co., Tehran, Iran (Sept 2021 - Dec 2021)
-                <ul>
-                    <li>Maintained computer and server backups for organizations, ensuring data security and reliability.</li>
-                    <li>Managed critical client relationships, enhancing customer service and communication skills.</li>
-                    <li><strong>Technical Skills:</strong> Python, Ubuntu Linux, Linux tools.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>IT Internship</strong>, Iranian Information Technology Organization, Tehran, Iran (May 2020 - Jan 2021)
-                <ul>
-                    <li>Contributed to electronic government policy making, assisting in the development and implementation of IT strategies.</li>
-                    <li>Conducted research on digital transformation and e‐government initiatives, providing recommendations for IT infrastructure improvements.</li>
-                    <li>Provided IT support and troubleshooting, improving technical problem-solving abilities.</li>
-                    <li><strong>Technical Skills:</strong> Linux, Wireshark, Bash.</li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</section>
+ <!-- Experience Section -->
+    <section id="experience">
+        <h2 class="section-title">Experience</h2>
+        <div class="section-content">
+            <ul>
+                <li>
+                    <strong class="toggle">Research Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)
+                    <ul class="details">
+                        <li>Conducting research on memory corruption and Android kernel vulnerabilities, with a focus on proximity vulnerabilities in wireless drivers.</li>
+                        <li>Developing a framework to emulate Android Wi‐Fi drivers by collecting snapshots from memory and CPU, and applying selective fuzzing techniques to identify vulnerabilities.</li>
+                        <li><strong>Technical Skills:</strong> Linux, Kernel, C, Fuzzing, Python, Aircrack‐ng, Speed‐HPC.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong class="toggle">Teaching Assistant</strong>, Concordia University, Montreal, Canada (Jan 2024 - Present)
+                    <ul class="details">
+                        <li>Tutored and instructed lab sessions for master’s courses, enhancing communication and mentorship skills.</li>
+                        <li>Facilitated lab sessions, guided students through complex technical concepts, and graded assignments with precision.</li>
+                        <li>Adapted to various teaching situations, improving problem-solving and communication skills.</li>
+                        <li><strong>Technical Skills:</strong> Machine Learning, Linux, Java, Python, HPC System Administration, Jupyter Notebook, Wireshark, Frida.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong class="toggle">Participant</strong>, Northsec 2024 CTF Competition, Montreal, Canada (2024)
+                    <ul class="details">
+                        <li>Competed in the Northsec 2024 Capture The Flag (CTF) competition, gaining hands‐on experience in cybersecurity challenges.</li>
+                        <li>Focused on brute force and SQL injection techniques, developing a custom dictionary for brute force attacks, and demonstrating strong analytical, problem-solving, and innovative skills.</li>
+                        <li><strong>Technical Skills:</strong> SQLmap, Linux, Bash, SQL, Soldering, Binary Analysis, Nmap.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong class="toggle">Participant</strong>, Athack Hackathon 2024, Montreal, Canada (2024)
+                    <ul class="details">
+                        <li>Secured 10th place out of 100 teams, demonstrating teamwork, problem-solving, and resilience under pressure.</li>
+                        <li>Participated in encryption and hashing challenges, effectively applying knowledge and self‐study skills.</li>
+                        <li>Successfully broke encryptions and identified embedded flags, showcasing technical aptitude and perseverance.</li>
+                        <li><strong>Technical Skills:</strong> Linux, Encryption, Bash, Radar2, Ghidra, Static Analysis, Binary Analysis.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong class="toggle">Software Engineer</strong>, Rayan Pardaz Kavosh, Tehran, Iran (Mar 2022 - Dec 2022)
+                    <ul class="details">
+                        <li>Implemented Business Process Management Systems (BPMS) and Deep Digital Process Automation to optimize workflows for banks and businesses.</li>
+                        <li>Designed processes, debugged code, and analyzed data, leading to improved operational efficiency and accuracy.</li>
+                        <li><strong>Technical Skills:</strong> Python, C, Linux, Git, BIZAGI.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong class="toggle">IT Technician</strong>, Barad Innovators Co., Tehran, Iran (Sept 2021 - Dec 2021)
+                    <ul class="details">
+                        <li>Maintained computer and server backups for organizations, ensuring data security and reliability.</li>
+                        <li>Managed critical client relationships, enhancing customer service and communication skills.</li>
+                        <li><strong>Technical Skills:</strong> Python, Ubuntu Linux, Linux tools.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong class="toggle">IT Internship</strong>, Iranian Information Technology Organization, Tehran, Iran (May 2020 - Jan 2021)
+                    <ul class="details">
+                        <li>Contributed to electronic government policy making, assisting in the development and implementation of IT strategies.</li>
+                        <li>Conducted research on digital transformation and e‐government initiatives, providing recommendations for IT infrastructure improvements.</li>
+                        <li>Provided IT support and troubleshooting, improving technical problem-solving abilities.</li>
+                        <li><strong>Technical Skills:</strong> Linux, Wireshark, Bash.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </section>
 
 
     <!-- Projects Section -->
@@ -408,6 +433,25 @@
     <footer>
         <p>&copy; 2024 Arvin Asrari</p>
     </footer>
+
+  <script>
+        // Select all the <strong> elements with class 'toggle'
+        document.querySelectorAll('.toggle').forEach(function(toggleElement) {
+            toggleElement.addEventListener('click', function() {
+                // Toggle the 'active' class on the clicked <strong> element
+                this.classList.toggle('active');
+
+                // Find the next sibling <ul> (the details section) and toggle its visibility
+                const details = this.nextElementSibling;
+                if (details.style.display === "block") {
+                    details.style.display = "none";
+                } else {
+                    details.style.display = "block";
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
 
