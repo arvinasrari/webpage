@@ -11,23 +11,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <!-- Styling the page -->
-   <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+  /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        line-height: 1.6;
-        background-color: #f7f7f7;
-        color: #333;
-        scroll-behavior: smooth;
-    }
-       
-    /* Navigation Bar */
-    /* General Styling (unchanged for desktop) */
+/* Body */
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    background-color: #f7f7f7;
+    color: #333;
+    scroll-behavior: smooth;
+}
+
+/* Navigation Bar */
 nav {
     position: fixed;
     top: 0;
@@ -102,6 +102,7 @@ nav ul li a:hover {
         width: 100%;
         text-align: center;
         transition: all 0.3s ease;
+        z-index: 999; /* Ensure it appears above other content */
     }
 
     nav ul.active {
@@ -114,179 +115,178 @@ nav ul li a:hover {
 
     nav ul li a {
         font-size: 20px; /* Increase link size for better touchability */
+        padding: 10px 0; /* Increase clickable area */
     }
 }
 
+/* Hero Section */
+.hero {
+    height: 100vh;
+    background: url('https://source.unsplash.com/random/1600x900') center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+}
 
-    /* Hero Section */
-    .hero {
-        height: 100vh;
-        background: url('https://source.unsplash.com/random/1600x900') center/cover no-repeat;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: #fff;
-        padding: 20px; /* Added padding for better spacing on small screens */
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    animation: fadeInDown 1.5s ease;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    animation: fadeInUp 1.5s ease;
+}
+
+.hero a {
+    display: inline-block;
+    padding: 12px 35px;
+    background-color: #ff9800;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.hero a:hover {
+    background-color: #e67e22;
+}
+
+/* Keyframes for animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-
-    .hero h1 {
-        font-size: 48px;
-        margin-bottom: 20px;
-        animation: fadeInDown 1.5s ease;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    .hero p {
-        font-size: 18px;
-        margin-bottom: 30px;
-        animation: fadeInUp 1.5s ease;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-
-    .hero a {
-        display: inline-block;
-        padding: 12px 35px; /* Increased padding for a bigger button */
-        background-color: #ff9800;
-        color: #fff;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: background 0.3s ease;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    .hero a:hover {
-        background-color: #e67e22;
-    }
+/* Section Styling */
+section {
+    padding: 80px 0; /* Increased padding for better spacing between sections */
+}
 
-    /* Keyframes for animations */
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+}
 
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.section-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-    /* Section Styling */
-    section {
-        padding: 80px 0; /* Increased padding for better spacing between sections */
-    }
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #333;
+}
 
-    .section-title {
-        text-align: center;
-        margin-bottom: 50px; /* Increased margin for better visual balance */
-        font-size: 32px;
-        font-weight: 600;
-        color: #333;
-        text-transform: uppercase; /* Added for a more uniform look */
-    }
+p, li {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.8;
+}
 
-    .section-content {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
+ul {
+    list-style: none;
+}
 
-    h2 {
-        font-size: 24px;
-        margin-bottom: 20px;
-        font-weight: 600;
-        color: #333;
-    }
+li {
+    margin-bottom: 15px;
+}
 
-    p, li {
-        font-size: 18px;
-        color: #666;
-        margin-bottom: 10px;
-        line-height: 1.8; /* Increased line-height for better readability */
-    }
+/* About Section */
+.about {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
 
-    ul {
-        list-style: none;
-    }
+.about img {
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
 
-    li {
-        margin-bottom: 15px; /* Increased spacing between list items */
-    }
+.about img:hover {
+    transform: scale(1.05);
+}
 
-    /* About Section */
+.about .content {
+    max-width: 600px;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+footer p {
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .about {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
+        flex-direction: column;
+        text-align: center;
     }
 
     .about img {
-        width: 400px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease; /* Added transition for hover effect */
+        width: 300px;
+        margin-bottom: 20px;
     }
 
-    .about img:hover {
-        transform: scale(1.05); /* Scale image on hover for a subtle effect */
+    .hero h1 {
+        font-size: 36px;
     }
 
-    .about .content {
-        max-width: 600px;
-    }
-
-    /* Footer */
-    footer {
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        padding: 20px 0;
-        margin-top: 40px;
-    }
-
-    footer p {
+    .hero p {
         font-size: 16px;
     }
 
-    /* Responsive Design */
-    @media(max-width: 768px) {
-        .about {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .about img {
-            width: 300px;
-            margin-bottom: 20px;
-        }
-
-        nav ul {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        nav ul li {
-            margin: 10px 0;
-        }
-
-        .hero h1 {
-            font-size: 36px;
-        }
-
-        .hero p {
-            font-size: 16px;
-        }
+    .section-title {
+        font-size: 28px;
     }
-</style>
+
+    .section-content {
+        padding: 0 10px; /* Reduce padding on smaller screens */
+    }
+}
+
 
 </head>
 <body>
