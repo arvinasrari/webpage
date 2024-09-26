@@ -25,41 +25,98 @@
         color: #333;
         scroll-behavior: smooth;
     }
-
+       
     /* Navigation Bar */
-    nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        background: #333;
-        color: #fff;
-        padding: 15px 0; /* Increased padding for better spacing */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
+    /* General Styling (unchanged for desktop) */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #333;
+    color: #fff;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ddd;
+}
+
+/* Hamburger Menu (Hidden by Default on Desktop) */
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block; /* Show hamburger menu on mobile */
     }
 
     nav ul {
-        list-style: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        display: none; /* Hide navigation links on mobile by default */
+        flex-direction: column;
+        position: absolute;
+        top: 60px; /* Adjust based on nav height */
+        left: 0;
+        background: #333;
+        width: 100%;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    nav ul.active {
+        display: flex; /* Show navigation when active class is added */
     }
 
     nav ul li {
-        margin: 0 20px;
+        margin: 10px 0; /* Add space between links on mobile */
     }
 
     nav ul li a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 18px; /* Adjusted for better readability */
-        transition: color 0.3s ease;
+        font-size: 20px; /* Increase link size for better touchability */
     }
+}
 
-    nav ul li a:hover {
-        color: #ddd;
-    }
 
     /* Hero Section */
     .hero {
@@ -235,6 +292,12 @@
 <body>
 
     <!-- Navigation Bar -->
+
+    <div class="menu-toggle" id="mobile-menu">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</div>
     <nav>
         <ul>
             <li><a href="#home">Home</a></li>
@@ -248,14 +311,15 @@
         </ul>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section
     <div class="hero" id="home">
         <div>
             <h1>Arvin Asrari</h1>
             <p>Cybersecurity Expert | Researcher | IT Specialist</p>
             <a href="#about">Learn More</a>
         </div>
-    </div>
+    </div> 
+     -->
 
     <!-- About Section -->
 <section id="about">
