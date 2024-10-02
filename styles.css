@@ -124,19 +124,23 @@ html {
 
 /* Section Titles */
 .section-title {
-    text-align: center;
-    margin-bottom: 50px;
+    position: relative;
     font-size: 32px;
     font-weight: 600;
     color: #333;
     text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 50px;
 }
 
 /* About Section with Gradient Background */
 #about {
+    /*
     background: linear-gradient(-45deg, #DBDCDC, #DADBDB, #DCDDDF, #D9DADA, #67A8E8, #75ADED, #6CA7E9, #64A5E6);
     background-size: 400% 400%;
     animation: gradientBG 5s ease infinite;
+    */
+    background-color: #f7f7f7; /* Matches the background of other sections */
 }
 
 @keyframes gradientBG {
@@ -158,7 +162,8 @@ html {
     max-width: 1100px;
     margin: 1px auto;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background: #D9DADA;
+    background: #fff;
+    border-radius: 2%;
 }
 
 .about img {
@@ -186,7 +191,8 @@ p {
 
 /* Education Section with Dynamic Background */
 #education {
-    background-image: url('photo_3.jpg');
+    /*background-image: url('photo_3.jpg');*/
+    background-color: #f7f7f7;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -209,7 +215,7 @@ p {
 /* Section Title Styling */
 .section-title::after {
     content: '';
-    width: 100px;
+    width: 200px;
     height: 4px;
     background-color: #ff9800;
     position: absolute;
@@ -218,6 +224,7 @@ p {
     transform: translateX(-50%);
     border-radius: 2px;
 }
+
 
 .section-content {
     max-width: 1100px;
@@ -241,7 +248,7 @@ p {
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(to right, #ff9800, #ffb74d);
+   /* background: linear-gradient(to right, #ff9800, #ffb74d); */
     z-index: 1;
 }
 
@@ -359,6 +366,7 @@ p {
         max-width: 100%;
     }
 }
+
 
 /* Experience Section Styles */
 .experience-item {
