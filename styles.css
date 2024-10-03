@@ -142,7 +142,7 @@ html {
     */
     background-color: #f7f7f7; /* Matches the background of other sections */
 }
-
+/*
 @keyframes gradientBG {
     0% {
         background-position: 0% 50%;
@@ -154,6 +154,7 @@ html {
         background-position: 0% 50%;
     }
 }
+*/
 
 .about {
     display: flex;
@@ -361,7 +362,10 @@ p {
 }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 /* Experience Section Styles */
 .experience-item {
     display: flex;
