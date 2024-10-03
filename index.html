@@ -12,6 +12,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- External CSS -->
     <link rel="stylesheet" href="styles.css">
+
+        <script>
+        function loadMobileCSS() {
+            if (!document.getElementById('mobile-css')) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'styles-mobile.css';
+                link.id = 'mobile-css';
+                document.head.appendChild(link);
+            }
+        }
+
+        function unloadMobileCSS() {
+            var mobileCSS = document.getElementById('mobile-css');
+            if (mobileCSS) {
+                document.head.removeChild(mobileCSS);
+            }
+        }
+
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                loadMobileCSS();
+            } else {
+                unloadMobileCSS();
+            }
+        }
+
+        window.addEventListener('load', checkScreenSize);
+        window.addEventListener('resize', checkScreenSize);
+    </script>
 </head>
 <body>
 
