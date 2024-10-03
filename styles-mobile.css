@@ -217,55 +217,43 @@ html {
 
 /* Participation Section */
 #participations {
-    margin-top: 40px; /* Adjusted margin */
-    display: flow-root; /* Ensure proper containment */
+    margin-top: 40px;
+    padding: 20px 15px;
+    clear: both; /* Clear floats */
 }
 
 .participation {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 40px; /* Adjusted margin */
-    padding: 0 10px; /* Reduced padding */
+    margin-bottom: 40px;
 }
 
 .participation-img {
-    width: 40%;
-    max-width: 170px;
+    width: 100%;
+    max-width: 300px;
     height: auto;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 15px;
-    height: 150px;
 }
 
 .participation-text {
     max-width: 100%;
     text-align: center;
-    padding: 10px;
 }
-
-.participation-text h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.participation-text p {
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-
 
 /* Experience Section */
 #experience {
-    margin-top: 40px; /* Adjusted margin-top */
-    display: flow-root; /* Ensure proper containment */
+    margin-top: 40px;
+    padding: 20px 15px;
+    clear: both; /* Clear floats */
 }
 
 .experience-list {
     list-style: none;
     margin: 0;
-    padding: 0 10px; /* Reduced padding */
+    padding: 0;
 }
 
 .experience-item {
@@ -290,6 +278,13 @@ html {
     flex: 1;
     text-align: center;
 }
+
+/* Ensure that both sections are displayed as block elements */
+#participations,
+#experience {
+    display: block;
+}
+
 
 .experience-text .toggle {
     font-size: 16px;
