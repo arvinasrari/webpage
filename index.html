@@ -10,37 +10,644 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- External CSS -->
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        function loadMobileCSS() {
-            if (!document.getElementById('mobile-css')) {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = 'styles-mobile.css';
-                link.id = 'mobile-css';
-                document.head.appendChild(link);
-            }
+
+    <!-- Merged CSS -->
+    <style>
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+    }
+
+    /* Body */
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        background-color: #f7f7f7;
+        color: #333;
+    }
+
+    /* Navigation Bar */
+    nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background: #333;
+        color: #fff;
+        padding: 15px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        width: 100%;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 0 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 18px;
+        transition: color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+        color: #ddd;
+    }
+
+    /* Hamburger Menu (Hidden by Default on Desktop) */
+    .menu-toggle {
+        display: none;
+        cursor: pointer;
+    }
+
+    .menu-toggle .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 5px auto;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    /* Mobile Navigation */
+    @media (max-width: 768px) {
+        .menu-toggle {
+            display: block; /* Show hamburger menu on mobile */
+            position: absolute;
+            right: 20px;
+            top: 15px;
         }
 
-        function unloadMobileCSS() {
-            var mobileCSS = document.getElementById('mobile-css');
-            if (mobileCSS) {
-                document.head.removeChild(mobileCSS);
-            }
+        nav ul {
+            display: none; /* Hide navigation links on mobile by default */
+            flex-direction: column;
+            position: absolute;
+            top: 60px; /* Adjust based on nav height */
+            left: 0;
+            background: #333;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+            z-index: 999; /* Ensure it appears above other content */
         }
 
-        function checkScreenSize() {
-            if (window.innerWidth <= 768) {
-                loadMobileCSS();
-            } else {
-                unloadMobileCSS();
-            }
+        nav ul.active {
+            display: flex; /* Show navigation when active class is added */
         }
 
-        window.addEventListener('load', checkScreenSize);
-        window.addEventListener('resize', checkScreenSize);
-    </script>
+        nav ul li {
+            margin: 10px 0; /* Add space between links on mobile */
+        }
+
+        nav ul li a {
+            font-size: 20px; /* Increase link size for better touchability */
+            padding: 10px 0; /* Increase clickable area */
+        }
+    }
+
+    /* Section Styles */
+    section {
+        padding: 80px 20px;
+        margin-top: 80px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    /* Section Titles */
+    .section-title {
+        position: relative;
+        font-size: 32px;
+        font-weight: 600;
+        color: #333;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .section-title::after {
+        content: '';
+        width: 200px;
+        height: 4px;
+        background-color: #ff9800;
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+
+    /* About Section */
+    .about {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        border-radius: 2%;
+    }
+
+    .about img {
+        width: 400px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .about img:hover {
+        transform: scale(1.05);
+    }
+
+    .about .content {
+        max-width: 600px;
+    }
+
+    .about p {
+        font-size: 18px;
+        color: #000;
+        margin-bottom: 10px;
+        line-height: 1.8;
+        margin-left: 0.5em;
+    }
+
+    /* Education Section */
+    #education {
+        background-color: #f7f7f7;
+        color: #333;
+        position: relative;
+        padding: 40px 20px;
+    }
+
+    .section-content {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* Timeline */
+    .timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        padding: 40px 0;
+        overflow-x: auto;
+        flex-wrap: wrap;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        z-index: 1;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        z-index: 2;
+        text-align: center;
+        margin-bottom: 30px;
+        color: #444;
+        margin-left: 0.5em;
+    }
+
+    .timeline-item h3 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #222;
+        font-weight: 600;
+    }
+
+    .timeline-item p {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Participation Section */
+    .participation {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    /* Reverse the order for text and image */
+    .participation.reverse {
+        flex-direction: row-reverse;
+    }
+
+    /* Participation Image */
+    .participation-img {
+        width: 100%;
+        max-width: 400px;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-right: 20px;
+    }
+
+    /* Adjust margin for reversed items */
+    .participation.reverse .participation-img {
+        margin-right: 0;
+        margin-left: 20px;
+    }
+
+    /* Participation Text */
+    .participation-text {
+        max-width: 50%;
+        padding: 20px;
+    }
+
+    /* Experience Section */
+    .experience-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .experience-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        margin-right: 20px;
+    }
+
+    .experience-text {
+        flex: 1;
+    }
+
+    .experience-text .toggle {
+        font-size: 22px;
+        font-weight: 600;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+
+    .experience-text .toggle::after {
+        content: " ▼";
+        font-size: 16px;
+        position: absolute;
+        right: -20px;
+        top: 0;
+    }
+
+    .experience-list li.active .experience-text .toggle::after {
+        content: " ▲";
+    }
+
+    .experience-text .details {
+        list-style: disc inside;
+        margin-left: 20px;
+        display: none;
+    }
+
+    .experience-list li.active .experience-text .details {
+        display: block;
+    }
+
+    .position-details {
+        display: block;
+        margin-top: 4px;
+        font-size: 13px;
+        color: #777;
+    }
+
+    /* Projects Section */
+    .project-grid {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+
+    .project-item {
+        width: calc(50% - 30px);
+        margin: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-header {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 15px;
+    }
+
+    .project-logo-container {
+        flex-shrink: 0;
+    }
+
+    .project-logo {
+        font-size: 48px;
+        color: #333;
+        margin-right: 15px;
+    }
+
+    .project-title-container {
+        flex: 1;
+        position: relative;
+    }
+
+    .project-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .project-details {
+        font-size: 14px;
+        color: #777;
+    }
+
+    .toggle-icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 24px;
+        color: #ff9800;
+        transition: transform 0.3s;
+    }
+
+    .toggle-icon::before {
+        content: '+';
+    }
+
+    .project-item.active .toggle-icon::before {
+        content: '-';
+    }
+
+    .project-description {
+        display: none;
+        padding: 0 15px 15px 15px;
+    }
+
+    .project-item.active .project-description {
+        display: block;
+    }
+
+    .project-description ul {
+        list-style: disc inside;
+        margin-left: 20px;
+    }
+
+    .project-description li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    .project-description a {
+        color: #ff9800;
+        text-decoration: none;
+    }
+
+    .project-description a:hover {
+        text-decoration: underline;
+    }
+
+    /* Languages Section */
+    #languages {
+        background-color: #f0f0f0;
+        color: #333;
+        padding: 60px 20px;
+    }
+
+    #languages .section-title {
+        margin-bottom: 40px;
+    }
+
+    .languages {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .language-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px;
+    }
+
+    .language-item p {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 18px;
+    }
+
+    .language-item small {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Progress Circle Styles */
+    .progress-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        position: relative;
+        background-color: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: conic-gradient(
+            #ff9800 calc(var(--progress) * 1deg),
+            #ddd 0deg
+        );
+        transition: background-image 1s ease-in-out;
+    }
+
+    .progress-circle .progress-value {
+        font-size: 20px;
+        color: #333;
+    }
+
+    /* Contact Section */
+    #contact {
+        background-color: #f0f0f0;
+        color: #333;
+        padding: 60px 20px;
+    }
+
+    .contact-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .contact-item {
+        margin: 20px;
+        position: relative;
+    }
+
+    .contact-item a {
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contact-icon {
+        font-size: 48px;
+        color: #333;
+        transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .contact-info {
+        display: none;
+        margin-top: 10px;
+        font-size: 16px;
+        color: #555;
+        text-align: center;
+    }
+
+    .contact-item:hover .contact-icon,
+    .contact-item a:focus .contact-icon {
+        color: #ff9800;
+        transform: scale(1.1);
+    }
+
+    .contact-item:hover .contact-info,
+    .contact-item a:focus .contact-info {
+        display: block;
+    }
+
+    /* Additional Styles */
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 600;
+    }
+
+    p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* Ensure images are responsive */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Responsive Fixes */
+    @media screen and (max-width: 768px) {
+        .about {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .about img {
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .timeline {
+            flex-direction: column;
+        }
+
+        .timeline-item {
+            width: 100%;
+        }
+
+        .participation {
+            flex-direction: column;
+        }
+
+        .participation.reverse {
+            flex-direction: column;
+        }
+
+        .participation-img,
+        .participation-text {
+            max-width: 100%;
+        }
+
+        .participation-img {
+            margin: 0 0 20px 0;
+        }
+
+        .participation.reverse .participation-img {
+            margin: 0 0 20px 0;
+        }
+
+        .languages {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .language-item {
+            margin: 20px 0;
+        }
+
+        .contact-content {
+            flex-direction: column;
+        }
+
+        .contact-item {
+            margin: 20px 0;
+        }
+
+        .project-item {
+            width: 100%;
+        }
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1024px) {
+        .nav-container {
+            padding: 0 15px;
+        }
+
+        .about {
+            max-width: 90%;
+        }
+
+        .section-content {
+            max-width: 90%;
+        }
+    }
+    </style>
 </head>
 <body>
 
@@ -106,52 +713,49 @@
     </section>
 
     <!-- Participations Section -->
-<section class="participations" id="participations">
-    <h2 class="section-title">Participations</h2>
+    <section class="participations" id="participations">
+        <h2 class="section-title">Participations</h2>
 
-    <!-- First Participation: Image on the left, text on the right -->
-    <div class="participation">
-        <img src="athack2.jpg" alt="Northsec 2025" class="participation-img">
-        <div class="participation-text">
-            <h3>Participant, Athack 2025 CTF Challenge Designing Team, Montreal, Canada (2025)</h3>
-            <p>
-                Participated as a key member of the challenge design team for the Athack 2025 Capture The Flag (CTF) competition. Contributed to the development of complex cybersecurity challenges, with a focus on reverse engineering, cryptography, and web exploitation scenarios. Worked collaboratively to create engaging and educational challenges that enhanced participants' analytical and problem-solving skills while maintaining a balanced level of difficulty.
-
-
-            </p>
-            <p><strong>Technical Skills:</strong> Burp Suite, Ghidra, Radare2, Metasploit, John the Ripper, Docker, CyberChef, pwntools, Nmap, WebGoat, Wireshark, ZAP (Zed Attack Proxy).</p>
+        <!-- First Participation: Image on the left, text on the right -->
+        <div class="participation">
+            <img src="athack2.jpg" alt="Northsec 2025" class="participation-img">
+            <div class="participation-text">
+                <h3>Participant, Athack 2025 CTF Challenge Designing Team, Montreal, Canada (2025)</h3>
+                <p>
+                    Participated as a key member of the challenge design team for the Athack 2025 Capture The Flag (CTF) competition. Contributed to the development of complex cybersecurity challenges, with a focus on reverse engineering, cryptography, and web exploitation scenarios. Worked collaboratively to create engaging and educational challenges that enhanced participants' analytical and problem-solving skills while maintaining a balanced level of difficulty.
+                </p>
+                <p><strong>Technical Skills:</strong> Burp Suite, Ghidra, Radare2, Metasploit, John the Ripper, Docker, CyberChef, pwntools, Nmap, WebGoat, Wireshark, ZAP (Zed Attack Proxy).</p>
+            </div>
         </div>
-    </div>
 
-    <!-- Second Participation: Image on the right, text on the left -->
-    <div class="participation reverse">
-        <img src="photo_northsec.JPG" alt="Northsec 2024" class="participation-img">
-        <div class="participation-text">
-            <h3>Participant, Northsec 2024 CTF Competition, Montreal, Canada (2024)</h3>
-            <p>
-                Competed in the Northsec 2024 Capture The Flag (CTF) competition, gaining hands‐on experience in cybersecurity challenges.
-                Focused on brute force and SQL injection techniques, developing a custom dictionary for brute force attacks, and
-                demonstrating strong analytical, problem-solving, and innovative skills.
-            </p>
-            <p><strong>Technical Skills:</strong> SQLmap, Linux, Bash, SQL, Soldering, Binary Analysis, Nmap.</p>
+        <!-- Second Participation: Image on the right, text on the left -->
+        <div class="participation reverse">
+            <img src="photo_northsec.JPG" alt="Northsec 2024" class="participation-img">
+            <div class="participation-text">
+                <h3>Participant, Northsec 2024 CTF Competition, Montreal, Canada (2024)</h3>
+                <p>
+                    Competed in the Northsec 2024 Capture The Flag (CTF) competition, gaining hands‐on experience in cybersecurity challenges.
+                    Focused on brute force and SQL injection techniques, developing a custom dictionary for brute force attacks, and
+                    demonstrating strong analytical, problem-solving, and innovative skills.
+                </p>
+                <p><strong>Technical Skills:</strong> SQLmap, Linux, Bash, SQL, Soldering, Binary Analysis, Nmap.</p>
+            </div>
         </div>
-    </div>
 
-    <!-- Third Participation: Image on the left, text on the right -->
-    <div class="participation">
-        <img src="photo-athack.jpg" alt="Athack Hackathon 2024" class="participation-img">
-        <div class="participation-text">
-            <h3>Participant, Athack Hackathon 2024, Montreal, Canada (2024)</h3>
-            <p>
-                Secured 10th place out of 100 teams, demonstrating teamwork, problem-solving, and resilience under pressure.
-                Participated in encryption and hashing challenges, effectively applying knowledge and self‐study skills.
-                Successfully broke encryptions and identified embedded flags, showcasing technical aptitude and perseverance.
-            </p>
-            <p><strong>Technical Skills:</strong> Linux, Encryption, Bash, Radar2, Ghidra, Static Analysis, Binary Analysis.</p>
+        <!-- Third Participation: Image on the left, text on the right -->
+        <div class="participation">
+            <img src="photo-athack.jpg" alt="Athack Hackathon 2024" class="participation-img">
+            <div class="participation-text">
+                <h3>Participant, Athack Hackathon 2024, Montreal, Canada (2024)</h3>
+                <p>
+                    Secured 10th place out of 100 teams, demonstrating teamwork, problem-solving, and resilience under pressure.
+                    Participated in encryption and hashing challenges, effectively applying knowledge and self‐study skills.
+                    Successfully broke encryptions and identified embedded flags, showcasing technical aptitude and perseverance.
+                </p>
+                <p><strong>Technical Skills:</strong> Linux, Encryption, Bash, Radar2, Ghidra, Static Analysis, Binary Analysis.</p>
+            </div>
         </div>
-    </div>
-</section>
-
+    </section>
 
     <!-- Experience Section -->
     <section id="experience">
@@ -234,152 +838,142 @@
         </div>
     </section>
 
-
-
-
-<!-- Projects Section -->
-<section id="projects">
-    <h2 class="section-title">Projects</h2>
-    <div class="section-content project-grid">
-        <!-- Project Item 1 -->
-        <div class="project-item">
-            <div class="project-header">
-                <div class="project-logo-container">
-                    <i class="fab fa-github project-logo"></i>
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2 class="section-title">Projects</h2>
+        <div class="section-content project-grid">
+            <!-- Project Item 1 -->
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-logo-container">
+                        <i class="fab fa-github project-logo"></i>
+                    </div>
+                    <div class="project-title-container">
+                        <strong class="project-title">Kernel Module Projects</strong>
+                        <span class="project-details">Montreal, Canada (Personal Project)</span>
+                        <span class="toggle-icon"></span>
+                    </div>
                 </div>
-               
-                <div class="project-title-container">
-                    <strong class="project-title">Kernel Module Projects</strong>
-                    <span class="project-details">Montreal, Canada (Personal Project)</span>
-                    <span class="toggle-icon"></span>
+                <div class="project-description">
+                    <ul>
+                        <li>Developed multiple kernel modules, including function redirection, ARM64 instruction modification, and kernel panic triggers, to demonstrate advanced kernel programming techniques.</li>
+                        <li>Created scripts for deploying and running kernel modules on devices, enhancing automation and debugging processes.</li>
+                        <li><strong>Technical Skills:</strong> C, Kernel programming, ARM64, Shell scripting.</li>
+                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/kernel-module-projects" target="_blank">kernel-module-projects</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="project-description">
-                <ul>
-                     <!---
-                    <li>Developed multiple kernel modules, including function redirection, ARM64 instruction modification, and kernel panic triggers, to demonstrate advanced kernel programming techniques.</li>
-                    <li>Created scripts for deploying and running kernel modules on devices, enhancing automation and debugging processes.</li>
-                    <li><strong>Technical Skills:</strong> C, Kernel programming, ARM64, Shell scripting.</li>
-                    <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/kernel-module-projects" target="_blank">kernel-module-projects</a></li>
-                        --->
-                </ul>
+
+            <!-- Project Item 2 -->
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-logo-container">
+                        <i class="fab fa-github project-logo"></i>
+                    </div>
+                    <div class="project-title-container">
+                        <strong class="project-title">APK Encryption Analysis</strong>
+                        <span class="project-details">Montreal, Canada (Personal Project)</span>
+                        <span class="toggle-icon"></span>
+                    </div>
+                </div>
+                <div class="project-description">
+                    <ul>
+                        <li>Automated the analysis of APK files to detect encryption usage and analyze native libraries, utilizing radare2 and readelf for in-depth examination.</li>
+                        <li>Developed scripts to decompile APKs, search for encryption keywords, and perform dynamic analysis on connected mobile devices.</li>
+                        <li><strong>Technical Skills:</strong> Shell scripting, radare2, apktool, adb.</li>
+                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/APK-Encryption-Analysis" target="_blank">APK-Encryption-Analysis</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Project Item 3 -->
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-logo-container">
+                        <i class="fab fa-github project-logo"></i>
+                    </div>
+                    <div class="project-title-container">
+                        <strong class="project-title">Kite-based Wi-Fi and LoRa Communication System</strong>
+                        <span class="project-details">Montreal, Canada (Personal Project)</span>
+                        <span class="toggle-icon"></span>
+                    </div>
+                </div>
+                <div class="project-description">
+                    <ul>
+                        <li>Developed a communication system using a Raspberry Pi for real-time Wi-Fi scanning and access point creation, combined with long-range LoRa communication via an ESP32 module.</li>
+                        <li>Integrated a 0.96-inch OLED display for network information and optimized power usage with a LiPo battery for sustained operation.</li>
+                        <li><strong>Technical Skills:</strong> Raspberry Pi, ESP32, Arduino IDE, Wi-Fi, LoRa, OLED display integration, power management.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Project Item 4 -->
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-logo-container">
+                        <i class="fab fa-github project-logo"></i>
+                    </div>
+                    <div class="project-title-container">
+                        <strong class="project-title">Docker Version Checker</strong>
+                        <span class="project-details">Montreal, Canada (Course Project)</span>
+                        <span class="toggle-icon"></span>
+                    </div>
+                </div>
+                <div class="project-description">
+                    <ul>
+                        <li>Developed a Bash script to check and update Docker versions on Debian-based Linux distributions, ensuring systems remain secure and up-to-date.</li>
+                        <li>Automated the version check and update process, enhancing system administration efficiency.</li>
+                        <li><strong>Technical Skills:</strong> Bash scripting, Docker, System administration.</li>
+                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/checkdocker-version" target="_blank">checkdocker-version</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Project Item 5 -->
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-logo-container">
+                        <i class="fab fa-github project-logo"></i>
+                    </div>
+                    <div class="project-title-container">
+                        <strong class="project-title">Optimization of Kernel-Level Security Mechanisms Using the Grey Wolf Optimizer (GWO) Algorithm</strong>
+                        <span class="project-details">Tehran, Iran (Bachelor’s Final Project)</span>
+                        <span class="toggle-icon"></span>
+                    </div>
+                </div>
+                <div class="project-description">
+                    <ul>
+                        <li>Developed an optimization model for kernel-level security mechanisms using the GWO algorithm to balance security and performance.</li>
+                        <li>Implemented and evaluated GWO-optimized security configurations for Access Control Lists (ACLs), SELinux policies, and AppArmor profiles, demonstrating significant improvements in security effectiveness and system performance.</li>
+                        <li><strong>Technical Skills:</strong> Python, Security policies, Kernel modules.</li>
+                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/Grey-Wolf-Optimizer" target="_blank">Grey-Wolf-Optimizer</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Project Item 6 -->
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-logo-container">
+                        <i class="fab fa-github project-logo"></i>
+                    </div>
+                    <div class="project-title-container">
+                        <strong class="project-title">Tic-Tac-Toe Game using Minimax Algorithm</strong>
+                        <span class="project-details">Tehran, Iran (Bachelor’s Project)</span>
+                        <span class="toggle-icon"></span>
+                    </div>
+                </div>
+                <div class="project-description">
+                    <ul>
+                        <li>Developed a Python implementation of Tic-Tac-Toe with an AI opponent using the minimax algorithm for optimal decision-making.</li>
+                        <li>Created a user-friendly interface, making the game accessible for both human and computer players.</li>
+                        <li><strong>Technical Skills:</strong> Python, Algorithm design, Game development.</li>
+                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/tic-tac-toe" target="_blank">tic-tac-toe</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-
-
-                
-        <!-- Project Item 2 -->
-        <div class="project-item">
-            <div class="project-header">
-                <div class="project-logo-container">
-                    <i class="fab fa-github project-logo"></i>
-                </div>
-                <div class="project-title-container">
-                    <strong class="project-title">APK Encryption Analysis</strong>
-                    <span class="project-details">Montreal, Canada (Personal Project)</span>
-                    <span class="toggle-icon"></span>
-                </div>
-            </div>
-            <div class="project-description">
-                <ul>
-                    <li>Automated the analysis of APK files to detect encryption usage and analyze native libraries, utilizing radare2 and readelf for in-depth examination.</li>
-                    <li>Developed scripts to decompile APKs, search for encryption keywords, and perform dynamic analysis on connected mobile devices.</li>
-                    <li><strong>Technical Skills:</strong> Shell scripting, radare2, apktool, adb.</li>
-                    <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/APK-Encryption-Analysis" target="_blank">APK-Encryption-Analysis</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Project Item 3 -->
-        <div class="project-item">
-            <div class="project-header">
-                <div class="project-logo-container">
-                    <i class="fab fa-github project-logo"></i>
-                </div>
-                <div class="project-title-container">
-                    <strong class="project-title">Kite-based Wi-Fi and LoRa Communication System</strong>
-                    <span class="project-details">Montreal, Canada (Personal Project)</span>
-                    <span class="toggle-icon"></span>
-                </div>
-            </div>
-            <div class="project-description">
-                <ul>
-                    <li>Developed a communication system using a Raspberry Pi for real-time Wi-Fi scanning and access point creation, combined with long-range LoRa communication via an ESP32 module.</li>
-                    <li>Integrated a 0.96-inch OLED display for network information and optimized power usage with a LiPo battery for sustained operation.</li>
-                    <li><strong>Technical Skills:</strong> Raspberry Pi, ESP32, Arduino IDE, Wi-Fi, LoRa, OLED display integration, power management.</li>
-                    <!-- If you have a GitHub link, include it below -->
-                </ul>
-            </div>
-        </div>
-
-        <!-- Project Item 4 -->
-        <div class="project-item">
-            <div class="project-header">
-                <div class="project-logo-container">
-                    <i class="fab fa-github project-logo"></i>
-                </div>
-                <div class="project-title-container">
-                    <strong class="project-title">Docker Version Checker</strong>
-                    <span class="project-details">Montreal, Canada (Course Project)</span>
-                    <span class="toggle-icon"></span>
-                </div>
-            </div>
-            <div class="project-description">
-                <ul>
-                    <li>Developed a Bash script to check and update Docker versions on Debian-based Linux distributions, ensuring systems remain secure and up-to-date.</li>
-                    <li>Automated the version check and update process, enhancing system administration efficiency.</li>
-                    <li><strong>Technical Skills:</strong> Bash scripting, Docker, System administration.</li>
-                    <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/checkdocker-version" target="_blank">checkdocker-version</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Project Item 5 -->
-        <div class="project-item">
-            <div class="project-header">
-                <div class="project-logo-container">
-                    <i class="fab fa-github project-logo"></i>
-                </div>
-                <div class="project-title-container">
-                    <strong class="project-title">Optimization of Kernel-Level Security Mechanisms Using the Grey Wolf Optimizer (GWO) Algorithm</strong>
-                    <span class="project-details">Tehran, Iran (Bachelor’s Final Project)</span>
-                    <span class="toggle-icon"></span>
-                </div>
-            </div>
-            <div class="project-description">
-                <ul>
-                    <li>Developed an optimization model for kernel-level security mechanisms using the GWO algorithm to balance security and performance.</li>
-                    <li>Implemented and evaluated GWO-optimized security configurations for Access Control Lists (ACLs), SELinux policies, and AppArmor profiles, demonstrating significant improvements in security effectiveness and system performance.</li>
-                    <li><strong>Technical Skills:</strong> Python, Security policies, Kernel modules.</li>
-                    <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/Grey-Wolf-Optimizer" target="_blank">Grey-Wolf-Optimizer</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Project Item 6 -->
-        <div class="project-item">
-            <div class="project-header">
-                <div class="project-logo-container">
-                    <i class="fab fa-github project-logo"></i>
-                </div>
-                <div class="project-title-container">
-                    <strong class="project-title">Tic-Tac-Toe Game using Minimax Algorithm</strong>
-                    <span class="project-details">Tehran, Iran (Bachelor’s Project)</span>
-                    <span class="toggle-icon"></span>
-                </div>
-            </div>
-            <div class="project-description">
-                <ul>
-                    <li>Developed a Python implementation of Tic-Tac-Toe with an AI opponent using the minimax algorithm for optimal decision-making.</li>
-                    <li>Created a user-friendly interface, making the game accessible for both human and computer players.</li>
-                    <li><strong>Technical Skills:</strong> Python, Algorithm design, Game development.</li>
-                    <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/tic-tac-toe" target="_blank">tic-tac-toe</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</section>
-
+    </section>
 
     <!-- Languages Section -->
     <section id="languages">
@@ -387,35 +981,34 @@
         <div class="section-content languages">
             <!-- Language Item 1 -->
             <div class="language-item">
-                <div class="progress-circle" data-progress="90">
+                <div class="progress-circle" data-progress="90" style="--progress:324;">
                     <span class="progress-value">90%</span>
                 </div>
                 <p>English<br><small>Professional proficiency (IELTS: 7.0)</small></p>
             </div>
             <!-- Language Item 2 -->
             <div class="language-item">
-                <div class="progress-circle" data-progress="100">
+                <div class="progress-circle" data-progress="100" style="--progress:360;">
                     <span class="progress-value">100%</span>
                 </div>
                 <p>Persian<br><small>Native proficiency</small></p>
             </div>
             <!-- Language Item 3 -->
             <div class="language-item">
-                <div class="progress-circle" data-progress="60">
+                <div class="progress-circle" data-progress="60" style="--progress:216;">
                     <span class="progress-value">60%</span>
                 </div>
                 <p>French<br><small>Professional proficiency (B1)</small></p>
             </div>
             <!-- Language Item 4 -->
             <div class="language-item">
-                <div class="progress-circle" data-progress="75">
+                <div class="progress-circle" data-progress="75" style="--progress:270;">
                     <span class="progress-value">75%</span>
                 </div>
                 <p>German<br><small>Professional proficiency (B2)</small></p>
             </div>
         </div>
     </section>
-
 
     <!-- Contact Section -->
     <section id="contact">
@@ -442,44 +1035,45 @@
         </div>
     </section>
 
-<!-- JavaScript for Experience Toggle -->
-<script>
-    document.querySelectorAll('.experience-text .toggle').forEach(function(toggle) {
-        toggle.addEventListener('click', function() {
-            const parentLi = this.closest('li');
-            parentLi.classList.toggle('active');
+    <!-- JavaScript for Navigation Toggle -->
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('nav ul');
+
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
         });
-    });
-</script>
+    </script>
 
-<!-- JavaScript for Progress Circles -->
-<script>
-    document.querySelectorAll('.progress-circle').forEach(function(circle) {
-        var progress = circle.getAttribute('data-progress');
-        var degrees = (progress / 100) * 360;
-        circle.style.setProperty('--progress', degrees);
-        circle.querySelector('.progress-value').textContent = progress + '%';
-    });
-</script>
-
-
-<script> 
-    // JavaScript for Project Toggle
-    document.querySelectorAll('.project-header').forEach(function(header) {
-        header.addEventListener('click', function() {
-            // Close any other open projects
-            document.querySelectorAll('.project-item.active').forEach(function(activeItem) {
-                if (activeItem !== header.parentElement) {
-                    activeItem.classList.remove('active');
-                    activeItem.querySelector('.project-header').setAttribute('aria-expanded', 'false');
-                }
+    <!-- JavaScript for Experience Toggle -->
+    <script>
+        document.querySelectorAll('.experience-text .toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                const parentLi = this.closest('li');
+                parentLi.classList.toggle('active');
             });
-            // Toggle the current project
-            var isActive = header.parentElement.classList.toggle('active');
-            header.setAttribute('aria-expanded', isActive);
         });
-    });
-</script>
+    </script>
+
+    <!-- JavaScript for Progress Circles -->
+    <script>
+        document.querySelectorAll('.progress-circle').forEach(function(circle) {
+            var progress = circle.getAttribute('data-progress');
+            var degrees = (progress / 100) * 360;
+            circle.style.setProperty('--progress', degrees);
+            circle.querySelector('.progress-value').textContent = progress + '%';
+        });
+    </script>
+
+    <!-- JavaScript for Project Toggle -->
+    <script>
+        document.querySelectorAll('.project-header').forEach(function(header) {
+            header.addEventListener('click', function() {
+                const projectItem = this.parentElement;
+                projectItem.classList.toggle('active');
+            });
+        });
+    </script>
 
 </body>
 </html>
