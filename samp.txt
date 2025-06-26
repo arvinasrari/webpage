@@ -55,138 +55,104 @@
 
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  const STORAGE_KEY = 'td_requests';
+  let requests = JSON.parse(localStorage.getItem(STORAGE_KEY))
+               || JSON.parse(localStorage.getItem('tf_requests'))
+               || [];
+  localStorage.removeItem('tf_requests');
+  let currentId = null;
 
-const STORAGE_KEY = 'td_requests';
-let requests = [];
-let currentId = null;
+  const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+  const typeSelect = document.getElementById('requestType');
+  const customType = document.getElementById('customType');
+  const form = document.getElementById('requestForm');
+  const prioritySelect = document.getElementById('priority');
+  const senderInput = document.getElementById('sender');
+  const descriptionInput = document.getElementById('description');
+  const requestList = document.getElementById('requestList');
+  const saveBtn = document.getElementById('saveBtn');
+  const editStatusSelect = document.getElementById('editStatus');
+  const commentsList = document.getElementById('commentsList');
+  const newCommentInput = document.getElementById('newComment');
 
-// Bootstrap modal instance
-const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-
-// Elements
-const typeSelect = document.getElementById('requestType');
-const customType = document.getElementById('customType');
-const form = document.getElementById('requestForm');
-const requestList = document.getElementById('requestList');
-const saveBtn = document.getElementById('saveBtn');
-
-// Initialize app
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  requests = saved ? JSON.parse(saved) : [];
-  renderList();
-});
-
-// Show/hide custom type input
-typeSelect.addEventListener('change', () => {
-  customType.style.display = typeSelect.value === 'Other' ? 'block' : 'none';
-});
-
-// Persist to localStorage
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
-}
-
-// Render request cards
-function renderList() {
-  if (!requests.length) {
-    requestList.innerHTML = '<p class="text-muted text-center">No requests yet. Submit one above.</p>';
-    return;
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
   }
 
-  requestList.innerHTML = requests.map(r => `
-    <div class="card mb-3 p-0" role="button" data-id="${r.id}">
-      <div class="card-body d-flex justify-content-between align-items-start">
-        <div>
-          <h5 class="card-title mb-1">${r.type}</h5>
-          <p class="card-text mb-1">${r.description || '<em>No description</em>'}</p>
-          <p class="small mb-1"><strong>Sender:</strong> ${r.sender} &nbsp;|&nbsp; <strong>Status:</strong> ${r.status}</p>
-          ${r.comments.length ? `<p class="small text-muted mb-0"><strong>Latest comment (${r.comments[r.comments.length-1].time}):</strong> ${r.comments[r.comments.length-1].text}</p>` : ''}
-        </div>
-        <div class="text-end">
-          <span class="badge ${r.priority==='High'? 'badge-high': r.priority==='Medium'? 'badge-medium': 'badge-low'} py-2 px-3">${r.priority}</span>
-          <div class="text-muted small mt-2">${r.time}</div>
+  function renderList() {
+    if (!requests.length) {
+      requestList.innerHTML = '<p class="text-muted text-center">No requests yet. Submit one above.</p>';
+      return;
+    }
+    requestList.innerHTML = requests.map(r => `
+      <div class="card mb-3 p-0" role="button" data-id="${r.id}">
+        <div class="card-body d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="card-title mb-1">${r.type}</h5>
+            <p class="card-text mb-1">${r.description || '<em>No description</em>'}</p>
+            <p class="small mb-1"><strong>Sender:</strong> ${r.sender} &nbsp;|&nbsp; <strong>Status:</strong> ${r.status}</p>
+            ${r.comments.length
+              ? `<p class="small text-muted mb-0"><strong>Latest comment (${r.comments[r.comments.length-1].time}):</strong> ${r.comments[r.comments.length-1].text}</p>`
+              : ''}
+          </div>
+          <div class="text-end">
+            <span class="badge ${r.priority==='High'? 'badge-high': r.priority==='Medium'? 'badge-medium': 'badge-low'} py-2 px-3">${r.priority}</span>
+            <div class="text-muted small mt-2">${r.time}</div>
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+    requestList.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => openDetail(card.dataset.id));
+    });
+  }
 
-  // Attach click handlers
-  requestList.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('click', () => openDetail(card.dataset.id));
+  function openDetail(id) {
+    currentId = Number(id);
+    const r = requests.find(x => x.id === currentId);
+    document.getElementById('detailId').textContent = r.id;
+    document.getElementById('detailType').textContent = r.type;
+    document.getElementById('detailPriority').textContent = r.priority;
+    document.getElementById('detailSender').textContent = r.sender;
+    document.getElementById('detailTime').textContent = r.time;
+    editStatusSelect.value = r.status;
+    commentsList.innerHTML = r.comments.length
+      ? r.comments.map(c => `<li><strong>${c.time}:</strong> ${c.text}</li>`).join('')
+      : '<li class="text-muted">No comments yet.</li>';
+    newCommentInput.value = '';
+    modal.show();
+  }
+
+  typeSelect.addEventListener('change', () => {
+    customType.style.display = typeSelect.value === 'Other' ? 'block' : 'none';
   });
-}
 
-// Open detail modal for a request
-function openDetail(id) {
-  currentId = Number(id);
-  const r = requests.find(x => x.id === currentId);
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    let type = typeSelect.value;
+    if (type === 'Other') {
+      type = customType.value.trim() || 'Other';
+    }
+    const priority = prioritySelect.value;
+    const sender = senderInput.value.trim();
+    const description = descriptionInput.value.trim();
+    const timestamp = new Date().toLocaleString();
+    requests.unshift({ id: Date.now(), type, priority, sender, description, status: 'Submitted', comments: [], time: timestamp });
+    save(); renderList();
+    form.reset();
+    customType.style.display = 'none';
+  });
 
-  // Populate fields
-  document.getElementById('detailId').textContent = r.id;
-  document.getElementById('detailType').textContent = r.type;
-  document.getElementById('detailPriority').textContent = r.priority;
-  document.getElementById('detailSender').textContent = r.sender;
-  document.getElementById('detailTime').textContent = r.time;
-  document.getElementById('editStatus').value = r.status;
+  saveBtn.addEventListener('click', () => {
+    const r = requests.find(x => x.id === currentId);
+    r.status = editStatusSelect.value;
+    const commentText = newCommentInput.value.trim();
+    if (commentText) {
+      r.comments.push({ text: commentText, time: new Date().toLocaleString() });
+    }
+    save(); renderList(); modal.hide();
+  });
 
-  // Comments list
-  const commentsList = document.getElementById('commentsList');
-  commentsList.innerHTML = r.comments.length
-    ? r.comments.map(c => `<li><strong>${c.time}:</strong> ${c.text}</li>`).join('')
-    : '<li class="text-muted">No comments yet.</li>';
-
-  // Clear new comment
-  document.getElementById('newComment').value = '';
-
-  modal.show();
-}
-
-// Handle new request submission
-form.addEventListener('submit', e => {
-  e.preventDefault();
-
-  // Determine type (custom or select)
-  let type = typeSelect.value;
-  if (type === 'Other') {
-    type = customType.value.trim() || 'Other';
-  }
-
-  const priority = document.getElementById('priority').value;
-  const sender = document.getElementById('sender').value.trim();
-  const description = document.getElementById('description').value.trim();
-  const timestamp = new Date().toLocaleString();
-
-  // Create new request object
-  const newReq = {
-    id: Date.now(),
-    type,
-    priority,
-    sender,
-    description,
-    status: 'Submitted',
-    comments: [],
-    time: timestamp
-  };
-
-  requests.unshift(newReq);
-  save();
   renderList();
-  form.reset();
-  customType.style.display = 'none';
-});
-
-// Save status & new comment
-saveBtn.addEventListener('click', () => {
-  const r = requests.find(x => x.id === currentId);
-  r.status = document.getElementById('editStatus').value;
-
-  const commentText = document.getElementById('newComment').value.trim();
-  if (commentText) {
-    r.comments.push({ text: commentText, time: new Date().toLocaleString() });
-  }
-
-  save();
-  renderList();
-  modal.hide();
 });
