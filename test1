@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TD Bank Symantec Request Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">TD Bank</a>
+    </div>
+  </nav>
+
+<!-- Main container -->
+<div class="container py-4">
+  <h2>Symantec Request Tracker</h2>
+
+  <!-- Request Form -->
+  <div class="card mb-4 bg-white">
+    <div class="card-body">
+      <form id="requestForm">
+        <div class="row g-3">
+
+          <!-- Request Type -->
+          <div class="col-md-4">
+            <label for="requestType" class="form-label">Request Type</label>
+            <select class="form-select" id="requestType" required>
+              <option value="">-- Select --</option>
+              <option>API Enhancement</option>
+              <option>Bug Report</option>
+              <option>Consultant</option>
+              <option>Policy</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- Priority -->
+          <div class="col-md-3">
+            <label for="priority" class="form-label">Priority</label>
+            <select class="form-select" id="priority" required>
+              <option value="">-- Select --</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <!-- Requester Name -->
+          <div class="col-md-5">
+            <label for="sender" class="form-label">Requester Name</label>
+            <input type="text" class="form-control" id="sender" placeholder="Enter your name" required>
+          </div>
+
+          <!-- Specify Other -->
+          <div class="col-md-4 mt-2" id="otherTypeContainer" style="display: none;">
+            <label for="otherType" class="form-label">Specify Other Type</label>
+            <input type="text" class="form-control" id="otherType" placeholder="Enter Request Type">
+          </div>
+
+          <!-- Row for Policy Scope | Status | Existing -->
+          <div class="row g-3 mt-2 mb-3">
+            <!-- Policy Scope -->
+            <div class="col-md-4" id="policyScopeContainer" style="display: none;">
+              <label for="policyScope" class="form-label">DAR or DIM?</label>
+              <select class="form-select" id="policyScope">
+                <option value="">-- Select --</option>
+                <option value="DAR">DAR</option>
+                <option value="DIM">DIM</option>
+              </select>
+            </div>
+
+            <!-- Policy Status -->
+            <div class="col-md-4" id="policyStatusContainer" style="display: none;">
+              <label for="policyStatus" class="form-label">Is this an existing policy or a new policy?</label>
+              <select class="form-select" id="policyStatus">
+                <option value="">-- Select --</option>
+                <option value="Existing">Existing Policy</option>
+                <option value="New">New Policy</option>
+              </select>
+            </div>
+
+            <!-- Existing Policy -->
+            <div class="col-md-4" id="existingPolicyContainer" style="display: none;">
+              <label for="existingPolicy" class="form-label">Select Existing Policy</label>
+              <select class="form-select" id="existingPolicy">
+                <option value="">-- Select Policy --</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Ticket Number and Assignee -->
+          <div class="row g-3 mt-3">
+            <div class="col-md-5">
+              <label for="ticket" class="form-label">Ticket Number</label>
+              <input type="text" class="form-control" id="ticket" placeholder="Enter your ticket number" required>
+            </div>
+
+            <div class="col-md-5">
+              <label for="assignee" class="form-label">Assignee Name</label>
+              <input type="text" class="form-control" id="assignee" placeholder="Enter name of person in charge" required>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" rows="3" placeholder="Describe your request..."></textarea>
+          </div>
+
+          <!-- Submit -->
+          <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary px-4">Submit Request</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+    
+
+    <!-- Requests List -->
+    <div id="requestList" class="mb-5"></div>
+
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-white">
+            <h5 class="modal-title text-dark">Request Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body bg-light">
+            <div class="row">
+              <dl class="col-sm-3">ID</dl>
+              <dd class="col-sm-9" id="detailId"></dd>
+              <dt class="col-sm-3">Type</dt>
+              <dd class="col-sm-9" id="detailType"></dd>
+              <dt class="col-sm-3">Priority</dt>
+              <dd class="col-sm-9" id="detailPriority"></dd>
+              <dt class="col-sm-3">Sender</dt>
+              <dd class="col-sm-9" id="detailSender"></dd>
+              <dt class="col-sm-3">Assignee</dt>
+              <dd class="col-sm-9" id="detailAssignee"></dd>
+              <dt class="col-sm-3">Time</dt>
+              <dd class="col-sm-9" id="detailTime"></dd>
+              <!-- Policy Info -->
+              <div id="detailPolicyBlock" style="display: none;">
+                <dt>Policy Scope</dt>
+                <dd id="detailPolicyScope"></dd>
+                <dt>Policy Status</dt>
+                <dd id="detailpolicyStatus"></dd>
+                <dt>Existing Policy</dt>
+                <dd id="detailExistingPolicy"></dd>
+              </div>
+            </div>
+
+            <form id="editForm">
+              <div class="mb-3">
+                <label for="editStatus" class="form-label">Status</label>
+                <select class="form-select" id="editStatus">
+                  <option>Submitted</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                  <option>Rejected</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <h6>Comments</h6>
+                <ul id="commentsList" class="list-unstyled small text-muted"></ul>
+              </div>
+              <div class="mb-3">
+                <label for="newComment" class="form-label">Add Comment</label>
+                <textarea class="form-control" id="newComment" rows="3" placeholder="Your comment..."></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer bg-white">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" id="saveBtn" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let requests = [];
+let currentId = null; 
+const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+
+// Get all tickets on page load
+window.addEventListener('load', async () => {
+  const response = await fetch('/tickets'); 
+  requests = await response.json();
+  showTickets();
+});
+
+// show/hide extra fields for "Other" and "Policy" options
+document.getElementById('requestType').addEventListener('change', function () {
+  const otherContainer = document.getElementById('otherTypeContainer');
+  const otherInput = document.getElementById('otherType');
+  const scopeContainer = document.getElementById('policyScopeContainer');
+  const policyContainer = document.getElementById('policyStatusContainer');
+  const existingContainer = document.getElementById('existingPolicyContainer');
+  
+  // If requestType was "Other" then show "Specify Other Type" input
+  if (this.value === 'Other') {
+    otherContainer.style.display = 'block';
+    otherInput.setAttribute('required', 'required');
+  } else {
+    otherContainer.style.display = 'none';
+    otherInput.removeAttribute('required');
+  }
+
+
+  // If requestType was "Policy" then show "DAR or DIM"
+  if (this.value === 'Policy') {
+    scopeContainer.style.display = 'block';
+    document.getElementById('policyScope').setAttribute('required', 'required');
+  } else {
+    scopeContainer.style.display = 'none';
+    policyContainer.style.display = 'none';
+    existingContainer.style.display = 'none';
+    document.getElementById('policyScope').removeAttribute('required');
+    document.getElementById('policyStatus').removeAttribute('required');
+    document.getElementById('existingPolicy').removeAttribute('required');
+  }
+});
+
+
+
+// When policyScope (DAR or DIM) is selected, show policyStatus
+document.getElementById('policyScope').addEventListener('change', function () {
+  const policyContainer = document.getElementById('policyStatusContainer');
+  const existingContainer = document.getElementById('existingPolicyContainer');
+
+  if (this.value) {
+    policyContainer.style.display = 'block';
+    document.getElementById('policyStatus').setAttribute('required', 'required');
+  } else {
+    policyContainer.style.display = 'none';
+    existingContainer.style.display = 'none';
+    document.getElementById('policyStatus').removeAttribute('required');
+  }
+});
+
+// When policyStatus is "Existing", get policies for selected scope
+document.getElementById('policyStatus').addEventListener('change', async function () {
+  const existingContainer = document.getElementById('existingPolicyContainer');
+
+  if (this.value === 'Existing') {
+    existingContainer.style.display = 'block';
+    document.getElementById('existingPolicy').setAttribute('required', 'required');
+
+    const scope = document.getElementById('policyScope').value;
+    const response = await fetch(`/policies?scope=${scope}`);
+    const policies = await response.json();
+
+    const select = document.getElementById('existingPolicy');
+    select.innerHTML = '<option value="">-- Select Policy --</option>';
+
+    // Drop down for each policy
+    policies.forEach(policy => {
+      const option = document.createElement('option');
+      option.value = policy;
+      option.textContent = policy;
+      select.appendChild(option);
+    });
+
+  } else {
+    existingContainer.style.display = 'none';
+    document.getElementById('existingPolicy').removeAttribute('required');
+  }
+});
+
+// Show all tickets
+function showTickets() {
+  const container = document.getElementById('requestList');
+  // If there was no requests
+  if (!requests.length) {
+    container.innerHTML = '<p class="text-muted text-center">No requests yet.</p>';
+    return;
+  }
+ticket
+  // for each ticket 
+  container.innerHTML = requests.map(ticket => {
+    let extraInfo = '';
+    // Shows Scope and Policy Status only if ticket type was "Policy"
+    if (ticket.type === 'Policy') {
+      extraInfo += `<p class="small mb-1"><strong>Scope:</strong> ${ticket.policy_scope || '-'}</p>`;
+      extraInfo += `<p class="small mb-1"><strong>Policy Status:</strong> ${ticket.policy_details || '-'}</p>`;
+      // shows Policy if it was "Existing"
+      if (ticket.policy_details === 'Existing') {
+        extraInfo += `<p class="small mb-1"><strong>Existing Policy:</strong> ${ticket.existing_policy_name || '-'}</p>`;
+      }
+    }
+
+    return `
+      <div class="card mb-3 p-0" role="button" data-id="${ticket.id}">
+        <div class="card-body d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="card-title mb-1">${ticket.type}</h5>
+            ${extraInfo}
+            <em>${ticket.description || 'No description'}</em>
+            <p class="small mb-1"><strong>Status:</strong> ${ticket.status}</p>
+            <p class="small mb-1"><strong>Sender:</strong> ${ticket.sender}</p>
+          </div>
+          <div class="text-end">
+            <span class="badge ${ticket.priority === 'High' ? 'badge-high' : ticket.priority === 'Medium' ? 'badge-medium' : 'badge-low'} py-2 px-3">${ticket.priority}</span>
+            <div class="text-muted small mt-2">${ticket.time}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  container.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.id));
+  });
+}
+
+// Open ticket detail modal
+function openDetail(id) {
+  const ticket = requests.find(x => x.id == id);
+  currentId = Number(id);
+
+  document.getElementById('detailId').textContent = ticket.id;
+  document.getElementById('detailType').textContent = ticket.type;
+  document.getElementById('detailPriority').textContent = ticket.priority;
+  document.getElementById('detailSender').textContent = ticket.sender;
+  document.getElementById('detailAssignee').textContent = ticket.assignee;
+  document.getElementById('detailTime').textContent = ticket.time;
+
+  if (ticket.type === 'Policy') {
+    document.getElementById('detailPolicyBlock').style.display = 'block';
+    document.getElementById('detailPolicyScope').textContent = ticket.policy_scope || '-';
+    document.getElementById('detailpolicyStatus').textContent = ticket.policy_details || '-';
+    document.getElementById('detailExistingPolicy').textContent = ticket.existing_policy_name || '-';
+  } else {
+    document.getElementById('detailPolicyBlock').style.display = 'none';
+  }
+
+  const commentList = document.getElementById('commentsList');
+  commentList.innerHTML = ticket.comments.length
+    ? ticket.comments.map(c => `<li><strong>${c.time}</strong>: ${c.text}</li>`).join('')
+    : '<li class="text-muted">No comments yet.</li>';
+
+  document.getElementById('newComment').value = '';
+  document.getElementById('editStatus').value = ticket.status;
+
+  modal.show();
+}
+
+// Submit new ticket
+document.getElementById('requestForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  let type = document.getElementById('requestType').value;
+  if (type === 'Other') {
+    type = document.getElementById('otherType').value.trim();
+  }
+
+  const priority = document.getElementById('priority').value;
+  const sender = document.getElementById('sender').value.trim();
+  const assignee = document.getElementById('assignee').value.trim();
+  const ticket = document.getElementById('ticket').value.trim();
+  const description = document.getElementById('description').value.trim();
+
+  let policyScope = null;
+  let policyStatus = null;
+  let existingPolicy = null;
+
+  if (type === 'Policy') {
+    policyScope = document.getElementById('policyScope').value;
+    policyStatus = document.getElementById('policyStatus').value;
+    if (policyStatus === 'Existing') {
+      existingPolicy = document.getElementById('existingPolicy').value;
+    }
+  }
+
+  await fetch('/tickets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type, priority, sender, assignee, ticket, description, policyScope, policyStatus, existingPolicy })
+  });
+
+  const response = await fetch('/tickets');
+  requests = await response.json();
+  showTickets();
+  e.target.reset();
+  document.getElementById('otherTypeContainer').style.display = 'none';
+  document.getElementById('policyScopeContainer').style.display = 'none';
+  document.getElementById('policyStatusContainer').style.display = 'none';
+  document.getElementById('existingPolicyContainer').style.display = 'none';
+});
+
+// Save ticket status and comments
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const ticket = requests.find(x => x.id === currentId);
+  ticket.status = document.getElementById('editStatus').value;
+  const commentText = document.getElementById('newComment').value.trim();
+
+  await fetch(`/tickets/${ticket.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: ticket.status, comment: commentText })
+  });
+
+  if (commentText) {
+    ticket.comments.push({ text: commentText, time: new Date().toLocaleString() });
+  }
+
+  showTickets();
+  modal.hide();
+});
+
+
+
+
+
+
+import os
+from flask import Flask, render_template, request, jsonify
+from models import db, Ticket, Comment
+from datetime import datetime
+import requests
+
+app = Flask(__name__)
+project_dir = os.path.abspath(os.path.dirname(__file__))
+
+
+# Database set up and config
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(project_dir, "tickets.db")}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+# Load policies from a local .txt file (for demo purposes only)
+@app.route('/policies')
+def get_policies():
+    scope = request.args.get('scope')
+    file_name = f"policies_{scope}.txt"
+    policies_file = os.path.join(project_dir, file_name)
+    if not os.path.exists(policies_file):
+        return jsonify([])
+    with open(policies_file) as f:
+        policies = [line.strip() for line in f if line.strip()]
+    return jsonify(policies)
+
+
+# Load policies from API instead of .txt
+"""
+@app.route('/policies')
+def get_policies():
+    scope = request.args.get('scope')
+
+    if scope == 'DIM':
+        url = f"https://*****.com"
+        headers = {
+        "Authorization":
+        }
+    else: # DAR
+        url = f"https://*****.com"
+        headers = {
+        "Authorization":
+        }
+    response = requests.get(url, headers=headers)
+    
+    # If the remote API call failed, return an empty list
+    if response.status_code != 200:
+        return jsonify([])
+    
+    policies = response.json()
+    return jsonify(policies)
+"""
+
+
+
+# Handles new ticket submissions and returns all tickets
+@app.route('/tickets', methods=['GET', 'POST'])
+def tickets():
+    # Create new ticket (POST)
+    if request.method == 'POST':
+        data = request.get_json()
+        print('Incoming POST:', data)
+
+        ticket = Ticket(
+            type=data['type'],
+            priority=data['priority'],
+            sender=data['sender'],
+            assignee=data['assignee'],
+            ticket_number=data['ticket'],
+            description=data['description'],
+            status='Submitted',
+            time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            policy_scope=data.get('policyScope'),          
+            policy_details=data.get('policyStatus'),
+            existing_policy_name=data.get('existingPolicy')
+        )
+        db.session.add(ticket)
+        db.session.commit()
+        return jsonify({'message': 'Ticket created', 'id': ticket.id}), 201
+    
+    # Listing all tickets
+    else:
+        all_tickets = Ticket.query.all()
+        result = []
+        for t in all_tickets:
+            result.append({
+                'id': t.id,
+                'type': t.type,
+                'priority': t.priority,
+                'sender': t.sender,
+                'assignee': t.assignee,
+                'ticket': t.ticket_number,
+                'description': t.description,
+                'status': t.status,
+                'time': t.time,
+                'policy_scope': t.policy_scope,
+                'policy_details': t.policy_details,
+                'existing_policy_name': t.existing_policy_name,
+                'comments': [{'text': c.text, 'time': c.time} for c in t.comments]
+            })
+        return jsonify(result)
+
+# Updates a ticket’s status and adds a comment (PUT)
+@app.route('/tickets/<int:ticket_id>', methods=['PUT'])
+def update_ticket(ticket_id):
+    data = request.get_json()
+    ticket = Ticket.query.get_or_404(ticket_id) #look for ticket if not found 404
+    ticket.status = data.get('status', ticket.status)
+    # Check if user sends comment if yes create and timestamp 
+    if 'comment' in data and data['comment']:
+        comment = Comment(
+            text=data['comment'],
+            time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            ticket_id=ticket.id
+        )
+        db.session.add(comment)
+    db.session.commit()
+    return jsonify({'message': 'Ticket updated'})
+
+
+# Run the development server (only for local testing)
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+from app import app
+from models import db
+
+with app.app_context():
+    db.create_all()
+    print("Database created!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+  --td-green: #007d3c;
+  --td-light-green: #dff4e4;
+  --td-gray-bg: #f8f9fa;
+  --td-border: #e6e6e6;
+}
+body {
+  background-color: var(--td-gray-bg);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+.navbar {
+  background-color: var(--td-green);
+}
+.navbar-brand, .navbar-brand:hover {
+  color: #ffffff;
+  font-weight: 600;
+}
+h2 {
+  color: var(--td-green);
+  margin-bottom: 1rem;
+}
+.card {
+  border-color: var(--td-border);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.15s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.btn-primary {
+  background-color: var(--td-green);
+  border-color: var(--td-green);
+}
+.btn-primary:hover {
+  background-color: #006a32;
+  border-color: #006a32;
+}
+.badge-high { background-color: #dc3545; }
+.badge-medium { background-color: #ffc107; color: #212529; }
+.badge-low { background-color: #6c757d; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Ticket(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # unique id
+    type = db.Column(db.String(100))
+    priority = db.Column(db.String(50))
+    sender = db.Column(db.String(100))
+    assignee = db.Column(db.String(100))
+    ticket_number = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    status = db.Column(db.String(50))
+    time = db.Column(db.String(50))
+    policy_scope = db.Column(db.String(50))          
+    policy_details = db.Column(db.String(100))
+    existing_policy_name = db.Column(db.String(100))
+    comments = db.relationship('Comment', backref='ticket', cascade="all, delete-orphan") # Links two tables
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text)
+    time = db.Column(db.String(50)) 
+    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id')) # Connects comment to its Ticket
