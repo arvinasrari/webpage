@@ -1,153 +1,169 @@
-// Grab filter elements
+// ✅ Filter logic
 const newFilterBy = document.getElementById('newFilterBy');
 const newFilterInputContainer = document.getElementById('newFilterInputContainer');
 const filtersContainer = document.getElementById('filtersContainer');
 
-// Show input based on selected filter type
 newFilterBy.addEventListener('change', () => {
   const field = newFilterBy.value;
-  let inputHTML = '';
-
-  if (!field) {
-    newFilterInputContainer.innerHTML = '';
-    return;
-  }
-
+  let html = '';
   if (field === 'time') {
-    inputHTML = `
-      <div class="row g-1">
-        <div class="col">
-          <label>From:</label>
-          <input type="date" class="form-control" id="newFilterTimeStart" required>
-        </div>
-        <div class="col">
-          <label>To:</label>
-          <input type="date" class="form-control" id="newFilterTimeEnd" required>
-        </div>
-      </div>
-    `;
+    html = `<label>From:</label><input type="date" class="form-control mb-1" id="newFilterTimeStart">
+            <label>To:</label><input type="date" class="form-control" id="newFilterTimeEnd">`;
   } else if (['type', 'priority', 'status'].includes(field)) {
-    let options = [];
+    let options = ['-- Select --'];
     if (field === 'type') options = ['API Enhancement', 'Bug Report', 'Consultant', 'Policy', 'Other'];
     if (field === 'priority') options = ['High', 'Medium', 'Low'];
     if (field === 'status') options = ['Submitted', 'In Progress', 'Completed', 'Rejected'];
-
-    inputHTML = `
-      <label>Value:</label>
-      <select class="form-select" id="newFilterValue" required>
-        ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-      </select>
-    `;
+    html = `<label>Value:</label>
+      <select class="form-select" id="newFilterValue">
+      ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}</select>`;
   } else {
-    inputHTML = `
-      <label>Value:</label>
-      <input type="text" class="form-control" id="newFilterValue" placeholder="Enter value" required>
-    `;
+    html = `<label>Value:</label><input type="text" class="form-control" id="newFilterValue" placeholder="Enter value">`;
   }
-
-  newFilterInputContainer.innerHTML = inputHTML;
+  newFilterInputContainer.innerHTML = html;
 });
 
-// Add Filter Row
-document.getElementById('addFilterBtn').addEventListener('click', (e) => {
-  e.preventDefault();
+// ✅ Add filter row
+document.getElementById('addFilterBtn').addEventListener('click', () => {
   const field = newFilterBy.value;
   if (!field) return;
 
   let rowHTML = '';
-
   if (field === 'time') {
     const from = document.getElementById('newFilterTimeStart').value;
     const to = document.getElementById('newFilterTimeEnd').value;
-    if (!from && !to) {
-      alert('Please select at least one date.');
-      return;
-    }
-    rowHTML = `
-      <div class="col-md-4">
-        <label>From</label>
-        <input type="date" class="form-control filter-time-start" value="${from}" required>
-      </div>
-      <div class="col-md-4">
-        <label>To</label>
-        <input type="date" class="form-control filter-time-end" value="${to}" required>
-      </div>
-    `;
+    if (!from && !to) return alert('Set at least one date.');
+    rowHTML = `<div class="col-md-4"><label>From</label><input type="date" class="form-control filter-time-start" value="${from}"></div>
+               <div class="col-md-4"><label>To</label><input type="date" class="form-control filter-time-end" value="${to}"></div>`;
   } else {
-    const val = document.getElementById('newFilterValue')?.value.trim();
-    if (!val) {
-      alert('Please enter a value.');
-      return;
-    }
+    const val = document.getElementById('newFilterValue').value.trim();
+    if (!val) return alert('Enter a value.');
     let inputField = '';
     if (['type', 'priority', 'status'].includes(field)) {
-      inputField = `
-        <select class="form-select filter-value" required>
-          <option value="${val}" selected>${val}</option>
-        </select>
-      `;
+      inputField = `<select class="form-select filter-value"><option selected>${val}</option></select>`;
     } else {
-      inputField = `<input type="text" class="form-control filter-value" value="${val}" required>`;
+      inputField = `<input type="text" class="form-control filter-value" value="${val}">`;
     }
-    rowHTML = `
-      <div class="col-md-6">
-        <label>${field.charAt(0).toUpperCase() + field.slice(1)}</label>
-        ${inputField}
-      </div>
-    `;
+    rowHTML = `<div class="col-md-6"><label>${field}</label>${inputField}</div>`;
   }
 
   const row = document.createElement('div');
   row.className = 'row g-2 mb-2 filter-row';
   row.dataset.field = field;
-  row.innerHTML = `
-    ${rowHTML}
-    <div class="col-md-2 d-flex align-items-end">
-      <button type="button" class="btn btn-danger remove-filter w-100">Remove</button>
-    </div>
-  `;
-
+  row.innerHTML = `${rowHTML}<div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger remove-filter w-100">Remove</button></div>`;
   filtersContainer.appendChild(row);
+
   newFilterBy.value = '';
   newFilterInputContainer.innerHTML = '';
 });
 
-// Remove Filter
+// ✅ Remove filter row
 filtersContainer.addEventListener('click', (e) => {
   if (e.target.classList.contains('remove-filter')) {
     e.target.closest('.filter-row').remove();
   }
 });
 
-// Apply Filters
-document.getElementById('applyFiltersBtn').addEventListener('click', (e) => {
-  e.preventDefault();
+// ✅ Apply filters
+document.getElementById('applyFiltersBtn').addEventListener('click', () => {
   let filtered = [...requests];
   filtersContainer.querySelectorAll('.filter-row').forEach(row => {
     const field = row.dataset.field;
     if (field === 'time') {
-      const from = row.querySelector('.filter-time-start').value;
-      const to = row.querySelector('.filter-time-end').value;
-      const fromDate = from ? new Date(from) : null;
-      const toDate = to ? new Date(to) : null;
-
+      const from = new Date(row.querySelector('.filter-time-start').value);
+      const to = new Date(row.querySelector('.filter-time-end').value);
       filtered = filtered.filter(r => {
-        const ticketDate = new Date(r.time);
-        if (fromDate && ticketDate < fromDate) return false;
-        if (toDate && ticketDate > toDate) return false;
-        return true;
+        const date = new Date(r.time);
+        return (!isNaN(from) ? date >= from : true) && (!isNaN(to) ? date <= to : true);
       });
     } else {
       const val = row.querySelector('.filter-value').value.trim().toLowerCase();
       filtered = filtered.filter(r => (r[field] || '').toLowerCase().includes(val));
     }
   });
-
   renderFilteredList(filtered);
 });
 
-// Clear Filters
+// ✅ Clear filters
 document.getElementById('clearFiltersBtn').addEventListener('click', () => {
   filtersContainer.innerHTML = '';
   showTickets();
 });
+
+// ✅ Render filtered list with same style
+function renderFilteredList(filtered) {
+  const container = document.getElementById('requestList');
+  if (!filtered.length) {
+    container.innerHTML = '<p class="text-muted text-center">No matching requests found.</p>';
+    return;
+  }
+  container.innerHTML = filtered.map(createTicketCard).join('');
+  attachCardClickEvents();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Filters -->
+        <hr class="my-4"/>
+        <h5 class="mb-3">🔍 Advanced Filters</h5>
+
+        <!-- Filters Container -->
+        <div id="filtersContainer" class="mb-3"></div>
+
+        <!-- Add Filter Controls -->
+        <div class="row g-2 align-items-end mb-3">
+          <div class="col-md-3">
+            <select id="newFilterBy" class="form-select">
+              <option value="">-- Select Filter --</option>
+              <option value="type">Type</option>
+              <option value="priority">Priority</option>
+              <option value="status">Status</option>
+              <option value="sender">Requester</option>
+              <option value="assignee">Assignee</option>
+              <option value="time">Time Range</option>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <div id="newFilterInputContainer"></div>
+          </div>
+          <div class="col-md-2">
+            <button id="addFilterBtn" class="btn btn-primary w-100">Add Filter</button>
+          </div>
+        </div>
+
+        <!-- Apply & Clear -->
+        <div class="row g-2">
+          <div class="col-md-2">
+            <button id="applyFiltersBtn" class="btn btn-success w-100">Apply Filters</button>
+          </div>
+          <div class="col-md-2">
+            <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100">Clear All</button>
+          </div>
+        </div>
+      </div>
+    </div>
