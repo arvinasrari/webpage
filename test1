@@ -1,32 +1,138 @@
-<div class="modal-header bg-white">
-  <h5 class="modal-title text-dark">Request Details</h5>
+<hr class="my-4">
+<h5 class="mb-3">🔍 Advanced Filters</h5>
 
-  <!-- Wrap both buttons in a flex container so they stay side by side -->
-  <div class="d-flex align-items-center ms-auto">
-    <!-- Expand/Collapse button -->
-    <button id="toggleExpandBtn" type="button" class="btn btn-outline-secondary btn-sm me-2">
-      <i id="expandIcon" class="bi bi-arrows-fullscreen"></i>
-    </button>
-    <!-- Close button -->
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Filters List -->
+<div id="filtersContainer" class="mb-3"></div>
+
+<!-- Filter Controls -->
+<div class="row g-2 align-items-end mb-3">
+  <div class="col-md-3">
+    <label for="newFilterBy" class="form-label">Add Filter By</label>
+    <select id="newFilterBy" class="form-select">
+      <option value="">-- Select Filter --</option>
+      <option value="type">Type</option>
+      <option value="priority">Priority</option>
+      <option value="status">Status</option>
+      <option value="sender">Requester</option>
+      <option value="assignee">Assignee</option>
+      <option value="time">Time Range</option>
+    </select>
+  </div>
+  <div class="col-md-5">
+    <div id="newFilterInputContainer"></div>
+  </div>
+  <div class="col-md-2">
+    <button id="addFilterBtn" class="btn btn-primary w-100">Add Filter</button>
   </div>
 </div>
 
-<script>
-  const modalDialog = document.querySelector('#detailModal .modal-dialog');
-  const toggleBtn = document.getElementById('toggleExpandBtn');
-  const expandIcon = document.getElementById('expandIcon');
+<!-- Apply + Clear -->
+<div class="row g-2 mb-4">
+  <div class="col-md-2">
+    <button id="applyFiltersBtn" class="btn btn-success w-100">Apply Filters</button>
+  </div>
+  <div class="col-md-2">
+    <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100">Clear All</button>
+  </div>
+</div>
 
-  toggleBtn.addEventListener('click', () => {
-    modalDialog.classList.toggle('modal-fullscreen');
-    if (modalDialog.classList.contains('modal-fullscreen')) {
-      expandIcon.classList.replace('bi-arrows-fullscreen', 'bi-arrows-angle-contract');
+
+
+
+
+
+
+
+
+// ✅ Add Filters Logic
+const newFilterBy = document.getElementById('newFilterBy');
+const newFilterInputContainer = document.getElementById('newFilterInputContainer');
+const filtersContainer = document.getElementById('filtersContainer');
+
+newFilterBy.addEventListener('change', () => {
+  const field = newFilterBy.value;
+  if (!field) return newFilterInputContainer.innerHTML = '';
+
+  if (field === 'time') {
+    newFilterInputContainer.innerHTML = `
+      <div class="row g-1">
+        <div class="col"><label>From</label><input type="date" class="form-control" id="newFilterTimeStart" required></div>
+        <div class="col"><label>To</label><input type="date" class="form-control" id="newFilterTimeEnd" required></div>
+      </div>`;
+  } else if (['type', 'priority', 'status'].includes(field)) {
+    const options = {
+      type: ['API Enhancement', 'Bug Report', 'Consultant', 'Policy', 'Other'],
+      priority: ['High', 'Medium', 'Low'],
+      status: ['Submitted', 'In Progress', 'Completed', 'Rejected']
+    };
+    newFilterInputContainer.innerHTML = `
+      <label>Value:</label>
+      <select class="form-select" id="newFilterValue" required>
+        ${options[field].map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+      </select>`;
+  } else {
+    newFilterInputContainer.innerHTML = `
+      <label>Value:</label><input type="text" class="form-control" id="newFilterValue" placeholder="Enter value" required>`;
+  }
+});
+
+document.getElementById('addFilterBtn').addEventListener('click', () => {
+  const field = newFilterBy.value;
+  if (!field) return;
+
+  let rowHTML = '';
+  if (field === 'time') {
+    const from = document.getElementById('newFilterTimeStart').value;
+    const to = document.getElementById('newFilterTimeEnd').value;
+    if (!from && !to) return alert('Set at least one date.');
+    rowHTML = `
+      <div class="col-md-4"><label>From</label><input type="date" class="form-control filter-time-start" value="${from}" required></div>
+      <div class="col-md-4"><label>To</label><input type="date" class="form-control filter-time-end" value="${to}" required></div>`;
+  } else {
+    const val = document.getElementById('newFilterValue')?.value.trim();
+    if (!val) return alert('Value required.');
+    rowHTML = `
+      <div class="col-md-6"><label>${field}</label><input type="text" class="form-control filter-value" value="${val}" required></div>`;
+  }
+
+  const row = document.createElement('div');
+  row.className = 'row g-2 mb-2 filter-row';
+  row.dataset.field = field;
+  row.innerHTML = `${rowHTML}
+    <div class="col-md-2 d-flex align-items-end">
+      <button type="button" class="btn btn-danger remove-filter w-100">Remove</button>
+    </div>`;
+  filtersContainer.appendChild(row);
+  newFilterBy.value = '';
+  newFilterInputContainer.innerHTML = '';
+});
+
+filtersContainer.addEventListener('click', e => {
+  if (e.target.classList.contains('remove-filter')) {
+    e.target.closest('.filter-row').remove();
+  }
+});
+
+document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+  let filtered = [...requests];
+  filtersContainer.querySelectorAll('.filter-row').forEach(row => {
+    const field = row.dataset.field;
+    if (field === 'time') {
+      const from = new Date(row.querySelector('.filter-time-start').value);
+      const to = new Date(row.querySelector('.filter-time-end').value);
+      filtered = filtered.filter(r => {
+        const date = new Date(r.time);
+        return (!isNaN(from) ? date >= from : true) && (!isNaN(to) ? date <= to : true);
+      });
     } else {
-      expandIcon.classList.replace('bi-arrows-angle-contract', 'bi-arrows-fullscreen');
+      const val = row.querySelector('.filter-value').value.trim().toLowerCase();
+      filtered = filtered.filter(r => (r[field] || '').toLowerCase().includes(val));
     }
   });
-</script>
+  renderFilteredList(filtered);
+});
 
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
+document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+  filtersContainer.innerHTML = '';
+  showTickets();
+});
