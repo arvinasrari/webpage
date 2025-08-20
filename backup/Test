@@ -1,174 +1,242 @@
 import os
-import json
 from datetime import datetime
 
-from flask import Flask, render_template, request, jsonify
+from flask import (
+    Flask, render_template, request, jsonify, session, g, redirect, url_for
+)
+from markupsafe import escape
+
 from models import db, Ticket, Comment
+
 import requests
 import urllib3
 
-# ------------------------------------------------------------------------------
-# Flask app & config
-# ------------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
+# App / DB setup
+# ─────────────────────────────────────────────────────────────
 app = Flask(__name__)
 
 project_dir = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(project_dir, 'tickets.db')}"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(project_dir, 'tickets.db')}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-# ------------------------------------------------------------------------------
-# Fake current_user (replace with real auth later)
-# ------------------------------------------------------------------------------
-# Example shapes:
-#   {'username': 'admin_user', 'role': 'admin', 'group': 'all'}
-#   {'username': '', 'role': 'user', 'group': 'dlp'}
-current_user = {'username': '', 'role': 'user', 'group': 'dlp'}
+# ─────────────────────────────────────────────────────────────
+# 
+ADMIN_GROUPS = {
+    "CN=Ticket-Admins,OU=Groups,DC=corp,DC=example,DC=com",
+    # add more exact group strings as needed...
+}
 
-# ------------------------------------------------------------------------------
-# Routes
-# ------------------------------------------------------------------------------
+# ─────────────────────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────────────────────
+def get_user():
+    """Return current user dict from session or None."""
+    return session.get("user")
 
-@app.route("/")
+@app.before_request
+def load_user():
+    g.user = get_user()
+
+def _derive_role_and_groups(user_info: dict):
+   
+    member_of = user_info.get("memberOf") or []
+    groups_clean = [str(g).strip() for g in member_of if g]
+    is_admin = any(g in ADMIN_GROUPS for g in groups_clean)
+    role = "admin" if is_admin else "user"
+    return role, groups_clean
+
+# ─────────────────────────────────────────────────────────────
+@app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    # If you build a domains list, pass it here; else keep empty.
+    return render_template("login.html", domains=[])
 
-# ---- Policies ---------------------------------------------------------------
+@app.route("/login", methods=["POST"])
+def login():
+    loginE = request.form.get("loginE", "").strip()
+    passwordE = request.form.get("passwordE", "").strip()
+    domaineE = request.form.get("domaineE", "").strip()
 
-# Load policies either from local .txt (demo) or from API.
-# Use query param: /policies?scope=DIM&source=file   (or source=api)
+    if not loginE or not passwordE:
+        return render_template("login.html", error="Username and password are required", domains=[]), 400
+
+    # AD auth (err, errStr, userInfo) — userInfo must contain 'memberOf'
+    err, errStr, userInfo = authenticateAD(
+        dict(username=loginE, password=passwordE, domain=domaineE),
+        None  # optional logger
+    )
+    if err:
+        return render_template("login.html", error=escape(errStr or "Authentication failed"), domains=[]), 401
+
+    role, groups = _derive_role_and_groups(userInfo)
+
+    if role != "admin" and not groups:
+        return render_template("login.html", error="No AD groups found for your account.", domains=[]), 403
+
+    session["user"] = {
+        "username": userInfo.get("fullName") or loginE,
+        "login": loginE,
+        "role": role,         # 'admin' or 'user'
+        "groups": groups,     # list of strings from AD
+        "domain": domaineE
+    }
+    session.permanent = True
+    return redirect(url_for("ticketintake"))
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.pop("user", None)
+    return jsonify({"message": "logged out"})
+
+@app.route("/ticketintake", methods=["GET"])
+def ticketintake():
+    if not g.user:
+        return redirect(url_for("index"))
+    # Render your main page after login
+    return render_template("ticketintake.html", user=g.user)
+
+# ─────────────────────────────────────────────────────────────
+# Policies (placeholders; unrelated to group scoping)
+# ─────────────────────────────────────────────────────────────
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-@app.route("/policies")
+@app.route('/policies', methods=['GET'])
 def get_policies():
-    scope = (request.args.get("scope") or "").strip()          # e.g., DIM / DLP / Proofpoint / Netskope
-    source = (request.args.get("source") or "file").strip()    # "file" (default) or "api"
-
-    # --- 1) From a local TXT file (demo)
-    if source.lower() == "file":
-        # file must be alongside app.py in ./policies_{scope}.txt
-        filename = f"policies_{scope}.txt" if scope else "policies.txt"
-        policies_path = os.path.join(project_dir, filename)
-        if not os.path.exists(policies_path):
-            # No file -> empty list
-            return jsonify([])
-        with open(policies_path, "r", encoding="utf-8") as f:
-            policies = [line.strip() for line in f if line.strip()]
-        return jsonify(policies)
-
-    # --- 2) From an API (placeholder)
-    # TODO: replace these with your real endpoints
-    if scope.upper() == "":
-        url 
-    else:
-        url = 
-
+    scope = request.args.get('scope')
+    url = "" if scope == "" else "" 
+    if not url:
+        return jsonify([])
+    response = requests.get(url, auth=('u', 'p'), verify=False)
+    if response.status_code != 200:
+        return jsonify([])
     try:
-        resp = requests.get(url, auth=("u", "p"), verify=False, timeout=15)
-    except requests.RequestException as e:
-        return jsonify({"error": f"Failed to reach policy API: {e}"}), 502
-
-    if resp.status_code != 200:
-        return jsonify({"error": f"Policy API returned {resp.status_code}"}), 502
-
-    try:
-        raw = resp.json()
-    except json.JSONDecodeError:
-        return jsonify({"error": "Policy API did not return JSON"}), 502
-
-    # Expecting a list of objects with a 'name' key; adjust as needed.
-    names = [p.get("name") for p in raw if isinstance(p, dict) and p.get("name")]
+        raw = response.json()
+        names = [p['name'] for p in raw]
+    except Exception:
+        names = []
     return jsonify(names)
 
-# ---- Tickets ---------------------------------------------------------------
-
-@app.route("/tickets", methods=["GET", "POST"])
+# ─────────────────────────────────────────────────────────────
+# Tickets — group-scoped access
+# ─────────────────────────────────────────────────────────────
+@app.route('/tickets', methods=['GET', 'POST'])
 def tickets():
-    # Create a ticket
-    if request.method == "POST":
-        # only admin or user allowed to create
-        if current_user.get("role") not in ("admin", "user"):
-            return jsonify({"error": "Unauthorized"}), 403
+    if g.user is None:
+        return jsonify({"error": "Not authenticated"}), 401
 
-        data = request.get_json(silent=True) or {}
+    role = g.user.get('role', 'user').lower()
+    user_groups = g.user.get('groups') or []  # list[str]
 
-        # minimal validation
-        missing = [k for k in ("type", "priority", "assignee", "description") if not data.get(k)]
+    # Create ticket
+    if request.method == 'POST':
+        if role not in ['admin', 'user']:
+            return jsonify({'error': 'Unauthorized'}), 403
+
+        data = request.get_json(force=True) or {}
+
+        # Validate required fields
+        required = ['type', 'priority', 'assignee', 'ticket', 'description']
+        missing = [k for k in required if not data.get(k)]
         if missing:
-            return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
+            return jsonify({"error": f"Missing fields: {', '.join(missing)}"}), 400
+
+        # Determine ticket group
+        if role == 'admin':
+            t_group = (data.get('group') or '').strip()
+            if not t_group:
+                return jsonify({"error": "Admin must provide 'group'"}), 400
+        else:
+            t_group = (data.get('group') or '').strip()
+            if not t_group:
+                if len(user_groups) == 1:
+                    t_group = user_groups[0]
+                else:
+                    return jsonify({"error": "Provide 'group' (one of your AD groups)."}), 400
+            if t_group not in user_groups:
+                return jsonify({"error": f"Forbidden group '{t_group}'"}), 403
 
         ticket = Ticket(
-            type=data["type"],
-            priority=data["priority"],
-            sender=current_user.get("username", "unknown"),
-            assignee=data["assignee"],
-            ticket_number=data.get("ticket", ""),
-            description=data["description"],
-            status=data.get("status", "Submitted"),
-            time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            policy_scope=data.get("policyScope", ""),
-            policy_details=json.dumps(data.get("policyDetail", {}), ensure_ascii=False),
-            existing_policy_name=data.get("existingPolicy", "")
+            type=data['type'],
+            priority=data['priority'],
+            sender=g.user.get('username') or g.user.get('login') or 'unknown',
+            assignee=data['assignee'],
+            ticket_number=data['ticket'],
+            description=data['description'],
+            status='Submitted',
+            time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            policy_scope=data.get('policyscope'),
+            policy_details=data.get('policystatus'),
+            existing_policy_name=data.get('existingPolicy'),
+            group=t_group
         )
-
         db.session.add(ticket)
         db.session.commit()
-        return jsonify({"message": "Ticket created", "id": ticket.id}), 201
+        return jsonify({'message': 'Ticket created', 'id': ticket.id, 'group': t_group}), 201
 
-    # List all tickets
-    all_tickets = Ticket.query.all()
-    result = []
-    for t in all_tickets:
-        result.append({
-            "id": t.id,
-            "type": t.type,
-            "priority": t.priority,
-            "sender": t.sender,
-            "assignee": t.assignee,
-            "ticket": t.ticket_number,
-            "description": t.description,
-            "status": t.status,
-            "time": t.time,
-            "policy_scope": t.policy_scope,
-            "policy_details": t.policy_details,          # stringified JSON from DB
-            "existing_policy_name": t.existing_policy_name,
-            "comments": [{"text": c.text, "time": c.time} for c in t.comments]  # <— fixed bug here
-        })
-    return jsonify(result)
+    # List tickets
+    else:
+        if role == 'admin':
+            q = Ticket.query
+        else:
+            q = Ticket.query.filter(Ticket.group.in_(user_groups))
 
-@app.route("/tickets/<int:ticket_id>", methods=["PUT"])
-def update_ticket(ticket_id: int):
-    data = request.get_json(silent=True) or {}
+        rows = q.all()
+        result = []
+        for t in rows:
+            result.append({
+                'id': t.id,
+                'type': t.type,
+                'priority': t.priority,
+                'sender': t.sender,
+                'assignee': t.assignee,
+                'ticket': t.ticket_number,
+                'description': t.description,
+                'status': t.status,
+                'time': t.time,
+                'policy_scope': t.policy_scope,
+                'policy_details': t.policy_details,
+                'existing_policy_name': t.existing_policy_name,
+                'group': t.group,
+                'comments': [{'text': c.text, 'time': c.time} for c in t.comments]
+            })
+        return jsonify(result)
 
+# Update status / add comment
+@app.route('/tickets/<int:ticket_id>', methods=['PUT'])
+def update_ticket(ticket_id):
+    if g.user is None:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    role = g.user.get('role', 'user').lower()
+    user_groups = g.user.get('groups') or []
+
+    data = request.get_json(force=True) or {}
     ticket = Ticket.query.get_or_404(ticket_id)
 
-    # Allow status update
-    if "status" in data and data["status"]:
-        ticket.status = data["status"]
+    # Non-admins: only modify tickets in their groups
+    if role != 'admin' and ticket.group not in user_groups:
+        return jsonify({"error": "Forbidden for your group"}), 403
 
-    # Optional: change assignee (admins only)
-    if "assignee" in data and data["assignee"]:
-        if current_user.get("role") != "admin":
-            return jsonify({"error": "Only admins can change assignee"}), 403
-        ticket.assignee = data["assignee"]
+    if 'status' in data and data['status']:
+        ticket.status = data['status']
 
-    # Optional: add a comment
-    if "comment" in data and data["comment"]:
+    if 'comment' in data and data['comment']:
         comment = Comment(
-            text=data["comment"],
-            time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            text=data['comment'],
+            time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             ticket_id=ticket.id
         )
         db.session.add(comment)
 
     db.session.commit()
-    return jsonify({"message": "Ticket updated"})
+    return jsonify({'message': 'Ticket updated'})
 
-# ------------------------------------------------------------------------------
-# Entrypoint (for local dev)
-# ------------------------------------------------------------------------------
-if __name__ == "__main__":
-    # Create tables on first run
+# ─────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
