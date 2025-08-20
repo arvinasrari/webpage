@@ -1,3 +1,24 @@
+ @app.route("/login", methods=["POST"])
++ def login():
++     loginE = (request.form.get("loginE") or "").strip()
++     passwordE = (request.form.get("passwordE") or "").strip()
++     if not loginE or not passwordE:
++         return render_template("login.html", error="Username and password are required", domains=[]), 400
++     rec = TEST_USERS.get(loginE)
++     if not rec or passwordE != rec["password"]:
++         return render_template("login.html", error="Invalid credentials", domains=[]), 401
++     session["user"] = {
++         "username": loginE,
++         "login": loginE,
++         "role": rec["role"],
++         "groups": list(rec["groups"]),
++     }
++     return redirect(url_for("ticketintake"))
+
+
+
+
+
 import os
 from datetime import datetime
 
