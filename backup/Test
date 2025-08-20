@@ -1,0 +1,174 @@
+import os
+import json
+from datetime import datetime
+
+from flask import Flask, render_template, request, jsonify
+from models import db, Ticket, Comment
+import requests
+import urllib3
+
+# ------------------------------------------------------------------------------
+# Flask app & config
+# ------------------------------------------------------------------------------
+app = Flask(__name__)
+
+project_dir = os.path.abspath(os.path.dirname(__file__))
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(project_dir, 'tickets.db')}"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
+
+# ------------------------------------------------------------------------------
+# Fake current_user (replace with real auth later)
+# ------------------------------------------------------------------------------
+# Example shapes:
+#   {'username': 'admin_user', 'role': 'admin', 'group': 'all'}
+#   {'username': '', 'role': 'user', 'group': 'dlp'}
+current_user = {'username': '', 'role': 'user', 'group': 'dlp'}
+
+# ------------------------------------------------------------------------------
+# Routes
+# ------------------------------------------------------------------------------
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# ---- Policies ---------------------------------------------------------------
+
+# Load policies either from local .txt (demo) or from API.
+# Use query param: /policies?scope=DIM&source=file   (or source=api)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+@app.route("/policies")
+def get_policies():
+    scope = (request.args.get("scope") or "").strip()          # e.g., DIM / DLP / Proofpoint / Netskope
+    source = (request.args.get("source") or "file").strip()    # "file" (default) or "api"
+
+    # --- 1) From a local TXT file (demo)
+    if source.lower() == "file":
+        # file must be alongside app.py in ./policies_{scope}.txt
+        filename = f"policies_{scope}.txt" if scope else "policies.txt"
+        policies_path = os.path.join(project_dir, filename)
+        if not os.path.exists(policies_path):
+            # No file -> empty list
+            return jsonify([])
+        with open(policies_path, "r", encoding="utf-8") as f:
+            policies = [line.strip() for line in f if line.strip()]
+        return jsonify(policies)
+
+    # --- 2) From an API (placeholder)
+    # TODO: replace these with your real endpoints
+    if scope.upper() == "":
+        url 
+    else:
+        url = 
+
+    try:
+        resp = requests.get(url, auth=("u", "p"), verify=False, timeout=15)
+    except requests.RequestException as e:
+        return jsonify({"error": f"Failed to reach policy API: {e}"}), 502
+
+    if resp.status_code != 200:
+        return jsonify({"error": f"Policy API returned {resp.status_code}"}), 502
+
+    try:
+        raw = resp.json()
+    except json.JSONDecodeError:
+        return jsonify({"error": "Policy API did not return JSON"}), 502
+
+    # Expecting a list of objects with a 'name' key; adjust as needed.
+    names = [p.get("name") for p in raw if isinstance(p, dict) and p.get("name")]
+    return jsonify(names)
+
+# ---- Tickets ---------------------------------------------------------------
+
+@app.route("/tickets", methods=["GET", "POST"])
+def tickets():
+    # Create a ticket
+    if request.method == "POST":
+        # only admin or user allowed to create
+        if current_user.get("role") not in ("admin", "user"):
+            return jsonify({"error": "Unauthorized"}), 403
+
+        data = request.get_json(silent=True) or {}
+
+        # minimal validation
+        missing = [k for k in ("type", "priority", "assignee", "description") if not data.get(k)]
+        if missing:
+            return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
+
+        ticket = Ticket(
+            type=data["type"],
+            priority=data["priority"],
+            sender=current_user.get("username", "unknown"),
+            assignee=data["assignee"],
+            ticket_number=data.get("ticket", ""),
+            description=data["description"],
+            status=data.get("status", "Submitted"),
+            time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            policy_scope=data.get("policyScope", ""),
+            policy_details=json.dumps(data.get("policyDetail", {}), ensure_ascii=False),
+            existing_policy_name=data.get("existingPolicy", "")
+        )
+
+        db.session.add(ticket)
+        db.session.commit()
+        return jsonify({"message": "Ticket created", "id": ticket.id}), 201
+
+    # List all tickets
+    all_tickets = Ticket.query.all()
+    result = []
+    for t in all_tickets:
+        result.append({
+            "id": t.id,
+            "type": t.type,
+            "priority": t.priority,
+            "sender": t.sender,
+            "assignee": t.assignee,
+            "ticket": t.ticket_number,
+            "description": t.description,
+            "status": t.status,
+            "time": t.time,
+            "policy_scope": t.policy_scope,
+            "policy_details": t.policy_details,          # stringified JSON from DB
+            "existing_policy_name": t.existing_policy_name,
+            "comments": [{"text": c.text, "time": c.time} for c in t.comments]  # <— fixed bug here
+        })
+    return jsonify(result)
+
+@app.route("/tickets/<int:ticket_id>", methods=["PUT"])
+def update_ticket(ticket_id: int):
+    data = request.get_json(silent=True) or {}
+
+    ticket = Ticket.query.get_or_404(ticket_id)
+
+    # Allow status update
+    if "status" in data and data["status"]:
+        ticket.status = data["status"]
+
+    # Optional: change assignee (admins only)
+    if "assignee" in data and data["assignee"]:
+        if current_user.get("role") != "admin":
+            return jsonify({"error": "Only admins can change assignee"}), 403
+        ticket.assignee = data["assignee"]
+
+    # Optional: add a comment
+    if "comment" in data and data["comment"]:
+        comment = Comment(
+            text=data["comment"],
+            time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            ticket_id=ticket.id
+        )
+        db.session.add(comment)
+
+    db.session.commit()
+    return jsonify({"message": "Ticket updated"})
+
+# ------------------------------------------------------------------------------
+# Entrypoint (for local dev)
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
+    # Create tables on first run
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
