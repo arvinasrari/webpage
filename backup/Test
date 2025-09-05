@@ -1,3 +1,83 @@
+function wirePolicyUI() {
+  const typeSel = $("type");
+  const statusSel = $("policyStatus");
+  const scopeSel  = $("policyScope");
+
+  const scopeC = $("policyScopeContainer");
+  const statusC = $("policyStatusContainer");
+  const existingC = $("existingPolicyContainer");
+  const otherC = $("otherTypeContainer");
+
+  // helper to fetch + fill the select
+  async function populateExistingPolicies() {
+    const status = statusSel?.value;
+    const scope  = (scopeSel?.value || "").trim();
+    if (status !== "Existing" || !scope) {
+      existingC.style.display = "none";
+      return;
+    }
+
+    existingC.style.display = "block";
+    const sel = $("existingPolicy");
+    sel.innerHTML = `<option value="">-- Select Policy --</option>`;
+
+    try {
+      const resp = await fetch(`/policies?scope=${encodeURIComponent(scope)}`, { credentials: "same-origin" });
+      if (!resp.ok) return;
+      const items = await resp.json();
+      (items || []).forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+    } catch (e) {
+      console.warn("failed to load policies", e);
+    }
+  }
+
+  // type changes: show policy controls; hide existing until status/scope handled
+  if (typeSel) {
+    typeSel.addEventListener("change", () => {
+      const isPolicy = typeSel.value === "Policy";
+      scopeC.style.display = isPolicy ? "block" : "none";
+      statusC.style.display = isPolicy ? "block" : "none";
+      existingC.style.display = "none";
+      otherC.style.display = (typeSel.value === "Other") ? "block" : "none";
+    });
+  }
+
+  // status change: if "Existing", fetch using current scope
+  if (statusSel) {
+    statusSel.addEventListener("change", populateExistingPolicies);
+  }
+
+  // scope change: if status is "Existing", refetch for new scope
+  if (scopeSel) {
+    scopeSel.addEventListener("change", populateExistingPolicies);
+  }
+}
+
+
+@app.route("/policies", methods=["GET"])
+def get_policies():
+    scope = (request.args.get("scope") or "").strip()
+    if not scope:
+        return jsonify([])
+
+    scope = scope.upper()  # DAR / DIM
+    file_name = f"policies_{scope}.txt"
+    policies_file = os.path.join(project_dir, file_name)
+
+    if not os.path.exists(policies_file):
+        return jsonify([])
+
+    with open(policies_file, "r", encoding="utf-8") as f:
+        policies = [line.strip() for line in f if line.strip()]
+    return jsonify(policies)
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
