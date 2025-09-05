@@ -1,174 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TD Bank Symantec Request Tracker</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">TD Bank</a>
+    </div>
+  </nav>
+
+  <!-- Main container -->
+  <div class="container py-4">
+    <h2>Symantec Request Tracker</h2>
+
+    <!-- Request Form -->
+    <div class="card mb-4 bg-white">
+      <div class="card-body">
+        <form id="IntakeForm">
+          <div class="row g-3">
+            <!-- Type -->
+            <div class="col-md-4">
+              <label for="type" class="form-label">Request Type</label>
+              <select class="form-select" id="type" required>
+                <option value="">-- Select --</option>
+                <option>API Enhancement</option>
+                <option>Bug Report</option>
+                <option>Consultant</option>
+                <option>Policy</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <!-- Priority -->
+            <div class="col-md-3">
+              <label for="priority" class="form-label">Priority</label>
+              <select class="form-select" id="priority" required>
+                <option value="">-- Select --</option>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </div>
+
+            <!-- Specify Other -->
+            <div class="col-md-4 mt-2" id="otherTypeContainer" style="display:none;">
+              <label for="otherType" class="form-label">Specify Other Type</label>
+              <input type="text" id="otherType" class="form-control" placeholder="Enter Request Type">
+            </div>
+
+            <!-- Policy Row -->
+            <div class="row g-3 mt-2 mb-3">
+              <div class="col-md-4" id="policyScopeContainer" style="display:none;">
+                <label for="policyScope" class="form-label">DAR or DIM?</label>
+                <select class="form-select" id="policyScope">
+                  <option value="">-- Select --</option>
+                  <option value="DAR">DAR</option>
+                  <option value="DIM">DIM</option>
+                </select>
+              </div>
+              <div class="col-md-4" id="policyStatusContainer" style="display:none;">
+                <label for="policyStatus" class="form-label">Existing or New?</label>
+                <select class="form-select" id="policyStatus">
+                  <option value="">-- Select --</option>
+                  <option value="Existing">Existing Policy</option>
+                  <option value="New">New Policy</option>
+                </select>
+              </div>
+              <div class="col-md-4" id="existingPolicyContainer" style="display:none;">
+                <label for="existingPolicy" class="form-label">Select Existing Policy</label>
+                <select class="form-select" id="existingPolicy">
+                  <option value="">-- Select Policy --</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Ticket Number -->
+            <div class="col-md-5">
+              <label for="ticket" class="form-label">Ticket Number</label>
+              <input type="text" id="ticket" class="form-control" placeholder="Enter ticket number" required>
+            </div>
+
+            <!-- Admin-only: Assignee + Group -->
+            {% if current_user and current_user.role|lower == 'admin' %}
+            <div class="col-md-5">
+              <label for="assigneeSel" class="form-label">Assignee (admin)</label>
+              <select id="assigneeSel" class="form-select">
+                <option value="">-- Select Assignee --</option>
+              </select>
+            </div>
+            <div class="col-md-5">
+              <label for="group" class="form-label">Group</label>
+              <select id="group" class="form-select" required>
+                <option value="">-- Select Group --</option>
+                <option value="Admins">Admins</option>
+                <option value="GroupA">GroupA</option>
+                <option value="GroupB">GroupB</option>
+              </select>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Description -->
+          <div class="col-12 mt-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" class="form-control" rows="3" placeholder="Describe your request..." required></textarea>
+          </div>
+
+          <!-- Submit -->
+          <div class="col-12 text-end mt-3">
+            <button type="submit" class="btn btn-primary px-4">Submit Request</button>
+          </div>
+        </form>
+
+        <!-- Filters -->
+        <hr class="my-4"/>
+        <h5 class="mb-3">
+          Requests
+          <span id="unassignedBadge" class="badge bg-danger ms-2" style="display:none;"></span>
+        </h5>
+
+        <div id="filtersContainer" class="mb-3"></div>
+
+        <div class="row g-2 align-items-end mb-3">
+          <div class="col-md-3">
+            <select id="newFilterBy" class="form-select">
+              <option value="">-- Select Filter --</option>
+              <option value="ticket">Ticket Number</option>
+              <option value="type">Type</option>
+              <option value="priority">Priority</option>
+              <option value="status">Status</option>
+              <option value="group">Group</option> 
+              <option value="assignee">Assignee</option>
+              <option value="time">Time Range</option>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <div id="newFilterInputContainer"></div>
+          </div>
+          <div class="col-md-2">
+            <button id="addFilterBtn" class="btn btn-primary w-100">Add Filter</button>
+          </div>
+        </div>
+
+        <div class="row g-2">
+          <div class="col-md-2">
+            <button id="applyFiltersBtn" class="btn btn-success w-100">Apply Filters</button>
+          </div>
+          <div class="col-md-2">
+            <button id="clearFiltersBtn" class="btn btn-outline-secondary w-100">Clear All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests List -->
+    <div id="requestList" class="mb-5"></div>
+
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-white">
+            <h5 class="modal-title text-dark">Request Details</h5>
+            <div class="d-flex align-items-center ms-auto">
+              <button id="toggleExpandBtn" type="button" class="btn btn-outline-secondary btn-sm me-2">
+                <i id="expandIcon" class="bi bi-arrows-fullscreen"></i>
+              </button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+          </div>
+
+          <div class="modal-body bg-light">
+            <div class="row">
+              <dt class="col-sm-3">ID</dt><dd class="col-sm-9" id="detailId"></dd>
+              <dt class="col-sm-3">Type</dt><dd class="col-sm-9" id="detailType"></dd>
+              <dt class="col-sm-3">Priority</dt><dd class="col-sm-9" id="detailPriority"></dd>
+              <dt class="col-sm-3">Sender</dt><dd class="col-sm-9" id="detailSender"></dd>
+              <dt class="col-sm-3">Assignee</dt><dd class="col-sm-9" id="detailAssignee"></dd>
+              <dt class="col-sm-3">Time</dt><dd class="col-sm-9" id="detailTime"></dd>
+              <dt class="col-sm-3">Ticket #</dt><dd class="col-sm-9" id="ticketNumber"></dd>
+            </div>
+
+            <div id="detailPolicyBlock" style="display:none;">
+              <dt>Policy Scope</dt><dd id="detailPolicyScope"></dd>
+              <dt>Policy Status</dt><dd id="detailPolicyStatus"></dd>
+              <dt>Existing Policy</dt><dd id="detailExistingPolicy"></dd>
+            </div>
+
+            <!-- Edit (admin-only controls) -->
+            <form id="editForm" class="mt-3">
+              {% if current_user and current_user.role|lower == 'admin' %}
+              <div class="mb-3">
+                <label for="editStatus" class="form-label">Status (admin)</label>
+                <select id="editStatus" class="form-select">
+                  <option>Submitted</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                  <option>Rejected</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editAssigneeSel" class="form-label">Assignee (admin)</label>
+                <select id="editAssigneeSel" class="form-select">
+                  <option value="">-- Select Assignee --</option>
+                </select>
+              </div>
+              {% endif %}
+
+              <!-- Simple comments -->
+              <div class="mb-2">
+                <label for="newComment" class="form-label">Add Comment</label>
+                <textarea id="newComment" class="form-control" rows="2" placeholder="Write your note..."></textarea>
+              </div>
+            </form>
+
+            <h6 class="mt-3">Comments</h6>
+            <div id="commentsList" class="small text-muted"></div>
+          </div>
+
+          <div class="modal-footer bg-white">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" id="saveBtn" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- expose user to JS -->
+  <script>window.CURRENT_USER = {{ current_user|tojson }};</script>
+
+  <!-- Bootstrap + scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>
+
+
+
+
+(() => {
+  // ---------------- State ----------------
+  let REQUESTS = [];
+  let CURRENT_ID = null;
+  let ASSIGNEES = [];
+
+  // -------------- Helpers ----------------
+  const $ = (id) => document.getElementById(id);
+  const isAdmin = () => ((window.CURRENT_USER?.role) || "").toLowerCase() === "admin";
+  const isUnassigned = (t) => !t.assignee || !String(t.assignee).trim();
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (m) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[m]));
+  }
+
+  function updateUnassignedHeaderBadge(list) {
+    const badge = $("unassignedBadge");
+    if (!badge) return;
+    if (!isAdmin()) { badge.style.display = "none"; badge.textContent = ""; return; }
+    const count = list.filter(isUnassigned).length;
+    if (count > 0) {
+      badge.style.display = "";
+      badge.textContent = `${count} unassigned`;
+    } else {
+      badge.style.display = "none";
+      badge.textContent = "";
+    }
+  }
+
+  // -------------- Assignees --------------
+  async function loadAssigneesIfAdmin() {
+    if (!isAdmin()) return;
+    const resp = await fetch("/assignees", { credentials: "same-origin" });
+    ASSIGNEES = resp.ok ? await resp.json() : [];
+
+    // Form select (create)
+    const createSel = $("assigneeSel");
+    if (createSel) {
+      createSel.innerHTML = `<option value="">-- Select Assignee --</option>` +
+        ASSIGNEES.map(a => `<option>${escapeHtml(a)}</option>`).join("");
+    }
+  }
+
+  // -------------- Policy UI --------------
+  function wirePolicyUI() {
+    const typeSel = $("type");
+    const statusSel = $("policyStatus");
+
+    const scopeC = $("policyScopeContainer");
+    const statusC = $("policyStatusContainer");
+    const existingC = $("existingPolicyContainer");
+    const otherC = $("otherTypeContainer");
+
+    if (typeSel) {
+      typeSel.addEventListener("change", () => {
+        const t = typeSel.value;
+        const isPolicy = t === "Policy";
+        scopeC.style.display = isPolicy ? "block" : "none";
+        statusC.style.display = isPolicy ? "block" : "none";
+        existingC.style.display = "none";
+        otherC.style.display = (t === "Other") ? "block" : "none";
+      });
+    }
+
+    if (statusSel) {
+      statusSel.addEventListener("change", () => {
+        existingC.style.display = (statusSel.value === "Existing") ? "block" : "none";
+      });
+    }
+  }
+
+  // ----------- Group for submit ----------
+  function pickGroupForSubmit() {
+    if (isAdmin()) {
+      const sel = $("group");
+      return (sel && sel.value && sel.value.trim()) || "";
+    }
+    const groups = window.CURRENT_USER?.groups || [];
+    if (groups.length === 1) return groups[0];
+    // If user has multiple groups and no selector, backend will prompt to choose one
+    return "";
+  }
+
+  // -------------- Cards/List -------------
+  function cardHTML(t) {
+    const badgeClass = t.priority === "High" ? "badge bg-danger"
+                    : t.priority === "Medium" ? "badge bg-warning"
+                    : "badge bg-secondary";
+    const unassignedMark = isUnassigned(t) ? `<span class="badge bg-danger ms-2">Unassigned</span>` : "";
+
+    return `
+      <div class="card mb-2" role="button" data-id="${t.id}">
+        <div class="card-body d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="card-title mb-1">
+              ${escapeHtml(t.ticket)} — ${escapeHtml(t.type)}
+              ${t.group ? `<span class="text-muted">• ${escapeHtml(t.group)}</span>` : ""}
+              ${unassignedMark}
+            </h6>
+            <p class="mb-1">
+              <strong>Status:</strong> ${escapeHtml(t.status)}
+              &nbsp; <strong>Assignee:</strong> ${escapeHtml(isUnassigned(t) ? "-" : t.assignee)}
+            </p>
+            <p class="mb-0">${escapeHtml(t.description || "")}</p>
+          </div>
+          <div class="text-end">
+            <span class="${badgeClass}">${escapeHtml(t.priority)}</span>
+            <div class="small text-muted mt-2">${escapeHtml(t.time || "")}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function showTickets(list = REQUESTS) {
+    const box = $("requestList");
+    if (!box) return;
+    if (!list.length) {
+      box.innerHTML = `<p class="text-muted">No requests yet.</p>`;
+      updateUnassignedHeaderBadge(list);
+      return;
+    }
+    box.innerHTML = list.map(cardHTML).join("");
+    box.querySelectorAll(".card").forEach(c => c.addEventListener("click", () => openDetail(Number(c.dataset.id))));
+    updateUnassignedHeaderBadge(list);
+  }
+
+  // ---------------- Filters --------------
+  function uniqueGroupsFromRequests() {
+    const set = new Set();
+    REQUESTS.forEach(r => { if (r.group) set.add(r.group); });
+    return Array.from(set).sort();
+  }
+
+  function addFilterRow(field, valueHTML) {
+    const row = document.createElement("div");
+    row.className = "row g-2 mb-2 filter-row";
+    row.dataset.field = field;
+    row.innerHTML = `
+      <div class="col-md-3"><label class="form-label text-capitalize">${field}</label></div>
+      <div class="col-md-7">${valueHTML}</div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="button" class="btn btn-danger w-100 remove-filter">Remove</button>
+      </div>
+    `;
+    $("filtersContainer").appendChild(row);
+  }
+
+  const newFilterBy = $("newFilterBy");
+  if (newFilterBy) {
+    newFilterBy.addEventListener("change", () => {
+      const field = newFilterBy.value;
+      const target = $("newFilterInputContainer");
+      if (!field) { target.innerHTML = ""; return; }
+
+      if (field === "time") {
+        target.innerHTML = `
+          <label class="form-label">From</label>
+          <input type="date" class="form-control mb-1" id="newFilterTimeStart">
+          <label class="form-label">To</label>
+          <input type="date" class="form-control" id="newFilterTimeEnd">
+        `;
+        return;
+      }
+
+      if (["type", "priority", "status"].includes(field)) {
+        const opts = field === "type"
+          ? ["API Enhancement","Bug Report","Consultant","Policy","Other"]
+          : field === "priority"
+            ? ["High","Medium","Low"]
+            : ["Submitted","In Progress","Completed","Rejected"];
+        target.innerHTML = `
+          <label class="form-label">Value</label>
+          <select class="form-select" id="newFilterValue">
+            ${opts.map(o => `<option>${o}</option>`).join("")}
+          </select>
+        `;
+        return;
+      }
+
+      if (field === "group") {
+        const groups = uniqueGroupsFromRequests();
+        if (groups.length) {
+          target.innerHTML = `
+            <label class="form-label">Group</label>
+            <select class="form-select" id="newFilterValue">
+              ${groups.map(g => `<option>${escapeHtml(g)}</option>`).join("")}
+            </select>
+          `;
+        } else {
+          target.innerHTML = `
+            <label class="form-label">Group</label>
+            <input type="text" class="form-control" id="newFilterValue" placeholder="Enter group">
+          `;
+        }
+        return;
+      }
+
+      // default: free text
+      target.innerHTML = `
+        <label class="form-label">Value</label>
+        <input type="text" class="form-control" id="newFilterValue" placeholder="Enter value">
+      `;
+    });
+  }
+
+  const addFilterBtn = $("addFilterBtn");
+  if (addFilterBtn) {
+    addFilterBtn.addEventListener("click", () => {
+      const field = newFilterBy.value;
+      if (!field) return;
+
+      if (field === "time") {
+        const from = $("newFilterTimeStart").value || "";
+        const to = $("newFilterTimeEnd").value || "";
+        addFilterRow(field, `
+          <input type="date" class="form-control filter-time-start" value="${from}">
+          <input type="date" class="form-control mt-1 filter-time-end" value="${to}">
+        `);
+      } else {
+        const val = ($("newFilterValue")?.value || "").trim();
+        if (!val) return;
+        addFilterRow(field, `
+          <input type="text" class="form-control filter-value" value="${escapeHtml(val)}">
+        `);
+      }
+      newFilterBy.value = "";
+      $("newFilterInputContainer").innerHTML = "";
+    });
+  }
+
+  const filtersContainer = $("filtersContainer");
+  if (filtersContainer) {
+    filtersContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-filter")) {
+        e.target.closest(".filter-row").remove();
+      }
+    });
+  }
+
+  const applyFiltersBtn = $("applyFiltersBtn");
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener("click", () => {
+      let filtered = [...REQUESTS];
+      $("filtersContainer").querySelectorAll(".filter-row").forEach(row => {
+        const field = row.dataset.field;
+        if (field === "time") {
+          const from = new Date(row.querySelector(".filter-time-start").value);
+          const to = new Date(row.querySelector(".filter-time-end").value);
+          filtered = filtered.filter(r => {
+            const d = new Date(r.time);
+            const okFrom = isNaN(from) ? true : d >= from;
+            const okTo = isNaN(to) ? true : d <= to;
+            return okFrom && okTo;
+          });
+        } else {
+          const val = (row.querySelector(".filter-value").value || "").toLowerCase();
+          filtered = filtered.filter(r => (r[field] || "").toString().toLowerCase().includes(val));
+        }
+      });
+      showTickets(filtered);
+    });
+  }
+
+  const clearFiltersBtn = $("clearFiltersBtn");
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener("click", () => {
+      $("filtersContainer").innerHTML = "";
+      showTickets();
+    });
+  }
+
+  // -------------- Detail/Edit ------------
+  function openDetail(id) {
+    const t = REQUESTS.find(x => x.id === id);
+    if (!t) return;
+    CURRENT_ID = id;
+
+    $("detailId").textContent = t.id;
+    $("detailType").textContent = t.type;
+    $("detailPriority").textContent = t.priority;
+    $("detailSender").textContent = t.sender || "-";
+    $("detailAssignee").innerHTML = isUnassigned(t)
+      ? `<span class="text-danger">Unassigned</span>`
+      : escapeHtml(t.assignee);
+    $("detailTime").textContent = t.time || "-";
+    $("ticketNumber").textContent = t.ticket || "-";
+
+    const showPolicy = t.type === "Policy";
+    const block = $("detailPolicyBlock");
+    if (block) block.style.display = showPolicy ? "block" : "none";
+    $("detailPolicyScope").textContent = t.policy_scope || "-";
+    $("detailPolicyStatus").textContent = t.policy_details || "-";
+    $("detailExistingPolicy").textContent = t.existing_policy_name || "-";
+
+    // Admin-only edit controls (HTML hides these for non-admins)
+    const stSel = $("editStatus");
+    if (stSel) stSel.value = t.status;
+    const asgSel = $("editAssigneeSel");
+    if (asgSel) {
+      asgSel.innerHTML = `<option value="">-- Select Assignee --</option>` +
+        ASSIGNEES.map(a => `<option ${a === t.assignee ? "selected" : ""}>${escapeHtml(a)}</option>`).join("");
+    }
+
+    // Comments: simple lines, "note — time"
+    $("commentsList").innerHTML = (t.comments || [])
+      .map(c => `${escapeHtml(c.text)} — <span class="text-secondary">${escapeHtml(c.time)}</span>`)
+      .join("<br>");
+
+    new bootstrap.Modal(document.getElementById("detailModal")).show();
+  }
+
+  // Expand button
+  document.addEventListener("DOMContentLoaded", () => {
+    const modalEl = document.getElementById("detailModal");
+    const toggleBtn = document.getElementById("toggleExpandBtn");
+    const expandIcon = document.getElementById("expandIcon");
+    if (modalEl && toggleBtn && expandIcon) {
+      toggleBtn.addEventListener("click", () => {
+        const dialog = modalEl.querySelector(".modal-dialog");
+        if (!dialog) return;
+        dialog.classList.toggle("modal-fullscreen");
+        const full = dialog.classList.contains("modal-fullscreen");
+        expandIcon.classList.toggle("bi-arrows-fullscreen", !full);
+        expandIcon.classList.toggle("bi-arrows-angle-contract", full);
+      });
+      modalEl.addEventListener("hidden.bs.modal", () => {
+        const dialog = modalEl.querySelector(".modal-dialog");
+        if (dialog) dialog.classList.remove("modal-fullscreen");
+        expandIcon.classList.add("bi-arrows-fullscreen");
+        expandIcon.classList.remove("bi-arrows-angle-contract");
+      });
+    }
+  });
+
+  // Save (admin: status/assignee, everyone: comment)
+  const saveBtn = $("saveBtn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", async () => {
+      if (!CURRENT_ID) return;
+      const payload = { comment: ($("newComment").value || "").trim() };
+
+      if (isAdmin()) {
+        const st = $("editStatus");
+        if (st) payload.status = st.value;
+        const asg = $("editAssigneeSel")?.value || "";
+        if (asg) payload.assignee = asg;
+      }
+
+      const resp = await fetch(`/tickets/${CURRENT_ID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload)
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        alert("Update failed: " + (err.error || resp.statusText));
+        return;
+      }
+
+      $("newComment").value = "";
+      await loadTickets();
+      bootstrap.Modal.getInstance(document.getElementById("detailModal")).hide();
+    });
+  }
+
+  // --------------- Create ----------------
+  const intakeForm = $("IntakeForm");
+  if (intakeForm) {
+    intakeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const type = $("type").value;
+      const priority = $("priority").value;
+      const ticket = $("ticket").value.trim();
+      const description = $("description").value.trim();
+
+      let policyScope, policyStatus, existingPolicy;
+      if (type === "Policy") {
+        policyScope = $("policyScope").value;
+        policyStatus = $("policyStatus").value;
+        if (policyStatus === "Existing") {
+          existingPolicy = $("existingPolicy").value;
+        }
+      }
+
+      const group = pickGroupForSubmit();
+      const payload = { type, priority, ticket, description, policyScope, policyStatus, existingPolicy, group };
+
+      if (isAdmin()) {
+        const asg = $("assigneeSel")?.value || "";
+        if (asg) payload.assignee = asg; // optional
+      }
+
+      const createResp = await fetch("/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload)
+      });
+
+      if (!createResp.ok) {
+        const err = await createResp.json().catch(() => ({}));
+        alert("Create failed: " + (err.error || createResp.statusText));
+        return;
+      }
+
+      await loadTickets();
+      $("description").value = "";
+    });
+  }
+
+  // --------------- Data ------------------
+  async function loadTickets() {
+    const resp = await fetch("/tickets", { credentials: "same-origin" });
+    REQUESTS = resp.ok ? await resp.json() : [];
+    showTickets();
+  }
+
+  // --------------- Init ------------------
+  wirePolicyUI();
+  loadAssigneesIfAdmin().then(loadTickets);
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import os
 from datetime import datetime
-
-from flask import (
-    Flask, render_template, request, jsonify, session, g, redirect, url_for
-)
-from markupsafe import escape
-
+from pathlib import Path
+from flask import Flask, render_template, request, jsonify, session, g, redirect, url_for
 from models import db, Ticket, Comment
-# from ADWrapper import authenticateAD   # keep commented while using TEST_USERS
-import requests
 import urllib3
 
 
-# -----------------------------------------------------------------------------
-# App & DB setup
-# -----------------------------------------------------------------------------
-app = Flask(__name__)
+# App setup
 
+app = Flask(__name__)
 app.secret_key = os.environ.get("APP_SECRET", "dev-secret")
+
 project_dir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(project_dir, 'tickets.db')}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db.init_app(app)
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# -----------------------------------------------------------------------------
-# Config / constants (adjust as needed)
-# -----------------------------------------------------------------------------
-ADMIN_GROUPS = {
-    "CN=Ticket-Admins,OU=Groups,DC=corp,DC=example,DC=com",
-}
 
-# --- Test users (no AD) ---
+# Simple auth store for local testing
+
 TEST_USERS = {
-    # IMPORTANT: groups must be a real list, not a string
+    
     "TAN1058": {"password": "pass", "role": "admin", "groups": ["Admins"]},
-    # add more examples:
-    # "JDOE": {"password": "pass", "role": "user", "groups": ["GroupA"]},
+     "aa": {"password": "pass", "role": "user", "groups": ["GroupA"]},
 }
 
-
-# -----------------------------------------------------------------------------
-# Helpers
-# -----------------------------------------------------------------------------
 def get_user():
-    """Read the logged-in user dict from the session, or None."""
     return session.get("user")
-
 
 @app.before_request
 def load_user():
-    """Expose the current user on flask.g for this request."""
     g.user = get_user()
-
 
 @app.context_processor
 def inject_current_user():
-    """
-    Make `current_user` available in every Jinja template.
-    Your templates can keep using:  {% if current_user and current_user.role == 'admin' %}
-    """
+    # Expose "current_user" into all templates (used by ticket_intake.html)
     return {"current_user": getattr(g, "user", None)}
 
-
-def _derive_role_and_groups(user_info: dict):
-    """
-    If you later switch back to AD, this will help turn AD membership into role/groups.
-    For TEST_USERS flow, we don't use it.
-    """
-    member_of = user_info.get("memberOf") or []
-    groups_clean = [str(g).strip() for g in member_of if g]
-    is_admin = any(g in ADMIN_GROUPS for g in groups_clean)
-    role = "admin" if is_admin else "user"
-    return role, groups_clean
-
-
 # -----------------------------------------------------------------------------
-# Routes
+# Auth + Pages
 # -----------------------------------------------------------------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
-    """
-    GET  -> show login page
-    POST -> hand off to login() so the form can POST to "/"
-    """
     if request.method == "POST":
         return login()
     return render_template("login.html", error=None, domains=[])
 
-
 @app.route("/login", methods=["POST"])
 def login():
-    """
-    Simple test-login against TEST_USERS.
-    Replace with AD auth when ready.
-    """
     loginE = (request.form.get("loginE") or "").strip()
     passwordE = (request.form.get("passwordE") or "").strip()
 
     if not loginE or not passwordE:
-        return render_template(
-            "login.html",
-            error="Username and password are required",
-            domains=[]
-        ), 400
+        return render_template("login.html", error="Username and password are required", domains=[]), 400
 
     rec = TEST_USERS.get(loginE)
-    # BUG FIX: use rec.get("password") not rec.get['password']
     if not rec or passwordE != rec.get("password"):
-        return render_template(
-            "login.html",
-            error="Invalid credentials",
-            domains=[]
-        ), 401
+        return render_template("login.html", error="Invalid credentials", domains=[]), 401
 
     groups_val = rec.get("groups") or []
-    # Safety: if someone accidentally sets a string, coerce to list
     if isinstance(groups_val, str):
         groups_val = [groups_val]
 
     session["user"] = {
         "username": loginE,
         "login": loginE,
-        "role": (rec.get("role") or "user"),
+        "role": rec.get("role", "user"),
         "groups": list(groups_val),
     }
     session.permanent = True
     return redirect(url_for("ticket_intake"))
-
 
 @app.route("/logout", methods=["POST"])
 def logout():
     session.pop("user", None)
     return jsonify({"message": "logged out"})
 
-
 @app.route("/ticket_intake", methods=["GET"])
 def ticket_intake():
-    """
-    Main page after login. Guarded. Also passes `user` to the template.
-    (You also have `current_user` via the context processor.)
-    """
     if not g.user:
         return redirect(url_for("index"))
     return render_template("ticket_intake.html", user=g.user)
 
+@app.route("/me", methods=["GET"])
+def me():
+    if not g.user:
+        return jsonify({"user": None}), 401
+    return jsonify({"user": g.user})
 
 # -----------------------------------------------------------------------------
-# Policies (placeholder; unrelated to group scoping)
+# Assignees (from a text file)
 # -----------------------------------------------------------------------------
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+ASSIGNEE_FILE = Path(__file__).with_name("assignee.txt")
 
+def load_assignees():
+    if not ASSIGNEE_FILE.exists():
+        return []
+    names = []
+    with ASSIGNEE_FILE.open("r", encoding="utf-8") as f:
+        for line in f:
+            name = line.strip()
+            if name:
+                names.append(name)
+    return names
+
+@app.route("/assignees", methods=["GET"])
+def assignees():
+    if g.user is None:
+        return jsonify({"error": "Not authenticated"}), 401
+    role = (g.user.get("role") or "user").lower()
+    # Only admins actually need the list; return empty for non-admins
+    return jsonify(load_assignees() if role == "admin" else [])
+
+# -----------------------------------------------------------------------------
+# Optional policies endpoint (stub)
+# -----------------------------------------------------------------------------
 @app.route("/policies", methods=["GET"])
 def get_policies():
-    scope = request.args.get("scope")
-    url = ""  # fill with your real endpoint if/when needed
-    if not url:
-        return jsonify([])
-
-    try:
-        response = requests.get(url, auth=("u", "p"), verify=False)
-        if response.status_code != 200:
-            return jsonify([])
-        raw = response.json()
-        names = [p["name"] for p in raw]
-        return jsonify(names)
-    except Exception:
-        return jsonify([])
-
+    # Wire this up to your real source if needed
+    return jsonify([])
 
 # -----------------------------------------------------------------------------
 # Tickets API
@@ -179,51 +830,53 @@ def tickets():
         return jsonify({"error": "Not authenticated"}), 401
 
     role = (g.user.get("role") or "user").lower()
-    user_groups = g.user.get("groups") or []  # List[str]
+    user_groups = g.user.get("groups") or []
 
-    # -----------------
-    # Create ticket
-    # -----------------
     if request.method == "POST":
-        if role not in ["admin", "user"]:
-            return jsonify({"error": "Unauthorized"}), 403
-
         data = request.get_json(force=True) or {}
 
-        # Validate required fields
-        required = ["type", "priority", "assignee", "ticket", "description"]
+        # Assignee is NOT required when creating a ticket
+        required = ["type", "priority", "ticket", "description"]
         missing = [k for k in required if not data.get(k)]
         if missing:
             return jsonify({"error": f"Missing fields: {', '.join(missing)}"}), 400
 
         # Determine ticket group
+        payload_group = (data.get("group") or "").strip()
         if role == "admin":
-            t_group = (data.get("group") or "").strip()
-            if not t_group:
+            if not payload_group:
                 return jsonify({"error": "Admin must provide 'group'"}), 400
+            t_group = payload_group
         else:
-            t_group = (data.get("group") or "").strip()
-            if not t_group:
+            if payload_group:
+                if payload_group not in user_groups:
+                    return jsonify({"error": f"Forbidden group '{payload_group}'"}), 403
+                t_group = payload_group
+            else:
                 if len(user_groups) == 1:
                     t_group = user_groups[0]
                 else:
-                    return jsonify({"error": "Provide 'group' (one of your AD groups)."}), 400
-            else:
-                if t_group not in user_groups:
-                    return jsonify({"error": f"Forbidden group '{t_group}'"}), 403
+                    return jsonify({"error": "Provide 'group' (one of your groups)."}), 400
 
-        # Create the ticket
+        # Admin may optionally choose assignee from list; users' assignee is ignored
+        assignee_val = ""
+        if role == "admin" and data.get("assignee"):
+            allowed = load_assignees()
+            if allowed and data["assignee"] not in allowed:
+                return jsonify({"error": "Assignee not in allowed list"}), 400
+            assignee_val = data["assignee"]
+
         ticket = Ticket(
             type=data["type"],
             priority=data["priority"],
             sender=g.user.get("username") or g.user.get("login") or "unknown",
-            assignee=data["assignee"],
+            assignee=assignee_val,  # empty if not provided by admin
             ticket_number=data["ticket"],
             description=data["description"],
             status="Submitted",
             time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            policy_scope=data.get("policyscope"),
-            policy_details=data.get("policystatus"),
+            policy_scope=data.get("policyScope"),
+            policy_details=data.get("policyStatus"),
             existing_policy_name=data.get("existingPolicy"),
             group=t_group,
         )
@@ -232,9 +885,7 @@ def tickets():
         db.session.commit()
         return jsonify({"message": "Ticket created", "id": ticket.id, "group": t_group}), 201
 
-    # -----------------
-    # List tickets
-    # -----------------
+    # GET: list tickets
     if role == "admin":
         q = Ticket.query
     else:
@@ -261,7 +912,6 @@ def tickets():
         })
     return jsonify(result)
 
-
 @app.route("/tickets/<int:ticket_id>", methods=["PUT"])
 def update_ticket(ticket_id):
     if g.user is None:
@@ -270,28 +920,37 @@ def update_ticket(ticket_id):
     role = (g.user.get("role") or "user").lower()
     user_groups = g.user.get("groups") or []
 
+    ticket = Ticket.query.get_or_404(ticket_id)
     data = request.get_json(force=True) or {}
 
-    ticket = Ticket.query.get_or_404(ticket_id)
-
-    # Non-admins: only modify tickets in their groups
-    if role != "admin" and ticket.group not in user_groups:
-        return jsonify({"error": "Forbidden for your group"}), 403
-
+    # ---- Only admin can change status
     if "status" in data and data["status"]:
+        if role != "admin":
+            return jsonify({"error": "Only admin can change status"}), 403
         ticket.status = data["status"]
 
+    # ---- Only admin can change assignee (and must be from allowed list if present)
+    if "assignee" in data and data["assignee"]:
+        if role != "admin":
+            return jsonify({"error": "Only admin can change assignee"}), 403
+        allowed = load_assignees()
+        if allowed and data["assignee"] not in allowed:
+            return jsonify({"error": "Assignee not in allowed list"}), 400
+        ticket.assignee = data["assignee"]
+
+    # ---- Comments: everyone can add, but users only on tickets in their groups
     if "comment" in data and data["comment"]:
+        if role != "admin" and ticket.group not in user_groups:
+            return jsonify({"error": "Forbidden for your group"}), 403
         comment = Comment(
             text=data["comment"],
             time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            ticket_id=ticket.id
+            ticket_id=ticket.id,
         )
         db.session.add(comment)
 
     db.session.commit()
     return jsonify({"message": "Ticket updated"})
-
 
 # -----------------------------------------------------------------------------
 # Main
@@ -299,4 +958,63 @@ def update_ticket(ticket_id):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+    # For local dev only; remove debug=True in production
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Ticket(db.Model):
+    __tablename__ = "ticket"
+
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(100), nullable=False)
+    priority = db.Column(db.String(50), nullable=False)
+    sender = db.Column(db.String(100), nullable=False)
+    assignee = db.Column(db.String(100), nullable=False)
+
+    ticket_number = db.Column(db.String(100), nullable=False, index=True)
+    description = db.Column(db.Text, nullable=False)
+
+    status = db.Column(db.String(50), nullable=False, index=True, default="Submitted")
+    time = db.Column(db.String(50), nullable=False)
+
+    policy_scope = db.Column(db.String(50))
+    policy_details = db.Column(db.String(100))
+    existing_policy_name = db.Column(db.String(100))
+
+    group = db.Column(db.String(50), nullable=False, index=True)
+
+    comments = db.relationship(
+        "Comment",
+        backref="ticket",
+        cascade="all, delete-orphan"
+    )
+
+class Comment(db.Model):
+    __tablename__ = "comment"
+
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    time = db.Column(db.String(50), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey("ticket.id"), nullable=False, index=True)
+    
+
