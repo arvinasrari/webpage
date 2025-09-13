@@ -1,464 +1,473 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Arvin Asrari - About Me & Education">
-    <title>About & Education - Arvin Asrari</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Arvin Asrari — Portfolio" />
+  <title>Arvin Asrari — Portfolio</title>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
-     <link rel="stylesheet" href="styles-mobile.css">
-    
-   </head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="" crossorigin="anonymous" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
 <body>
 
-    <!-- Navigation Toolbar -->
-    <div class="menu-toggle" id="mobile-menu">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
+  <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
+  </button>
+
+  <nav id="primary-nav" aria-label="Primary">
+    <ul>
+      <li><a href="#about"><i class="nav-ico fas fa-user"></i>About</a></li>
+
+      <li class="has-dropdown">
+        <a href="#tools"><i class="nav-ico fas fa-toolbox"></i>Tools</a>
+        <div class="dropdown" role="menu" aria-label="Tools menu">
+          <a href="flip-coin.html"><span class="ico fas fa-coins"></span>Coin</a>
+          <a href="linux.html"><span class="ico fab fa-linux"></span>Linux</a>
+          <a href="cards.html"><span class="ico fas fa-th-large"></span>Cards</a>
+          <a href="todo.html"><span class="ico fas fa-check-square"></span>To-Do List</a>
+        </div>
+      </li>
+
+      <li><a href="#education"><i class="nav-ico fas fa-graduation-cap"></i>Education</a></li>
+      <li><a href="#projects"><i class="nav-ico fas fa-folder-open"></i>Projects</a></li>
+      <li><a href="#experience"><i class="nav-ico fas fa-briefcase"></i>Experience</a></li>
+      <li><a href="#participations"><i class="nav-ico fas fa-award"></i>Participations</a></li>
+      <li><a href="#languages"><i class="nav-ico fas fa-language"></i>Languages</a></li>
+      <li><a href="#contact"><i class="nav-ico fas fa-envelope"></i>Contact</a></li>
+    </ul>
+  </nav>
+
+  <main id="snap">
+
+    <section id="about" aria-labelledby="about-title">
+      <h2 class="section-title" id="about-title">About Me</h2>
+      <div class="section-content about">
+        <img src="photo_1.jpg" alt="Photo of Arvin Asrari" loading="lazy" decoding="async" width="400" height="400" />
+        <div class="content">
+          <p>Cybersecurity graduate student with hands-on research experience. Passionate about applying practical techniques to real-world security problems, with a focus on systems, low-level internals, and applied research. Enjoys building, breaking, and improving complex systems, and collaborating on impactful projects.</p>
+        </div>
+      </div>
+    </section>
+<section id="tools" aria-labelledby="tools-title">
+  <h2 class="section-title" id="tools-title">Tools</h2>
+  <div class="section-content tool-grid">
+    <div class="tool-card">
+      <div class="tool-title"><i class="ico fas fa-coins" aria-hidden="true"></i>Coin</div>
+      <div class="tool-actions">
+        <a href="flip-coin.html"><i class="ico fas fa-play"></i>Open</a>
+      </div>
     </div>
-    <nav>
-        <ul>
-            <li><a href="#about">About Me</a></li>
-            <li><a href="#education">Education</a></li>
-            <li><a href="#participations">Participations</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-           <li><a href="flip-coin.html">Coin</a></li> 
-            <li><a href="#languages">Languages</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
 
-    <!-- About Section -->
-    <section id="about">
-        <h2 class="section-title">About Me</h2>
-        <div class="section-content about">
-            <img src="photo_1.jpg" alt="Photo of Arvin Asrari">
-            <div class="content">
-                <p>As a dedicated cybersecurity graduate student with hands-on research experience, I am passionate about applying my skills and knowledge to tackle real-world security challenges. My enthusiasm for discovering innovative solutions drives me to contribute to advancing cybersecurity practices through practical application and collaboration on impactful projects.</p>
-            </div>
+    <div class="tool-card">
+      <div class="tool-title"><i class="ico fab fa-linux" aria-hidden="true"></i>Linux</div>
+      <div class="tool-actions">
+        <a href="linux.html"><i class="ico fas fa-terminal"></i>Open</a>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-title"><i class="ico fas fa-th-large" aria-hidden="true"></i>Cards</div>
+      <div class="tool-actions">
+        <a href="cards.html"><i class="ico fas fa-play"></i>Open</a>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-title"><i class="ico fas fa-check-square" aria-hidden="true"></i>To-Do List</div>
+      <div class="tool-actions">
+        <a href="todo.html"><i class="ico fas fa-play"></i>Open</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <section id="education" aria-labelledby="education-title">
+      <h2 class="section-title" id="education-title">Education</h2>
+      <div class="section-content">
+        <div class="timeline">
+          <div class="timeline-item">
+            <h3><i class="fas fa-flask" aria-hidden="true"></i> Research Assistant</h3>
+            <p><strong>Jan 2023 – Present</strong></p>
+            <p>Finding proximity vulnerabilities via selective fuzzing with memory snapshots on Android wireless stacks.</p>
+          </div>
+
+          <div class="timeline-item">
+            <h3><i class="fas fa-chalkboard-teacher" aria-hidden="true"></i> Teaching Assistant</h3>
+            <p><strong>Sept 2023 – Present</strong></p>
+            <p>Lab instruction, grading, and mentorship in advanced security courses and systems topics.</p>
+          </div>
+
+          <div class="timeline-item">
+            <h3><i class="fas fa-book" aria-hidden="true"></i> Key Courses</h3>
+            <p><strong>Completed:</strong></p>
+            <p>Cryptography &amp; Network Security; Advanced Operating Systems; Software Vulnerabilities &amp; Exploits.</p>
+          </div>
         </div>
+      </div>
     </section>
 
-    <!-- Education Section -->
-    <section id="education">
-        <h2 class="section-title">Education</h2>
-        <div class="section-content">
-            <div class="timeline">
-                <!-- Timeline Item 1 -->
-                <div class="timeline-item">
-                    <h3><i class="fas fa-flask"></i> Research Assistant (RA)</h3>
-                    <p><strong>Jan 2023 ‐ Present</strong></p>
-                    <p>Conducting research on “Finding Proximity Vulnerabilities Using Selective Fuzzing with Memory Snapshots.”</p>
-                </div>
-
-                <!-- Timeline Item 2 -->
-                <div class="timeline-item">
-                    <h3><i class="fas fa-chalkboard-teacher"></i> Teaching Assistant (TA)</h3>
-                    <p><strong>Sept 2023 ‐ Present</strong></p>
-                    <p>Assisted with grading and mentoring students in the course “Advanced Security Techniques”.</p>
-                </div>
-
-                <!-- Timeline Item 3 -->
-                <div class="timeline-item">
-                    <h3><i class="fas fa-book"></i> Key Courses</h3>
-                    <p><strong>Completed Courses:</strong></p>
-                    <p> - Cryptography and Network Security</p>
-                    <p> - Advanced Operating Systems</p>
-                    <p> - Software Vulnerabilities and Exploits</p>
-                </div>
+    <section id="projects" aria-labelledby="projects-title">
+      <h2 class="section-title" id="projects-title">Projects</h2>
+      <div class="section-content project-grid">
+        <div class="project-item">
+          <div class="project-header">
+            <i class="fab fa-github project-logo" aria-hidden="true"></i>
+            <div class="project-title-container">
+              <strong class="project-title">Kernel Module Projects</strong>
+              <span class="project-details">Personal Project — Montreal</span>
+              <span class="toggle-icon" aria-hidden="true"></span>
             </div>
-        </div>
-    </section>
-
-    <!-- Participations Section -->
-    <section class="participations" id="participations">
-        <h2 class="section-title">Participations</h2>
-
-        <!-- First Participation: Image on the left, text on the right -->
-    <div class="participation">
-        <img src="1739636759258.jpg" alt="ConUHacks 2025" class="participation-img">
-            <div class="participation-text">
-                <h3>Top 3 Winner, SAP Challenge at ConUHacks 2025, Montreal, Canada (2025)</h3>
-                <p>
-                    Thrilled to share that my team and I secured a top 3 position in the SAP Challenge at ConUHacks 2025! Together with my amazing teammates, Ali Raeisdanaei and Alireza Toghiani Khorasgani, we built an iOS application for wildfire management, designed to coordinate firefighting units using data inputs (CSV files or direct links) and predict future wildfire scenarios using AI models trained on historical environmental data. My primary contribution focused on developing the backend API and designing the server infrastructure to ensure smooth performance and scalability.
-                </p>
-                <p>
-                    Grateful to HackConcordia, SAP, and the event organizers for creating such a fantastic platform to innovate, collaborate, and learn. Looking forward to tackling new challenges and building impactful solutions in the future.
-                </p>
-                <p><strong>Technical Skills:</strong> iOS Development, API Design, Server Infrastructure, AI Model Integration, Data Analysis, Cloud Deployment, Team Collaboration.</p>
-            </div>
-        </div>
-
-
-        <!-- Second Participation: Image on the right, text on the left -->
-        <div class="participation reverse">
-            <img src="photo_northsec.JPG" alt="Northsec 2024" class="participation-img">
-            <div class="participation-text">
-                <h3>Participant, Northsec 2024 CTF Competition, Montreal, Canada (2024)</h3>
-                <p>
-                    Competed in the Northsec 2024 Capture The Flag (CTF) competition, gaining hands‐on experience in cybersecurity challenges.
-                    Focused on brute force and SQL injection techniques, developing a custom dictionary for brute force attacks, and
-                    demonstrating strong analytical, problem-solving, and innovative skills.
-                </p>
-                <p><strong>Technical Skills:</strong> SQLmap, Linux, Bash, SQL, Soldering, Binary Analysis, Nmap.</p>
-            </div>
-        </div>
-
-        <!-- Third Participation: Image on the left, text on the right -->
-        <div class="participation">
-            <img src="photo-athack.jpg" alt="Athack Hackathon 2024" class="participation-img">
-            <div class="participation-text">
-                <h3>Participant, Athack Hackathon 2024, Montreal, Canada (2024)</h3>
-                <p>
-                    Secured 10th place out of 100 teams, demonstrating teamwork, problem-solving, and resilience under pressure.
-                    Participated in encryption and hashing challenges, effectively applying knowledge and self‐study skills.
-                    Successfully broke encryptions and identified embedded flags, showcasing technical aptitude and perseverance.
-                </p>
-                <p><strong>Technical Skills:</strong> Linux, Encryption, Bash, Radar2, Ghidra, Static Analysis, Binary Analysis.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience">
-        <h2 class="section-title">Experience</h2>
-        <div class="section-content">
-            <ul class="experience-list">
-                 <!-- Experience New Item  -->
-                <li>
-                    <div class="experience-item">
-                        <img src="Toronto-Dominion_Bank_logo.svg.png" alt="TD Bank Logo">
-                            <div class="experience-text">
-                                <strong class="toggle">Cybersecurity Intern – Data Loss Prevention (DLP) Team</strong> <span class="position-details">TD Bank, Toronto, Canada (May 2025 – Aug 2025)</span>
-                                 <ul class="details">
-                                    <li>Worked as part of the enterprise DLP team to support data protection initiatives across critical systems and business units.</li>
-                                   <!-- <li>Collaborated with the engineering team and vendor partners to troubleshoot policy issues and refine detection logic based on business requirements.</li>
-                                    <li>Reviewed data classification models, created custom detection rules, and contributed to refining sensitive information types (SITs) for targeted protection.</li>
-                                    <li>Prepared technical reports and documentation outlining policy configurations, testing outcomes, and recommendations for policy enhancements.</li> -->
-                                    <li><strong>Technical Skills:</strong> Data Loss Prevention (DLP), Symantec, Microsoft Purview, Policy Tuning, Data Classification, Cybersecurity Fundamentals, Team Collaboration.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </li>
-                <!-- Experience Item 1 -->
-                <li>
-                    <div class="experience-item">
-                        <img src="test.png" alt="Concordia University Logo">
-                        <div class="experience-text">
-                            <strong class="toggle">Research Assistant</strong> <span class="position-details"> Concordia University, Montreal, Canada (Jan 2024 - Present)</span>
-                            <ul class="details">
-                                <li>Conducted research on memory corruption and Android kernel vulnerabilities, focusing on proximity vulnerabilities in wireless drivers.</li>
-                                <li>Developed a framework to emulate Android Wi-Fi drivers by collecting snapshots from memory and CPU, applying selective fuzzing techniques to identify vulnerabilities.</li>
-                                <li><strong>Technical Skills:</strong> Linux, Kernel, C, Fuzzing, Python, Aircrack-ng, Speed-HPC.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <!-- Experience Item 2 -->
-                <li>
-                    <div class="experience-item">
-                        <img src="test.png" alt="Concordia University Logo">
-                        <div class="experience-text">
-                            <strong class="toggle">Teaching Assistant</strong><span class="position-details"> Concordia University, Montreal, Canada (Jan 2024 - Present)</span>
-                            <ul class="details">
-                                <li>Tutored and instructed lab sessions for master’s courses, enhancing communication and mentorship skills.</li>
-                                <li>Facilitated lab sessions, guided students through complex technical concepts, and graded assignments with precision.</li>
-                                <li>Adapted to various teaching situations, improving problem-solving and communication skills.</li>
-                                <li><strong>Technical Skills:</strong> Machine Learning, Linux, Java, Python, HPC System Administration, Jupyter Notebook, Wireshark, Frida.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <!-- Experience Item 3 -->
-                <li>
-                    <div class="experience-item">
-                        <img src="test2.jpeg" alt="Rayan Pardaz Kavosh Logo">
-                        <div class="experience-text">
-                            <strong class="toggle">Software Engineer</strong><span class="position-details">  Rayan Pardaz Kavosh, Tehran, Iran (Mar 2022 - Dec 2022)</span>
-                            <ul class="details">
-                                <li>Implemented Business Process Management Systems (BPMS) and Deep Digital Process Automation to optimize workflows for banks and businesses.</li>
-                                <li>Designed processes, debugged code, and analyzed data, leading to improved operational efficiency and accuracy.</li>
-                                <li><strong>Technical Skills:</strong> Python, C, Linux, Git, BIZAGI.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <!-- Experience Item 4 -->
-                <li>
-                    <div class="experience-item">
-                        <img src="test3.webp" alt="Barad Innovators Co. Logo">
-                        <div class="experience-text">
-                            <strong class="toggle">IT Technician</strong><span class="position-details"> Barad Innovators Co., Tehran, Iran (Sept 2021 - Dec 2021)</span>
-                            <ul class="details">
-                                <li>Maintained computer and server backups for organizations, ensuring data security and reliability.</li>
-                                <li>Managed critical client relationships, enhancing customer service and communication skills.</li>
-                                <li><strong>Technical Skills:</strong> Python, Ubuntu Linux, Linux tools.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <!-- Experience Item 5 -->
-                <li>
-                    <div class="experience-item">
-                        <img src="test4.png" alt="Iranian Information Technology Organization Logo">
-                        <div class="experience-text">
-                            <strong class="toggle">IT Internship</strong><span class="position-details"> Iranian Information Technology Organization, Tehran, Iran (May 2020 - Jan 2021)</span>
-                            <ul class="details">
-                                <li>Contributed to electronic government policy making, assisting in the development and implementation of IT strategies.</li>
-                                <li>Conducted research on digital transformation and e-government initiatives, providing recommendations for IT infrastructure improvements.</li>
-                                <li>Provided IT support and troubleshooting, improving technical problem-solving abilities.</li>
-                                <li><strong>Technical Skills:</strong> Linux, Wireshark, Bash.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
+          </div>
+          <div class="project-description">
+            <ul>
+              <li>Function redirection, ARM64 instruction patching, controlled kernel panic modules.</li>
+              <li>Deployment scripts for devices; improved debugging workflows.</li>
+              <li><strong>Skills:</strong> C, ARM64, Kernel, Shell.</li>
+              <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/kernel-module-projects" target="_blank" rel="noopener noreferrer">kernel-module-projects</a></li>
             </ul>
+          </div>
         </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <i class="fab fa-github project-logo" aria-hidden="true"></i>
+            <div class="project-title-container">
+              <strong class="project-title">APK Encryption Analysis</strong>
+              <span class="project-details">Personal Project — Montreal</span>
+              <span class="toggle-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="project-description">
+            <ul>
+              <li>Automated static/dynamic analysis to detect ciphers and native lib usage.</li>
+              <li>Decompile, grep, and device-side probes with adb + radare2.</li>
+              <li><strong>Skills:</strong> Bash, radare2, apktool, adb.</li>
+              <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/APK-Encryption-Analysis" target="_blank" rel="noopener noreferrer">APK-Encryption-Analysis</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <i class="fab fa-github project-logo" aria-hidden="true"></i>
+            <div class="project-title-container">
+              <strong class="project-title">Kite-based Wi-Fi &amp; LoRa System</strong>
+              <span class="project-details">Personal Project — Montreal</span>
+              <span class="toggle-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="project-description">
+            <ul>
+              <li>Raspberry Pi AP + scanner; LoRa via ESP32; OLED status.</li>
+              <li>Battery-optimized, field-deployable rig.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <i class="fab fa-github project-logo" aria-hidden="true"></i>
+            <div class="project-title-container">
+              <strong class="project-title">Docker Version Checker</strong>
+              <span class="project-details">Course Project — Montreal</span>
+              <span class="toggle-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="project-description">
+            <ul>
+              <li>Detects and updates Docker on Debian-based distros.</li>
+              <li><strong>Skills:</strong> Bash, Docker, Sysadmin.</li>
+              <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/checkdocker-version" target="_blank" rel="noopener noreferrer">checkdocker-version</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <i class="fab fa-github project-logo" aria-hidden="true"></i>
+            <div class="project-title-container">
+              <strong class="project-title">GWO for Kernel-Level Security</strong>
+              <span class="project-details">Bachelor’s Final Project — Tehran</span>
+              <span class="toggle-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="project-description">
+            <ul>
+              <li>Optimized ACLs/SELinux/AppArmor trade-offs with Grey Wolf Optimizer.</li>
+              <li><strong>Skills:</strong> Python, Security Policies.</li>
+              <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/Grey-Wolf-Optimizer" target="_blank" rel="noopener noreferrer">Grey-Wolf-Optimizer</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <i class="fab fa-github project-logo" aria-hidden="true"></i>
+            <div class="project-title-container">
+              <strong class="project-title">Tic-Tac-Toe (Minimax)</strong>
+              <span class="project-details">Bachelor’s Project — Tehran</span>
+              <span class="toggle-icon" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="project-description">
+            <ul>
+              <li>Classic game with optimal AI decision-making.</li>
+              <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/tic-tac-toe" target="_blank" rel="noopener noreferrer">tic-tac-toe</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects">
-        <h2 class="section-title">Projects</h2>
-        <div class="section-content project-grid">
-            <!-- Project Item 1 -->
-            <div class="project-item">
-                <div class="project-header">
-                    <div class="project-logo-container">
-                        <i class="fab fa-github project-logo"></i>
-                    </div>
-                    <div class="project-title-container">
-                        <strong class="project-title">Kernel Module Projects</strong>
-                        <span class="project-details">Montreal, Canada (Personal Project)</span>
-                        <span class="toggle-icon"></span>
-                    </div>
-                </div>
-                <div class="project-description">
-                    <ul>
-                        <li>Developed multiple kernel modules, including function redirection, ARM64 instruction modification, and kernel panic triggers, to demonstrate advanced kernel programming techniques.</li>
-                        <li>Created scripts for deploying and running kernel modules on devices, enhancing automation and debugging processes.</li>
-                        <li><strong>Technical Skills:</strong> C, Kernel programming, ARM64, Shell scripting.</li>
-                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/kernel-module-projects" target="_blank">kernel-module-projects</a></li>
-                    </ul>
-                </div>
+    <section id="experience" aria-labelledby="experience-title">
+      <h2 class="section-title" id="experience-title">Experience</h2>
+      <div class="section-content">
+        <ul class="experience-list">
+          <li>
+            <div class="experience-item">
+              <img src="Toronto-Dominion_Bank_logo.svg.png" alt="TD Bank logo" width="60" height="60" loading="lazy" />
+              <div class="experience-text">
+                <strong class="toggle">Cybersecurity Intern — DLP</strong>
+                <span class="position-details">TD Bank, Toronto — May 2025 – Aug 2025</span>
+                <ul class="details">
+                  <li>Enterprise data protection policy tuning and triage.</li>
+                  <li>Skills: DLP (Symantec, Purview), data classification.</li>
+                </ul>
+              </div>
             </div>
+          </li>
 
-            <!-- Project Item 2 -->
-            <div class="project-item">
-                <div class="project-header">
-                    <div class="project-logo-container">
-                        <i class="fab fa-github project-logo"></i>
-                    </div>
-                    <div class="project-title-container">
-                        <strong class="project-title">APK Encryption Analysis</strong>
-                        <span class="project-details">Montreal, Canada (Personal Project)</span>
-                        <span class="toggle-icon"></span>
-                    </div>
-                </div>
-                <div class="project-description">
-                    <ul>
-                        <li>Automated the analysis of APK files to detect encryption usage and analyze native libraries, utilizing radare2 and readelf for in-depth examination.</li>
-                        <li>Developed scripts to decompile APKs, search for encryption keywords, and perform dynamic analysis on connected mobile devices.</li>
-                        <li><strong>Technical Skills:</strong> Shell scripting, radare2, apktool, adb.</li>
-                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/APK-Encryption-Analysis" target="_blank">APK-Encryption-Analysis</a></li>
-                    </ul>
-                </div>
+          <li>
+            <div class="experience-item">
+              <img src="test.png" alt="Concordia logo" width="60" height="60" loading="lazy" />
+              <div class="experience-text">
+                <strong class="toggle">Research Assistant</strong>
+                <span class="position-details">Concordia University — Jan 2024 – Present</span>
+                <ul class="details">
+                  <li>Android kernel/wireless fuzzing with snapshot-guided harnesses.</li>
+                  <li>Skills: Linux kernel, C, fuzzing, Python.</li>
+                </ul>
+              </div>
             </div>
+          </li>
 
-            <!-- Project Item 3 -->
-            <div class="project-item">
-                <div class="project-header">
-                    <div class="project-logo-container">
-                        <i class="fab fa-github project-logo"></i>
-                    </div>
-                    <div class="project-title-container">
-                        <strong class="project-title">Kite-based Wi-Fi and LoRa Communication System</strong>
-                        <span class="project-details">Montreal, Canada (Personal Project)</span>
-                        <span class="toggle-icon"></span>
-                    </div>
-                </div>
-                <div class="project-description">
-                    <ul>
-                        <li>Developed a communication system using a Raspberry Pi for real-time Wi-Fi scanning and access point creation, combined with long-range LoRa communication via an ESP32 module.</li>
-                        <li>Integrated a 0.96-inch OLED display for network information and optimized power usage with a LiPo battery for sustained operation.</li>
-                        <li><strong>Technical Skills:</strong> Raspberry Pi, ESP32, Arduino IDE, Wi-Fi, LoRa, OLED display integration, power management.</li>
-                    </ul>
-                </div>
+          <li>
+            <div class="experience-item">
+              <img src="test.png" alt="Concordia logo" width="60" height="60" loading="lazy" />
+              <div class="experience-text">
+                <strong class="toggle">Teaching Assistant</strong>
+                <span class="position-details">Concordia University — Jan 2024 – Present</span>
+                <ul class="details">
+                  <li>Graduate labs, grading, mentorship in advanced security.</li>
+                  <li>Skills: Linux, Java/Python, HPC admin, Wireshark, Frida.</li>
+                </ul>
+              </div>
             </div>
+          </li>
 
-            <!-- Project Item 4 -->
-            <div class="project-item">
-                <div class="project-header">
-                    <div class="project-logo-container">
-                        <i class="fab fa-github project-logo"></i>
-                    </div>
-                    <div class="project-title-container">
-                        <strong class="project-title">Docker Version Checker</strong>
-                        <span class="project-details">Montreal, Canada (Course Project)</span>
-                        <span class="toggle-icon"></span>
-                    </div>
-                </div>
-                <div class="project-description">
-                    <ul>
-                        <li>Developed a Bash script to check and update Docker versions on Debian-based Linux distributions, ensuring systems remain secure and up-to-date.</li>
-                        <li>Automated the version check and update process, enhancing system administration efficiency.</li>
-                        <li><strong>Technical Skills:</strong> Bash scripting, Docker, System administration.</li>
-                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/checkdocker-version" target="_blank">checkdocker-version</a></li>
-                    </ul>
-                </div>
+          <li>
+            <div class="experience-item">
+              <img src="test2.jpeg" alt="Rayan Pardaz Kavosh logo" width="60" height="60" loading="lazy" />
+              <div class="experience-text">
+                <strong class="toggle">Software Engineer</strong>
+                <span class="position-details">Rayan Pardaz Kavosh — Mar 2022 – Dec 2022</span>
+                <ul class="details">
+                  <li>BPMS/DDPA implementations for financial workflows.</li>
+                  <li>Skills: Python, C, Linux, Git, Bizagi.</li>
+                </ul>
+              </div>
             </div>
+          </li>
 
-            <!-- Project Item 5 -->
-            <div class="project-item">
-                <div class="project-header">
-                    <div class="project-logo-container">
-                        <i class="fab fa-github project-logo"></i>
-                    </div>
-                    <div class="project-title-container">
-                        <strong class="project-title">Optimization of Kernel-Level Security Mechanisms Using the Grey Wolf Optimizer (GWO) Algorithm</strong>
-                        <span class="project-details">Tehran, Iran (Bachelor’s Final Project)</span>
-                        <span class="toggle-icon"></span>
-                    </div>
-                </div>
-                <div class="project-description">
-                    <ul>
-                        <li>Developed an optimization model for kernel-level security mechanisms using the GWO algorithm to balance security and performance.</li>
-                        <li>Implemented and evaluated GWO-optimized security configurations for Access Control Lists (ACLs), SELinux policies, and AppArmor profiles, demonstrating significant improvements in security effectiveness and system performance.</li>
-                        <li><strong>Technical Skills:</strong> Python, Security policies, Kernel modules.</li>
-                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/Grey-Wolf-Optimizer" target="_blank">Grey-Wolf-Optimizer</a></li>
-                    </ul>
-                </div>
+          <li>
+            <div class="experience-item">
+              <img src="test3.webp" alt="Barad Innovators logo" width="60" height="60" loading="lazy" />
+              <div class="experience-text">
+                <strong class="toggle">IT Technician</strong>
+                <span class="position-details">Barad Innovators — Sept 2021 – Dec 2021</span>
+                <ul class="details">
+                  <li>Server/endpoint backups and client support.</li>
+                  <li>Skills: Ubuntu, scripting, diagnostics.</li>
+                </ul>
+              </div>
             </div>
+          </li>
 
-            <!-- Project Item 6 -->
-            <div class="project-item">
-                <div class="project-header">
-                    <div class="project-logo-container">
-                        <i class="fab fa-github project-logo"></i>
-                    </div>
-                    <div class="project-title-container">
-                        <strong class="project-title">Tic-Tac-Toe Game using Minimax Algorithm</strong>
-                        <span class="project-details">Tehran, Iran (Bachelor’s Project)</span>
-                        <span class="toggle-icon"></span>
-                    </div>
-                </div>
-                <div class="project-description">
-                    <ul>
-                        <li>Developed a Python implementation of Tic-Tac-Toe with an AI opponent using the minimax algorithm for optimal decision-making.</li>
-                        <li>Created a user-friendly interface, making the game accessible for both human and computer players.</li>
-                        <li><strong>Technical Skills:</strong> Python, Algorithm design, Game development.</li>
-                        <li><strong>GitHub:</strong> <a href="https://github.com/arvinasrari/tic-tac-toe" target="_blank">tic-tac-toe</a></li>
-                    </ul>
-                </div>
+          <li>
+            <div class="experience-item">
+              <img src="test4.png" alt="IITO logo" width="60" height="60" loading="lazy" />
+              <div class="experience-text">
+                <strong class="toggle">IT Intern</strong>
+                <span class="position-details">Iranian Information Technology Organization — May 2020 – Jan 2021</span>
+                <ul class="details">
+                  <li>E-government research and IT support.</li>
+                  <li>Skills: Linux, Wireshark, Bash.</li>
+                </ul>
+              </div>
             </div>
-        </div>
+          </li>
+
+        </ul>
+      </div>
     </section>
 
-    <!-- Languages Section -->
-    <section id="languages">
-        <h2 class="section-title">Languages</h2>
-        <div class="section-content languages">
-            <!-- Language Item 1 -->
-            <div class="language-item">
-                <div class="progress-circle" data-progress="100" style="--progress:324;">
-                    <span class="progress-value">100%</span>
-                </div>
-                <p>English<br><small>Professional proficiency (IELTS: 7.0)</small></p>
-            </div>
-            <!-- Language Item 2 -->
-            <div class="language-item">
-                <div class="progress-circle" data-progress="100" style="--progress:360;">
-                    <span class="progress-value">100%</span>
-                </div>
-                <p>Persian<br><small>Native proficiency</small></p>
-            </div>
-            <!-- Language Item 3 -->
-            <div class="language-item">
-                <div class="progress-circle" data-progress="75" style="--progress:216;">
-                    <span class="progress-value">75%</span>
-                </div>
-                <p>French<br><small>Professional proficiency (B1)</small></p>
-            </div>
-            <!-- Language Item 4 -->
-            <div class="language-item">
-                <div class="progress-circle" data-progress="75" style="--progress:270;">
-                    <span class="progress-value">75%</span>
-                </div>
-                <p>German<br><small>Professional proficiency (B2)</small></p>
-            </div>
+ <section id="participations" aria-labelledby="participations-title">
+  <h2 class="section-title" id="participations-title">Participations</h2>
+  <div class="section-content">
+    <div class="participations-grid">
+
+      <!-- 1) NorthSec 2025 -->
+      <article class="participation-card">
+        <img src="photo_northsec.jpg" alt="NorthSec 2025 CTF" class="participation-img" loading="lazy" decoding="async">
+        <div class="participation-text">
+          <h3>Participant, NorthSec 2025 CTF — Montreal, Canada (2025)</h3>
+          <p class="clamp">
+            Hands-on attack/defense challenges across web, pwn, crypto, and forensics. Focused on methodical recon,
+            clean note-taking, and quick triage to maximize team points.
+          </p>
+          <p><strong>Technical Skills:</strong> Linux, Burp Suite, Wireshark, Python, Reverse Engineering, Crypto, Forensics.</p>
         </div>
+      </article>
+
+      <!-- 2) ConUHacks 2025 (SAP challenge top 3) -->
+      <article class="participation-card right">
+        <img src="1739636759258.jpg" alt="ConUHacks 2025 — SAP Challenge" class="participation-img" loading="lazy" decoding="async">
+        <div class="participation-text">
+          <h3>Top 3 — SAP Challenge, ConUHacks 2025 — Montreal, Canada (2025)</h3>
+          <p class="clamp">
+            Built an iOS wildfire operations tool with data ingestion and forecasting. I owned the backend API and
+            infra to keep the pipeline stable and scalable.
+          </p>
+          <p><strong>Technical Skills:</strong> API Design, Cloud Infra, Data Ingestion, iOS Integration, Team Collaboration.</p>
+        </div>
+      </article>
+
+      <!-- 3) PolyCyber 2025 CTF -->
+      <article class="participation-card">
+        <img src="polycyber-2025.jpg" alt="PolyCyber 2025 CTF at Polytechnique Montréal" class="participation-img" loading="lazy" decoding="async">
+        <div class="participation-text">
+          <h3>Participant, PolyCyber 2025 CTF — Polytechnique Montréal (2025)</h3>
+          <p class="clamp">
+            University-hosted CTF emphasizing practical exploitation and precise write-ups. Targeted web vulns,
+            binary puzzles, and lightweight reversing under time pressure.
+          </p>
+          <p><strong>Technical Skills:</strong> Nmap, SQLi/IDOR, Ghidra, Radare2, Python Tooling, Write-up Discipline.</p>
+        </div>
+      </article>
+
+      <!-- 4) NorthSec 2024 -->
+      <article class="participation-card right">
+        <img src="EB_05106.jpg" alt="NorthSec 2024 CTF" class="participation-img" loading="lazy" decoding="async">
+        <div class="participation-text">
+          <h3>Participant, NorthSec 2024 CTF — Montreal, Canada (2024)</h3>
+          <p class="clamp">
+            Focused on brute-force strategy and SQL injection tracks. Built custom dictionaries and repeatable
+            workflows to iterate quickly and learn from misses.
+          </p>
+          <p><strong>Technical Skills:</strong> SQLmap, Linux, Bash, SQL, Binary Analysis, Nmap.</p>
+        </div>
+      </article>
+
+      <!-- 5) INNOVATE Montreal 2025 — Volunteer -->
+      <article class="participation-card">
+        <img src="innovate-2025.jpg" alt="INNOVATE Montreal 2025 volunteer" class="participation-img" loading="lazy" decoding="async">
+        <div class="participation-text">
+          <h3>Volunteer, INNOVATE Montreal 2025 — Iranian Network of Visionaries & Advanced Technologists</h3>
+          <p class="clamp">
+            Supported a community event connecting founders, technologists, and industry mentors. Helped with
+            logistics, startup pitch flow, and attendee coordination across sessions.
+          </p>
+          <p><strong>Event Highlights:</strong> Startup Pitch, Fireside Chats, Networking with VCs, mentors, and operators.</p>
+        </div>
+      </article>
+
+      <!-- 6) Athack Hackathon 2024 -->
+      <article class="participation-card right">
+        <img src="photo-athack.jpg" alt="Athack Hackathon 2024" class="participation-img" loading="lazy" decoding="async">
+        <div class="participation-text">
+          <h3>Participant, Athack Hackathon — Montreal, Canada (2024)</h3>
+          <p class="clamp">
+            Placed 10th/100 teams. Cryptography and hashing challenges under tight deadlines — leaned on clear
+            team roles and quick experimentation.
+          </p>
+          <p><strong>Technical Skills:</strong> Linux, Encryption, Bash, Radare2, Ghidra, Static & Binary Analysis.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+    <section id="languages" aria-labelledby="languages-title">
+      <h2 class="section-title" id="languages-title">Languages</h2>
+      <div class="section-content languages">
+        <div class="language-item">
+          <div class="progress-circle" data-progress="100">
+            <span class="progress-value">100%</span>
+          </div>
+          <p>English<br /><small>Professional proficiency (IELTS 7.0)</small></p>
+        </div>
+
+        <div class="language-item">
+          <div class="progress-circle" data-progress="100">
+            <span class="progress-value">100%</span>
+          </div>
+          <p>Persian<br /><small>Native proficiency</small></p>
+        </div>
+
+        <div class="language-item">
+          <div class="progress-circle" data-progress="75">
+            <span class="progress-value">75%</span>
+          </div>
+          <p>French<br /><small>Professional proficiency (B1)</small></p>
+        </div>
+
+        <div class="language-item">
+          <div class="progress-circle" data-progress="75">
+            <span class="progress-value">75%</span>
+          </div>
+          <p>German<br /><small>Professional proficiency (B2)</small></p>
+        </div>
+      </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <h2 class="section-title">Contact</h2>
-        <div class="section-content contact-content">
-            <div class="contact-item">
-                <a href="mailto:arvin@asrar.io" target="_blank">
-                    <i class="fas fa-envelope contact-icon" aria-hidden="true"></i>
-                    <span class="contact-info">arvin@asrar.io</span>
-                </a>
-            </div>
-            <div class="contact-item">
-                <a href="https://github.com/arvinasrari" target="_blank">
-                    <i class="fab fa-github contact-icon" aria-hidden="true"></i>
-                    <span class="contact-info">github.com/arvinasrari</span>
-                </a>
-            </div>
-            <div class="contact-item">
-                <a href="https://linkedin.com/in/arvin-asrari" target="_blank">
-                    <i class="fab fa-linkedin contact-icon" aria-hidden="true"></i>
-                    <span class="contact-info">linkedin.com/arvin-asrari</span>
-                </a>
-            </div>
+    <section id="contact" aria-labelledby="contact-title">
+      <h2 class="section-title" id="contact-title">Contact</h2>
+      <div class="section-content contact-content">
+        <div class="contact-item">
+          <a href="mailto:arvin@asrar.io" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-envelope contact-icon" aria-hidden="true"></i>
+            <span class="contact-info">arvin@asrar.io</span>
+          </a>
         </div>
+
+        <div class="contact-item">
+          <a href="https://github.com/arvinasrari" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github contact-icon" aria-hidden="true"></i>
+            <span class="contact-info">github.com/arvinasrari</span>
+          </a>
+        </div>
+
+        <div class="contact-item">
+          <a href="https://linkedin.com/in/arvin-asrari" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-linkedin contact-icon" aria-hidden="true"></i>
+            <span class="contact-info">linkedin.com/arvin-asrari</span>
+          </a>
+        </div>
+      </div>
     </section>
 
-    <!-- JavaScript for Navigation Toggle -->
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('nav ul');
+  </main>
 
-        menuToggle.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
-    </script>
-
-    <!-- JavaScript for Experience Toggle -->
-    <script>
-        document.querySelectorAll('.experience-text .toggle').forEach(function(toggle) {
-            toggle.addEventListener('click', function() {
-                const parentLi = this.closest('li');
-                parentLi.classList.toggle('active');
-            });
-        });
-    </script>
-
-    <!-- JavaScript for Progress Circles -->
-    <script>
-        document.querySelectorAll('.progress-circle').forEach(function(circle) {
-            var progress = circle.getAttribute('data-progress');
-            var degrees = (progress / 100) * 360;
-            circle.style.setProperty('--progress', degrees);
-            circle.querySelector('.progress-value').textContent = progress + '%';
-        });
-    </script>
-
-    <!-- JavaScript for Project Toggle -->
-    <script>
-        document.querySelectorAll('.project-header').forEach(function(header) {
-            header.addEventListener('click', function() {
-                const projectItem = this.parentElement;
-                projectItem.classList.toggle('active');
-            });
-        });
-    </script>
-
+  <script src="main.js" defer></script>
 </body>
 </html>

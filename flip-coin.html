@@ -1,361 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Flip a Coin - The Best Solution for Important Decisions">
-    <title>Flip a Coin</title>
-    <style>
-        /* General Styling */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ff9800, #f44336);
-            color: white;
-            text-align: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Flip a Coin - The Best Solution for Important Decisions" />
+  <title>Flip a Coin • Arvin Asrari</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="" crossorigin="anonymous" />
 
 
-            /* Navigation Bar */
-    nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        background: #333;
-        color: #fff;
-        padding: 15px 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
+  <link rel="stylesheet" href="styles.css"/>
+
+  <style>
+    :root{--heads:#2196f3;--tails:#e91e63}
+    .coin-wrap{display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;width:100%;max-width:720px;margin:0 auto;background:var(--surface);border-radius:12px;box-shadow:var(--shadow-md);padding:24px}
+    .coin-title{font-size:22px;font-weight:600;text-align:center}
+    .coin-phrase{font-size:16px;color:var(--muted);text-align:center;margin-top:-4px}
+    .coin-stage{width:220px;height:220px;display:grid;place-items:center}
+    .coin-flat{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 4px rgba(255,255,255,.15),0 10px 30px rgba(0,0,0,.18);background:var(--accent);transition:background .25s ease}
+    .coin-flat.is-heads{background:var(--heads)}
+    .coin-flat.is-tails{background:var(--tails)}
+    .coin-label{font-weight:800;font-size:28px;letter-spacing:.6px;color:#111}
+    .spinning{animation:spin2d 900ms ease-in-out}
+    @keyframes spin2d{0%{transform:rotate(0deg)}100%{transform:rotate(1080deg)}}
+    .coin-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:4px}
+    .btn{appearance:none;border:0;border-radius:10px;background:#333;color:#fff;padding:10px 14px;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.2);background:#444}
+    .btn-accent{background:var(--accent);color:#111}
+    .btn-accent:hover{background:#ffa51f}
+    .coin-result{min-height:28px;font-size:18px;font-weight:600;text-align:center}
+    .stat{display:flex;gap:10px;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
+    .stat b{color:var(--text)}
+    @media (max-width:768px){
+      .coin-wrap{max-width:92%;padding:18px}
+      .coin-stage{width:180px;height:180px}
+      .coin-label{font-size:24px}
     }
-
-    .nav-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-        width: 100%;
-    }
-
-    nav ul {
-        list-style: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    nav ul li {
-        margin: 0 20px;
-    }
-
-    nav ul li a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 18px;
-        transition: color 0.3s ease;
-    }
-
-    nav ul li a:hover {
-        color: #ddd;
-    }
-
-    /* Hamburger Menu (Hidden by Default on Desktop) */
-    .menu-toggle {
-        display: none;
-        cursor: pointer;
-    }
-
-    .menu-toggle .bar {
-        display: block;
-        width: 25px;
-        height: 3px;
-        margin: 5px auto;
-        background-color: black;
-        transition: all 0.3s ease;
-    }
-
-    /* Mobile Navigation */
-    @media (max-width: 768px) {
-        .menu-toggle {
-            display: block; /* Show hamburger menu on mobile */
-            position: absolute;
-            right: 20px;
-            top: 15px;
-        }
-
-        nav ul {
-            display: none; /* Hide navigation links on mobile by default */
-            flex-direction: column;
-            position: absolute;
-            top: 60px; /* Adjust based on nav height */
-            left: 0;
-            background: #333;
-            width: 100%;
-            text-align: center;
-            transition: all 0.3s ease;
-            z-index: 999; /* Ensure it appears above other content */
-        }
-
-        nav ul.active {
-            display: flex; /* Show navigation when active class is added */
-        }
-
-        nav ul li {
-            margin: 10px 0; /* Add space between links on mobile */
-        }
-
-        nav ul li a {
-            font-size: 20px; /* Increase link size for better touchability */
-            padding: 10px 0; /* Increase clickable area */
-        }
-    }
-
-        #flip-coin-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Title Styling */
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-            padding: 0 20px;
-        }
-
-        /* Coin Container */
-        #coin-container {
-            width: 200px;
-            height: 200px;
-            perspective: 1000px;
-            margin-bottom: 20px;
-        }
-
-        #coin {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d; /* Enables 3D effect */
-            animation: none;
-        }
-
-        .side {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            align-items: flex-end;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* Different colors for each side */
-        .heads {
-            background: #2196f3; /* Blue */
-            transform: rotateY(0deg);
-        }
-
-        .tails {
-            background: #e91e63; /* Pink */
-            transform: rotateY(180deg);
-        }
-
-        /* Coin Animation */
-        @keyframes flip-heads {
-            0% { transform: rotateY(0); }
-            100% { transform: rotateY(1080deg); } /* Ends with Heads (default) facing up */
-        }
-
-        @keyframes flip-tails {
-            0% { transform: rotateY(0); }
-            100% { transform: rotateY(1080deg) rotateY(180deg); } /* Ends with Tails facing up */
-        }
-
-        /* Controls Styling */
-        #controls {
-            margin: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #fff;
-            background-color: #333;
-            transition: background-color 0.3s ease, transform 0.2s;
-        }
-
-        button:hover {
-            background-color: #555;
-            transform: scale(1.1);
-        }
-
-        #result-text {
-            font-size: 22px;
-            margin: 20px;
-        }
-
-        #play-again-button {
-            padding: 10px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #fff;
-            background-color: #f44336;
-            margin-top: 20px;
-            transition: background-color 0.3s ease, transform 0.2s;
-        }
-
-        #play-again-button:hover {
-            background-color: #d32f2f;
-            transform: scale(1.1);
-        }
-
-        /* Responsive Styling */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-
-            #coin-container {
-                width: 150px;
-                height: 150px;
-            }
-
-            .side {
-                font-size: 18px;
-                padding-bottom: 8px;
-            }
-
-            button {
-                font-size: 16px;
-                padding: 8px 16px;
-            }
-
-            #result-text {
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            #coin-container {
-                width: 120px;
-                height: 120px;
-            }
-
-            .side {
-                font-size: 16px;
-                padding-bottom: 5px;
-            }
-
-            button {
-                font-size: 14px;
-                padding: 6px 12px;
-            }
-
-            #result-text {
-                font-size: 16px;
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <div id="flip-coin-container">
-        <header>
-            <h1>Best Solution to Decide the Important Decisions of Life</h1>
-        </header>
-    <div class="menu-toggle" id="mobile-menu">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-    </div>
-        
-        <nav>
-            <ul>
-                <li><a href="index.html">About Me</a></li>
-                <li><a href="index.html">Education</a></li>
-                <li><a href="index.html">Participations</a></li>
-                <li><a href="index.html">Experience</a></li>
-                <li><a href="index.html">Projects</a></li>
-               <li><a href="flip-coin.html">Coin</a></li> 
-                <li><a href="index.html">Languages</a></li>
-                <li><a href="index.html">Contact</a></li>
-            </ul>
-        </nav>
-        <main>
-            <div id="coin-container">
-                <div id="coin">
-                    <div class="side heads">Heads</div>
-                    <div class="side tails">Tails</div>
-                </div>
-            </div>
-            <div id="controls">
-                <button id="heads-button">Heads</button>
-                <button id="tails-button">Tails</button>
-            </div>
-            <p id="result-text"></p>
-            <button id="play-again-button" style="display: none;">Play Again</button>
-        </main>
-    </div>
-    <script>
-        const coin = document.getElementById("coin");
-        const headsButton = document.getElementById("heads-button");
-        const tailsButton = document.getElementById("tails-button");
-        const resultText = document.getElementById("result-text");
-        const playAgainButton = document.getElementById("play-again-button");
 
-        function flipCoin(userGuess) {
-            // Randomly determine outcome
-            const outcome = Math.random() < 0.5 ? "heads" : "tails";
+  <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </button>
 
-            // Start animation
-            coin.style.animation = "none";
-            setTimeout(() => {
-                coin.style.animation = `flip-${outcome} 3s forwards`;
-            }, 100);
+ <nav id="primary-nav" aria-label="Primary">
+    <ul>
+      <li><a href="index.html#about"><i class="nav-ico fas fa-user"></i>About</a></li>
 
-            // Display result after animation
-            setTimeout(() => {
-                const win = userGuess === outcome;
-                resultText.textContent = win
-                    ? `You guessed ${userGuess}. It's ${outcome.toUpperCase()}! You win! 🎉`
-                    : `You guessed ${userGuess}. It's ${outcome.toUpperCase()}. You lose. 😢`;
-                resultText.style.color = win ? "green" : "red";
-                playAgainButton.style.display = "block";
-            }, 3000);
-        }
+      <li class="has-dropdown">
+        <a href="#tools"><i class="nav-ico fas fa-toolbox"></i>Tools</a>
+        <div class="dropdown" role="menu" aria-label="Tools menu">
+          <a href="flip-coin.html"><span class="ico fas fa-coins"></span>Coin</a>
+          <a href="linux.html"><span class="ico fab fa-linux"></span>Linux</a>
+          <a href="cards.html"><span class="ico fas fa-th-large"></span>Cards</a>
+          <a href="todo.html"><span class="ico fas fa-check-square"></span>To-Do List</a>
+        </div>
+      </li>
 
-        headsButton.addEventListener("click", () => flipCoin("heads"));
-        tailsButton.addEventListener("click", () => flipCoin("tails"));
+      <li><a href="index.html#education"><i class="nav-ico fas fa-graduation-cap"></i>Education</a></li>
+      <li><a href="index.html#projects"><i class="nav-ico fas fa-folder-open"></i>Projects</a></li>
+      <li><a href="index.html#experience"><i class="nav-ico fas fa-briefcase"></i>Experience</a></li>
+      <li><a href="index.html#participations"><i class="nav-ico fas fa-award"></i>Participations</a></li>
+      <li><a href="index.html#languages"><i class="nav-ico fas fa-language"></i>Languages</a></li>
+      <li><a href="index.html#contact"><i class="nav-ico fas fa-envelope"></i>Contact</a></li>
+    </ul>
+  </nav>
 
-        playAgainButton.addEventListener("click", () => {
-            resultText.textContent = "";
-            playAgainButton.style.display = "none";
-        });
-    </script>
+  <main id="snap">
+    <section id="coin">
+      <div class="coin-wrap" role="region" aria-labelledby="coin-title">
+        <h1 class="coin-title" id="coin-title">Flip a Coin</h1>
+        <p class="coin-phrase">Best Solution to Decide the Important Decisions of Life</p>
+
+        <div class="coin-stage" aria-hidden="true">
+          <div id="coinEl" class="coin-flat">
+            <span id="coinLabel" class="coin-label">READY</span>
+          </div>
+        </div>
+
+        <div class="coin-controls">
+          <button id="btnFlip" class="btn btn-accent">Flip</button>
+          <button id="btnReset" class="btn" style="display:none">Reset</button>
+        </div>
+
+        <p id="resultTxt" class="coin-result" aria-live="polite"></p>
+
+        <div class="stat">
+          <span>Flips: <b id="sFlips">0</b></span>
+          <span>|</span>
+          <span>Heads: <b id="sHeads">0</b></span>
+          <span>|</span>
+          <span>Tails: <b id="sTails">0</b></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="main.js" defer></script>
+  <script>
+    const coin=document.getElementById('coinEl');
+    const coinLabel=document.getElementById('coinLabel');
+    const btnFlip=document.getElementById('btnFlip');
+    const btnReset=document.getElementById('btnReset');
+    const resultTxt=document.getElementById('resultTxt');
+    const sFlips=document.getElementById('sFlips');
+    const sHeads=document.getElementById('sHeads');
+    const sTails=document.getElementById('sTails');
+    let total=0,heads=0,tails=0,animating=false;
+    function disableControls(d){btnFlip.disabled=d;btnFlip.style.opacity=d?.7:1;btnFlip.style.cursor=d?'not-allowed':'pointer'}
+    function updateStats(){sFlips.textContent=String(total);sHeads.textContent=String(heads);sTails.textContent=String(tails)}
+    function flip(){
+      if(animating)return;
+      animating=true;disableControls(true);resultTxt.textContent='';
+      coin.classList.remove('spinning','is-heads','is-tails');void coin.offsetWidth;coin.classList.add('spinning');
+      setTimeout(()=>{const outcome=Math.random()<.5?'HEADS':'TAILS';
+        coin.classList.remove('is-heads','is-tails');
+        coin.classList.add(outcome==='HEADS'?'is-heads':'is-tails');
+        coinLabel.textContent=outcome;
+        total++;if(outcome==='HEADS')heads++;else tails++;updateStats();
+        resultTxt.textContent=`It's ${outcome}!`;btnReset.style.display='inline-flex';
+        animating=false;disableControls(false);
+      },920);
+    }
+    function reset(){resultTxt.textContent='';coinLabel.textContent='READY';coin.classList.remove('spinning','is-heads','is-tails');btnReset.style.display='none'}
+    btnFlip.addEventListener('click',flip);
+    btnReset.addEventListener('click',reset);
+  </script>
 </body>
 </html>

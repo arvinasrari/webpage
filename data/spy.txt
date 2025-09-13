@@ -1,0 +1,10 @@
+Airport
+Hospital
+University
+Bank
+Beach
+Space Station
+Restaurant
+Embassy
+Theater
+Zoo

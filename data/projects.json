@@ -1,0 +1,75 @@
+[
+  {
+    "title": "Cybersecurity Certificate (CC)",
+    "desc": "Completed a structured certificate covering network fundamentals, threat modeling, incident response, and secure architecture basics.",
+    "tags": ["Certification", "Cybersecurity"],
+    "progress": 100,
+    "status": "done",
+    "icon": "fas fa-certificate"
+  },
+  {
+    "title": "Portfolio Website Refresh (v2)",
+    "desc": "Deployed a redesigned, mobile-friendly portfolio with improved navigation, accessibility, and performance tuning.",
+    "tags": ["Web", "Portfolio", "UI"],
+    "progress": 100,
+    "status": "done",
+    "icon": "fas fa-globe"
+  },
+  {
+    "title": "Self-Hosted VPN",
+    "desc": "Built and validated a private VPN stack with server hardening, client profiles, and checks for DNS/IPv6 leak protection.",
+    "tags": ["Security", "Networking", "Infra"],
+    "progress": 100,
+    "status": "done",
+    "icon": "fas fa-shield-alt"
+  },
+
+  {
+    "title": "CompTIA Security+ (Sec+) Prep",
+    "desc": "Active study plan with labs and practice exams—focus on risk management, network security, identity, and crypto basics.",
+    "tags": ["Certification", "Study"],
+    "progress": 45,
+    "status": "ongoing",
+    "icon": "fas fa-book"
+  },
+  {
+    "title": "Master’s Thesis — Blockchain for Wind Farm Coordination",
+    "desc": "Exploring permissioned blockchain to coordinate wind turbine operations and energy dispatch: smart contracts for bidding/settlement, telemetry integrity for turbines/SCADA, and secure provenance for maintenance data.",
+    "tags": ["Research", "Blockchain", "Energy", "Smart Grid", "IoT", "Renewables"],
+    "progress": 35,
+    "status": "ongoing",
+    "icon": "fas fa-wind"
+  },
+  {
+    "title": "USB HID Automation Board (Rubber Ducky-style)",
+    "desc": "Designing a microcontroller-based HID board and crafting scripted payloads; testing in controlled, permissioned environments.",
+    "tags": ["Hardware", "Security", "USB"],
+    "progress": 50,
+    "status": "ongoing",
+    "icon": "fas fa-microchip"
+  },
+  {
+    "title": "Custom Wi-Fi Access-Point Board",
+    "desc": "Board bring-up and wireless tuning; exploring firmware options, radios, and stability under varied client loads.",
+    "tags": ["Hardware", "Wi-Fi", "Networking"],
+    "progress": 40,
+    "status": "ongoing",
+    "icon": "fas fa-wifi"
+  },
+  {
+    "title": "Android VPN Client App",
+    "desc": "Building a client UI with tunnel integration, profile management, and connection health indicators.",
+    "tags": ["Android", "Security", "Mobile"],
+    "progress": 30,
+    "status": "ongoing",
+    "icon": "fas fa-mobile-alt"
+  },
+  {
+    "title": "Lock-Picking Practice",
+    "desc": "Progressing through training locks and techniques; focusing on non-destructive entry concepts as a skills exercise.",
+    "tags": ["Practice", "Hands-on"],
+    "progress": 20,
+    "status": "ongoing",
+    "icon": "fas fa-key"
+  }
+]

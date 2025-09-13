@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Projects Board — Ongoing and Completed" />
+  <title>Projects Board</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg:#f7f7f7;
+      --surface:#fff;
+      --text:#333;
+      --muted:#666;
+      --accent:#ff9800;
+      --nav-h:64px;
+      --radius:12px;
+      --shadow-sm:0 2px 5px rgba(0,0,0,.1);
+      --shadow-md:0 4px 10px rgba(0,0,0,.1);
+      --shadow-lg:0 6px 15px rgba(0,0,0,.2);
+      --chip:#f2f2f2;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text)}
+
+    nav{
+      position:fixed;top:0;left:0;width:100%;
+      background:#333;color:#fff;height:var(--nav-h);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:var(--shadow-sm);z-index:1000;
+    }
+    nav ul{list-style:none;display:flex;align-items:center;justify-content:center;gap:22px}
+    nav a{
+      color:#fff;text-decoration:none;font-weight:500;font-size:17px;
+      padding:6px 2px;display:inline-flex;align-items:center;gap:.5rem;transition:color .2s ease;
+    }
+    nav a:hover,nav a:focus{color:#ddd;outline:none}
+    .nav-ico{font-size:16px;opacity:.9;transform:translateY(-1px)}
+    .has-dropdown{position:relative}
+    .has-dropdown .dropdown{
+      position:absolute;top:calc(100% + 10px);left:0;background:#222;color:#fff;
+      border-radius:10px;box-shadow:var(--shadow-lg);min-width:220px;padding:8px;display:none;z-index:1200
+    }
+    .has-dropdown.open .dropdown{display:block}
+    .dropdown a{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+      color:#fff;text-decoration:none;font-size:15px
+    }
+    .dropdown a:hover{background:#333}
+    .dropdown .ico{width:18px;text-align:center}
+    .menu-toggle{display:none;cursor:pointer;width:44px;height:44px;position:absolute;right:16px;top:10px;border:0;background:transparent;z-index:1001}
+    .menu-toggle .bar{display:block;width:25px;height:3px;margin:5px auto;background:#fff;transition:all .3s ease}
+    @media (max-width:768px){
+      .menu-toggle{display:block}
+      nav ul{
+        display:none;flex-direction:column;position:absolute;top:var(--nav-h);left:0;right:0;
+        background:#333;text-align:center;padding:12px 0;z-index:999
+      }
+      nav ul.active{display:flex}
+      nav li{margin:6px 0}
+      nav a{font-size:18px;padding:10px 0}
+      .has-dropdown .dropdown{position:static;box-shadow:none;background:#333;padding:0}
+    }
+
+    main{margin-top:var(--nav-h);padding:22px}
+    .wrapper{max-width:1100px;margin:0 auto}
+    .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+    .page-title{font-size:26px;font-weight:700}
+    .hint{font-size:13px;color:var(--muted)}
+    .disclaimer{
+      margin-top:8px;background:#fff;border-left:4px solid var(--accent);
+      border-radius:10px;padding:10px 12px;box-shadow:var(--shadow-sm);color:#444;font-size:14px;
+    }
+    .disclaimer i{color:#ff9800;margin-right:8px}
+
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+    .seg{background:var(--surface);border-radius:12px;box-shadow:var(--shadow-sm);padding:4px;display:inline-flex;gap:4px}
+    .seg button{border:0;background:transparent;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600;color:#444}
+    .seg button.on{background:#111;color:#fff}
+    .search{display:flex;align-items:center;gap:8px;background:var(--surface);box-shadow:var(--shadow-sm);border-radius:12px;padding:8px 12px;flex:1;min-width:220px}
+    .search input{border:0;outline:none;width:100%;background:transparent;font-size:14px;color:#222}
+
+    #board{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:880px){ #board{grid-template-columns:1fr} }
+    .col{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-md);padding:14px}
+    .col.hide{display:none}
+    .col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .col-title{display:flex;align-items:center;gap:10px;font-weight:700}
+    .count{background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;color:#555}
+    .list{display:grid;gap:12px}
+    .empty{color:#777;background:#fff;border-radius:12px;padding:14px;box-shadow:var(--shadow-sm)}
+
+    .proj-card{background:#fff;border-radius:14px;box-shadow:var(--shadow-sm);padding:12px;display:grid;gap:8px}
+    .proj-card.is-done{border:1px solid rgba(22,160,133,.18)}
+    .proj-head{display:flex;align-items:center;gap:10px}
+    .proj-ico{font-size:18px;color:#222}
+    .proj-title{font-weight:700}
+    .proj-desc{color:#444;font-size:14px;line-height:1.55}
+    .meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .chip{display:inline-block;background:var(--chip);color:#333;border-radius:999px;padding:4px 8px;font-size:12px}
+    .meta-row .due{color:#444;font-size:13px}
+    .progress{height:8px;background:#eee;border-radius:999px;overflow:hidden}
+    .progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffa733);width:0%}
+
+    .hide{display:none !important}
+  </style>
+</head>
+<body>
+  <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </button>
+
+  <nav id="primary-nav" aria-label="Primary">
+    <ul>
+      <li><a href="index.html#about"><i class="nav-ico fas fa-user"></i>About</a></li>
+      <li class="has-dropdown">
+        <a href="#tools" aria-haspopup="true" aria-expanded="false"><i class="nav-ico fas fa-toolbox"></i>Tools</a>
+        <div class="dropdown" role="menu" aria-label="Tools menu">
+          <a href="flip-coin.html"><span class="ico fas fa-coins"></span>Coin</a>
+          <a href="linux.html"><span class="ico fab fa-linux"></span>Linux</a>
+          <a href="cards.html"><span class="ico fas fa-th-large"></span>Cards</a>
+          <a href="todo.html"><span class="ico fas fa-check-square"></span>To-Do List</a>
+        </div>
+      </li>
+      <li><a href="index.html#education"><i class="nav-ico fas fa-graduation-cap"></i>Education</a></li>
+      <li><a href="index.html#projects"><i class="nav-ico fas fa-folder-open"></i>Projects</a></li>
+      <li><a href="index.html#experience"><i class="nav-ico fas fa-briefcase"></i>Experience</a></li>
+      <li><a href="index.html#participations"><i class="nav-ico fas fa-award"></i>Participations</a></li>
+      <li><a href="index.html#languages"><i class="nav-ico fas fa-language"></i>Languages</a></li>
+      <li><a href="index.html#contact"><i class="nav-ico fas fa-envelope"></i>Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="wrapper">
+      <div class="page-head">
+        <div>
+          <div class="page-title">Projects Board</div>
+          <div class="hint" id="count-hint">Loading…</div>
+          <div class="disclaimer" role="note">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            These entries are personal, small-scope experiments made for learning and curiosity. They’re demos and prototypes—not intended for broad rollout or production use. Please engage with them thoughtfully, in appropriate contexts, and only where you have permission. No endorsement or affiliation is implied.
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="seg" id="view-switch" role="tablist" aria-label="View filter">
+          <button role="tab" aria-selected="true" class="on" data-filter="all">All</button>
+          <button role="tab" aria-selected="false" data-filter="in">In Progress</button>
+          <button role="tab" aria-selected="false" data-filter="done">Done</button>
+        </div>
+
+        <label class="search" aria-label="Search projects">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <input id="search" type="search" placeholder="Search by title or tag…" />
+        </label>
+      </div>
+
+      <section id="board" aria-live="polite">
+        <div class="col" data-col="in">
+          <div class="col-head">
+            <div class="col-title"><i class="fas fa-tasks"></i> In Progress</div>
+            <span class="count" id="count-in">0</span>
+          </div>
+          <div id="col-in" class="list">
+            <div class="empty">Loading…</div>
+          </div>
+        </div>
+
+        <div class="col" data-col="done">
+          <div class="col-head">
+            <div class="col-title"><i class="fas fa-check-double"></i> Done</div>
+            <span class="count" id="count-done">0</span>
+          </div>
+          <div id="col-done" class="list">
+            <div class="empty">Loading…</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function $(s, r){ return (r||document).querySelector(s); }
+    function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+    function formatDate(s){ var d=new Date(s); if(isNaN(d))return'TBD'; return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+    function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+    (function navInit(){
+      var menuBtn = $('#mobile-menu');
+      var navList = $('#primary-nav ul');
+      var dd      = $('.has-dropdown');
+      var closeTimer = 0;
+
+      if (menuBtn && navList) {
+        menuBtn.addEventListener('click', function(){
+          var expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+          menuBtn.setAttribute('aria-expanded', String(!expanded));
+          navList.classList.toggle('active');
+        });
+      }
+
+      if (dd) {
+        var trigger  = dd.querySelector('a[aria-haspopup="true"]');
+        var dropdown = dd.querySelector('.dropdown');
+
+        function openDD(){ clearTimeout(closeTimer); dd.classList.add('open'); if (trigger) trigger.setAttribute('aria-expanded','true'); }
+        function shutDD(){ dd.classList.remove('open'); if (trigger) trigger.setAttribute('aria-expanded','false'); }
+
+        dd.addEventListener('mouseenter', openDD);
+        dd.addEventListener('mouseleave', function(){ clearTimeout(closeTimer); closeTimer = setTimeout(shutDD, 220); });
+
+        if (trigger) {
+          trigger.addEventListener('click', function(e){
+            e.preventDefault();
+            if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+              dd.classList.toggle('open');
+              trigger.setAttribute('aria-expanded', String(dd.classList.contains('open')));
+            } else {
+              openDD();
+            }
+          });
+          trigger.addEventListener('pointerdown', openDD);
+          if (dropdown) dropdown.addEventListener('pointerenter', openDD);
+        }
+
+        document.addEventListener('click', function(e){
+          if (!dd.contains(e.target)) shutDD();
+        });
+      }
+
+      var nav = $('#primary-nav');
+      if (nav) {
+        var h = Math.round(nav.getBoundingClientRect().height);
+        document.documentElement.style.setProperty('--nav-h', h + 'px');
+        window.addEventListener('resize', function(){
+          var hh = Math.round(nav.getBoundingClientRect().height);
+          document.documentElement.style.setProperty('--nav-h', hh + 'px');
+        });
+      }
+    })();
+
+    var FALLBACK = [
+      { "title":"CC cert","desc":"Certification completed.","tags":["Certification"],"progress":100,"status":"done","icon":"fas fa-certificate" },
+      { "title":"Website update","desc":"Portfolio/site refresh wrapped up.","tags":["Web"],"progress":100,"status":"done","icon":"fas fa-globe" },
+      { "title":"Personal VPN","desc":"Self-hosted VPN stack set up and verified.","tags":["Security","Infra"],"progress":100,"status":"done","icon":"fas fa-shield-alt" },
+
+      { "title":"Sec+","desc":"Study plan, practice exams, and labs.","tags":["Certification"],"progress":45,"status":"ongoing","icon":"fas fa-book" },
+      { "title":"Thesis","desc":"Research write-up and experiments.","tags":["Research"],"progress":35,"status":"ongoing","icon":"fas fa-scroll" },
+      { "title":"Ruberyduck board","desc":"USB HID scripting board build & payloads.","tags":["Hardware","Security"],"progress":50,"status":"ongoing","icon":"fas fa-microchip" },
+      { "title":"Access point board","desc":"Custom AP board bring-up and testing.","tags":["Hardware","Wi-Fi"],"progress":40,"status":"ongoing","icon":"fas fa-wifi" },
+      { "title":"Android app for VPN","desc":"Client app UI & tunnel integration.","tags":["Android","Security"],"progress":30,"status":"ongoing","icon":"fas fa-mobile-alt" },
+      { "title":"Lock picking","desc":"Skill practice & lock set progression.","tags":["Practice"],"progress":20,"status":"ongoing","icon":"fas fa-key" }
+    ];
+
+    function loadProjects(){
+      return fetch('data/projects.json', { cache:'no-store' })
+        .then(function(res){ if (!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
+        .catch(function(){ return FALLBACK; });
+    }
+    function isDone(p){
+      var st = (p.status||'').toLowerCase();
+      var pr = (p.progress==null ? 0 : +p.progress);
+      return st === 'done' || st === 'completed' || pr >= 100;
+    }
+    function isInProgress(p){
+      var st = (p.status||'').toLowerCase();
+      var pr = (p.progress==null ? 0 : +p.progress);
+      return st === 'ongoing' || st === 'in-progress' || (pr >= 0 && pr < 100);
+    }
+    function cardHTML(kind, p){
+      var pct = Math.max(0, Math.min(100, parseInt(p.progress,10) || 0));
+      if (isDone(p)) pct = 100;
+      var ico = p.icon ? p.icon : (kind==='done' ? 'fas fa-check-circle' : 'fas fa-folder-open');
+      var tags = (p.tags||[]).map(function(t){ return '<span class="chip">'+t+'</span>'; }).join(' ');
+      var due  = p.due ? formatDate(p.due) : 'TBD';
+      return ''+
+      '<article class="proj-card is-'+ (kind==='done' ? 'done' : 'in') +'" data-title="'+escapeAttr(p.title||'')+'" data-tags="'+escapeAttr((p.tags||[]).join(' '))+'">'+
+        '<div class="proj-head">'+
+          '<i class="proj-ico '+ ico +'" aria-hidden="true"></i>'+
+          '<div class="proj-title">'+ (p.title||'Untitled') +'</div>'+
+        '</div>'+
+        (p.desc ? '<div class="proj-desc">'+ p.desc +'</div>' : '')+
+        '<div class="meta-row">'+
+          '<span class="due"><i class="fas fa-calendar" aria-hidden="true"></i> '+ due +'</span>'+
+          (tags ? tags : '')+
+        '</div>'+
+        '<div class="progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+ pct +'"><span style="width:'+ pct +'%"></span></div>'+
+      '</article>';
+    }
+    function renderBoard(list){
+      var inList = list.filter(isInProgress).filter(function(p){ return !isDone(p); });
+      var dnList = list.filter(isDone);
+
+      inList.sort(function(a,b){ return String(a.title).localeCompare(String(b.title)); });
+      dnList.sort(function(a,b){ return String(a.title).localeCompare(String(b.title)); });
+
+      $('#count-in').textContent   = inList.length;
+      $('#count-done').textContent = dnList.length;
+      $('#count-hint').textContent = inList.length + ' in progress • ' + dnList.length + ' done';
+
+      $('#col-in').innerHTML   = inList.map(cardHTML.bind(null,'in')).join('')   || '<div class="empty">Nothing in progress.</div>';
+      $('#col-done').innerHTML = dnList.map(cardHTML.bind(null,'done')).join('') || '<div class="empty">No completed items yet.</div>';
+
+      attachFilterAndSearch();
+    }
+    function attachFilterAndSearch(){
+      var seg = $('#view-switch');
+      if (seg && !seg._bound){
+        seg.addEventListener('click', function(e){
+          var btn = e.target.closest ? e.target.closest('button[data-filter]') : null;
+          if (!btn) return;
+          $$('#view-switch button').forEach(function(b){
+            b.classList.toggle('on', b===btn);
+            b.setAttribute('aria-selected', b===btn ? 'true':'false');
+          });
+          applyFilter(btn.getAttribute('data-filter'));
+        });
+        seg._bound = true;
+      }
+      var input = $('#search');
+      if (input && !input._bound){
+        input.addEventListener('input', function(){
+          applySearch(this.value.trim().toLowerCase());
+        });
+        input._bound = true;
+      }
+    }
+    function applyFilter(mode){
+      var inCol = $('[data-col="in"]');
+      var dnCol = $('[data-col="done"]');
+      if (!inCol || !dnCol) return;
+      if (mode === 'in'){ inCol.classList.remove('hide'); dnCol.classList.add('hide'); }
+      else if (mode === 'done'){ inCol.classList.add('hide'); dnCol.classList.remove('hide'); }
+      else { inCol.classList.remove('hide'); dnCol.classList.remove('hide'); }
+    }
+    function applySearch(q){
+      var cards = $$('.proj-card');
+      if (!q){ cards.forEach(function(c){ c.classList.remove('hide'); }); return; }
+      cards.forEach(function(c){
+        var t = (c.getAttribute('data-title')||'').toLowerCase();
+        var g = (c.getAttribute('data-tags')||'').toLowerCase();
+        var match = t.indexOf(q) >= 0 || g.indexOf(q) >= 0;
+        c.classList.toggle('hide', !match);
+      });
+    }
+
+    (function(){
+      fetch('data/projects.json',{cache:'no-store'})
+        .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+        .catch(function(){ return null; })
+        .then(function(list){ renderBoard(Array.isArray(list)?list:FALLBACK); });
+    })();
+  </script>
+</body>
+</html>
