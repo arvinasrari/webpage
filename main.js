@@ -113,13 +113,16 @@ $$('.project-header').forEach(h=>{
   h.addEventListener('click',()=>h.parentElement.classList.toggle('active'));
 });
 
-/* Language % labels */
+// Progress rings — set --p from data-progress (0–100)
+// Progress rings — set --p from data-progress (0–100)
 $$('.progress-circle').forEach(c=>{
-  const v=c.querySelector('.progress-value');
-  const p=Number(c.getAttribute('data-progress'))||0;
-  const cl=clamp(p,0,100);
-  if(v) v.textContent=`${cl}%`;
+  const v = c.querySelector('.progress-value');
+  const p = Number(c.getAttribute('data-progress'));
+  const cl = clamp(isFinite(p) ? p : 0, 0, 100);
+  c.style.setProperty('--p', cl);
+  if (v) v.textContent = `${cl}%`;
 });
+
 
 /* Safer rel for blank-target links */
 document.querySelectorAll('a[target="_blank"]').forEach(a=>{

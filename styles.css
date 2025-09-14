@@ -221,11 +221,36 @@ p{font-size:17px;color:#000;margin-bottom:10px;line-height:1.8}
 .language-item{display:flex;flex-direction:column;align-items:center;margin:10px}
 .language-item p{text-align:center;margin-top:10px;font-size:16px}
 .language-item small{font-size:13px;color:#666}
+
+/* Donut progress rings */
+/* Progress pie (no inner white circle) */
 .progress-circle{
-  --size:120px;width:var(--size);height:var(--size);border-radius:50%;
-  background:var(--accent);display:grid;place-items:center
+  --size:120px;
+  --p: 0;                /* 0–100, set from JS */
+  width:var(--size);
+  height:var(--size);
+  border-radius:50%;
+  position:relative;
+  display:grid;
+  place-items:center;
+
+  /* Solid pie using conic-gradient */
+  background:
+    conic-gradient(var(--accent) calc(var(--p) * 1%), #e6e6e6ec 0);
+
+  /* Make the number readable on any fill */
+  color:#020202;
+  font-weight:700;
 }
-.progress-circle .progress-value{font-size:22px;color:#000;font-weight:700;letter-spacing:.3px}
+.progress-circle .progress-value{
+  position:relative;      /* stays above the background */
+  z-index:1;
+  font-size:22px;
+  letter-spacing:.3px;
+  /* optional: subtle stroke for contrast on light % */
+  text-shadow:0 0 2px rgba(0,0,0,.35);
+}
+
 
 /* ---------- CONTACT ---------- */
 #contact{background:#f0f0f0;color:#333;padding:30px 20px}

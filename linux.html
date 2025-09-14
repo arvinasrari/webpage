@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Linux — Under Progress" />
+  <title>Linux — Under Progress</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+  <!-- Site-wide styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-scoped styles -->
+  <style>
+    /* Keep content below your fixed nav */
+    main{ padding-top: var(--nav-h); }
+
+    /* Centered “under progress” card */
+    .progress-wrap{
+      min-height: calc(100svh - var(--nav-h));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(900px 500px at 100% -10%, rgba(0,0,0,.05), transparent 60%),
+        var(--bg);
+    }
+    .progress-card{
+      width: min(100%, 720px);
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+      text-align: center;
+    }
+    .progress-card .title{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      font-weight:700;font-size:22px;color:#111
+    }
+    .progress-card p{ color:#555; font-size:16px }
+    .actions{ display:flex;gap:10px;justify-content:center;flex-wrap:wrap; margin-top:6px }
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:12px;border:0;cursor:pointer;
+      background:#f2f2f2;color:#222;text-decoration:none;font-weight:600
+    }
+    .dots{display:inline-block;min-width:1.8em}
+    .dots::after{
+      content: '…'; animation: pulse 1.2s infinite steps(4, end);
+    }
+    @keyframes pulse { 0%{content:' '} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} 100%{content:' '} }
+  </style>
+</head>
+<body class="page-standalone">
+  <!-- Mobile menu button -->
+  <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
+  </button>
+
+  <!-- Primary Navigation (same as index) -->
+  <nav id="primary-nav" aria-label="Primary">
+    <ul>
+      <li><a href="index.html#about"><i class="nav-ico fas fa-user"></i>About</a></li>
+
+      <li class="has-dropdown">
+        <a href="#tools"><i class="nav-ico fas fa-toolbox"></i>Tools</a>
+        <div class="dropdown" role="menu" aria-label="Tools menu">
+          <a href="flip-coin.html"><span class="ico fas fa-coins"></span>Coin</a>
+          <a href="linux.html"><span class="ico fab fa-linux"></span>Linux</a>
+          <a href="cards.html"><span class="ico fas fa-th-large"></span>Cards</a>
+          <a href="todo.html"><span class="ico fas fa-check-square"></span>To-Do List</a>
+        </div>
+      </li>
+
+      <li><a href="index.html#education"><i class="nav-ico fas fa-graduation-cap"></i>Education</a></li>
+      <li><a href="index.html#projects"><i class="nav-ico fas fa-folder-open"></i>Projects</a></li>
+      <li><a href="index.html#experience"><i class="nav-ico fas fa-briefcase"></i>Experience</a></li>
+      <li><a href="index.html#participations"><i class="nav-ico fas fa-award"></i>Participations</a></li>
+      <li><a href="index.html#languages"><i class="nav-ico fas fa-language"></i>Languages</a></li>
+      <li><a href="index.html#contact"><i class="nav-ico fas fa-envelope"></i>Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="progress-wrap" aria-labelledby="linux-title">
+      <div class="progress-card">
+        <h1 class="title" id="linux-title">
+          <i class="fab fa-linux" aria-hidden="true"></i>
+          Linux Lab — Under Progress<span class="dots" aria-hidden="true"></span>
+        </h1>
+
+        <p>This page is a placeholder while I build a safe, browser-friendly Linux demo you can open on any screen.</p>
+        <p style="font-size:14px;color:#777">I’ll post updates here once there’s something to try.</p>
+
+        <div class="actions">
+          <a class="btn" href="index.html#tools"><i class="fas fa-arrow-left"></i>Back to Tools</a>
+          <a class="btn" href="cards.html"><i class="fas fa-th-large"></i>Try Cards</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Nav behavior -->
+  <script src="main.js" defer></script>
+</body>
+</html>
