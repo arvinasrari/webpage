@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Party Card Games – Spy, How Well Do You Know Me, The Unspoken, Psychedelic Mix, Pantomime" />
+  <meta name="description" content="Party Card Games – Spy, How Well Do You Know Me, Values (Under Pressure), Psychedelic Mix, Pantomime" />
   <title>Cards</title>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <!-- FA5 to match existing icons used in JS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 
   <!-- Site-wide styles (your main theme) -->
@@ -18,21 +19,19 @@
   <!-- Page-scoped styles (layout + cards UI) -->
   <style>
     :root{
-      /* relies on your styles.css tokens; --nav-h is used to keep content below the fixed nav */
       --bg:#f7f7f7;
       --surface:#fff;
       --text:#333;
       --muted:#666;
       --accent:#ff9800;
-      --nav-h:64px;
+      --nav-h:64px;              /* fallback; main site JS can overwrite */
       --shadow-md:0 4px 10px rgba(0,0,0,.1);
       --shadow-lg:0 12px 30px rgba(0,0,0,.18);
     }
 
-    /* Keep content clear of the fixed navbar */
     main.cards-main{padding-top:var(--nav-h); margin-top:0}
 
-    /* ====== Deck chooser (first screen) ====== */
+    /* ====== Deck chooser ====== */
     #game-chooser{
       min-height:calc(100svh - var(--nav-h));
       display:flex;align-items:center;justify-content:center;
@@ -90,10 +89,7 @@
     .game-card:hover::before{opacity:1}
     @keyframes card-rise{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-    .ripple{position:absolute;border-radius:50%;transform:scale(0);opacity:.25;background:currentColor;pointer-events:none;animation:ripple .6s ease-out forwards}
-    @keyframes ripple{to{transform:scale(12);opacity:0}}
-
-    /* ====== Game runner (centered below navbar) ====== */
+    /* ====== Game runner ====== */
     #game-runner{
       min-height:calc(100svh - var(--nav-h));
       display:grid;
@@ -143,12 +139,16 @@
   </style>
 </head>
 <body>
+  <noscript style="display:block;padding:12px;background:#fff3cd;color:#7a5c00;text-align:center">
+    This page needs JavaScript enabled to run the games.
+  </noscript>
+
   <!-- Mobile menu button -->
   <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav">
     <span class="bar"></span><span class="bar"></span><span class="bar"></span>
   </button>
 
-  <!-- Primary Navigation (same order & icons as main site) -->
+  <!-- Primary Navigation -->
   <nav id="primary-nav" aria-label="Primary">
     <ul>
       <li><a href="index.html#about"><i class="nav-ico fas fa-user"></i>About</a></li>
@@ -158,7 +158,7 @@
         <div class="dropdown" role="menu" aria-label="Tools menu">
           <a href="flip-coin.html"><span class="ico fas fa-coins"></span>Coin</a>
           <a href="linux.html"><span class="ico fab fa-linux"></span>Linux</a>
-          <a href="cards.html"><span class="ico fas fa-th-large"></span>Cards</a>
+          <a href="cards.html" aria-current="page"><span class="ico fas fa-th-large"></span>Cards</a>
           <a href="todo.html"><span class="ico fas fa-check-square"></span>To-Do List</a>
         </div>
       </li>
@@ -199,13 +199,13 @@
             <span class="cta">Start</span>
           </button>
 
-<button type="button" class="game-card" data-game="values" aria-label="Start Values (Under Pressure)">
-  <div class="badge">Values</div>
-  <div class="ico fas fa-balance-scale" aria-hidden="true"></div> <!-- FA5 icon -->
-  <div class="name">Values (Under Pressure)</div>
-  <p class="desc">Pick what you’d protect and what you’d trade—explain.</p>
-  <span class="cta">Start</span>
-</button>
+          <button type="button" class="game-card" data-game="values" aria-label="Start Values (Under Pressure)">
+            <div class="badge">Values</div>
+            <div class="ico fas fa-balance-scale" aria-hidden="true"></div> <!-- FA5 icon -->
+            <div class="name">Values (Under Pressure)</div>
+            <p class="desc">Pick what you’d protect and what you’d trade—then explain.</p>
+            <span class="cta">Start</span>
+          </button>
 
           <button type="button" class="game-card" data-game="psy" aria-label="Start Psychedelic Mix">
             <div class="badge">Deep</div>
@@ -226,7 +226,7 @@
       </div>
     </section>
 
-    <!-- Game runner (centered card below navbar) -->
+    <!-- Game runner -->
     <section id="game-runner" hidden aria-live="polite">
       <div class="runner-card">
         <div id="runner-head">
@@ -241,7 +241,7 @@
     </section>
   </main>
 
-  <!-- Page logic (kept in external JS as requested) -->
+  <!-- Page logic -->
   <script src="cards.js" defer></script>
 </body>
 </html>

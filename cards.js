@@ -1,12 +1,8 @@
-/* cards.js — minimal, resilient, single-delegated binding
-   Decks: spy, knowme, values, psy, pantomime
-*/
+/* cards.js — resilient decks (Values/Spy/KnowMe/Psy/Pantomime) */
 
-/* -------- Polyfills (old Safari/IE11 quirks) -------- */
+/* -------- polyfills -------- */
 if (!Element.prototype.matches) {
-  Element.prototype.matches =
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.webkitMatchesSelector;
+  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 }
 if (!Element.prototype.closest) {
   Element.prototype.closest = function (s) {
@@ -19,36 +15,62 @@ if (!Element.prototype.closest) {
   };
 }
 
-/* -------- Helpers -------- */
+/* -------- helpers -------- */
 function $(s, r){ return (r||document).querySelector(s); }
 function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ return a.map(function(v){return [Math.random(),v];}).sort(function(x,y){return x[0]-y[0];}).map(function(p){return p[1];}); }
 function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+function parseVS(line){
+  // Expected shape: "left vs. right when/after/with ..."
+  // We keep it robust: split on first " vs. " if present.
+  var left='', right='', context='';
+  var vsIdx = line.toLowerCase().indexOf(' vs. ');
+  if (vsIdx >= 0) {
+    left = line.slice(0, vsIdx).trim();
+    var rest = line.slice(vsIdx + 5).trim(); // after " vs. "
+    // Look for a trailing context keyword to show separately (optional)
+    var ctxMatch = /( when | after | during | in | with )/i.exec(rest);
+    if (ctxMatch) {
+      var ci = ctxMatch.index;
+      right = rest.slice(0, ci).trim();
+      context = rest.slice(ci).trim();
+    } else {
+      right = rest.trim();
+      context = '';
+    }
+  } else {
+    // fallback (no vs. found)
+    left = line.trim();
+    right = '';
+    context = '';
+  }
+  return {left:left, right:right, context:context};
+}
 
-/* -------- Global state -------- */
+/* -------- state -------- */
 var state = {
   game:null, deck:[], idx:0, history:[], passesLeft:3, answered:0,
   timer:null, timeLeft:0,
-  spy:{ players:5, spies:1, roles:[], revealIndex:0, secret:'' }
+  spy:{ players:5, spies:1, roles:[], revealIndex:0, secret:'' },
+  values:{ protect:null, trade:null } // per-card picks (ephemeral)
 };
 
-/* -------- Elements (filled in init) -------- */
+/* -------- elements -------- */
 var chooser, runner, panel, titleEl, metaEl;
 
-/* -------- Data files -------- */
+/* -------- data files -------- */
 var FILES = {
   spy:        'data/spy.txt',
   knowme:     'data/knowme.txt',
-  values:     'data/values.txt',  // <- NEW
+  values:     'data/values.txt',    // <-- your renamed deck
   psy:        'data/psy.txt',
   pantomime:  'data/pantomime.txt'
 };
+// Optional alias so old IDs still work:
+FILES.unspoken = FILES.values;
 
-/* Back-compat aliases (old links/buttons) */
-var ALIASES = { unspoken: 'values' };
-
-/* -------- Boot -------- */
+/* -------- boot -------- */
 (function boot(){
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init, {once:true});
@@ -69,7 +91,7 @@ function init(){
   console.log('[cards] ready');
 }
 
-/* -------- Navbar (works with your current HTML) -------- */
+/* -------- navbar -------- */
 function setupNavbar(){
   var menuBtn = $('#mobile-menu');
   var navList = $('#primary-nav ul');
@@ -85,49 +107,31 @@ function setupNavbar(){
 
   if (dd) {
     var closeTimer = 0;
-    var trigger =
-      dd.querySelector(':scope > a') ||
-      dd.querySelector(':scope > button') ||
-      dd.querySelector('a') ||
-      dd.querySelector('button');
+    var trigger  = dd.querySelector(':scope > a') || dd.querySelector(':scope > button');
     var dropdown = dd.querySelector('.dropdown');
 
-    function isMobile(){
-      return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
-    }
-    function openDD(){
-      clearTimeout(closeTimer);
-      dd.classList.add('open');
-      if (trigger) trigger.setAttribute('aria-expanded','true');
-    }
-    function shutDD(){
-      dd.classList.remove('open');
-      if (trigger) trigger.setAttribute('aria-expanded','false');
-    }
+    function openDD(){ clearTimeout(closeTimer); dd.classList.add('open'); if (trigger) trigger.setAttribute('aria-expanded','true'); }
+    function shutDD(){ dd.classList.remove('open'); if (trigger) trigger.setAttribute('aria-expanded','false'); }
 
-    dd.addEventListener('mouseenter', function(){ if (!isMobile()) openDD(); });
-    dd.addEventListener('mouseleave', function(){
-      if (!isMobile()) { clearTimeout(closeTimer); closeTimer = setTimeout(shutDD, 220); }
-    });
+    dd.addEventListener('mouseenter', openDD);
+    dd.addEventListener('mouseleave', function(){ clearTimeout(closeTimer); closeTimer = setTimeout(shutDD, 220); });
 
     if (trigger) {
       trigger.addEventListener('click', function(e){
-        // On mobile, click toggles; on desktop, keep hover open
-        if (isMobile()) {
+        if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
           e.preventDefault();
           dd.classList.toggle('open');
           trigger.setAttribute('aria-expanded', String(dd.classList.contains('open')));
         }
       });
     }
-
     document.addEventListener('click', function(e){
       if (!dd.contains(e.target)) shutDD();
     });
   }
 }
 
-/* -------- Back to chooser -------- */
+/* -------- back -------- */
 function setupBack(){
   var back = $('#back-to-games');
   if (!back) return;
@@ -145,46 +149,41 @@ function toChooser(){
   console.log('[cards] back to chooser');
 }
 
-/* -------- One delegated click for chooser -------- */
+/* -------- chooser -------- */
 function bindChooserOnce(){
   if (!chooser) return;
   chooser.addEventListener('click', function(e){
     var card = e.target.closest && e.target.closest('.game-card[data-game]');
     if (!card) return;
     e.preventDefault();
-    var rawId = card.getAttribute('data-game');
-    var id = ALIASES[rawId] || rawId;
-    console.log('[cards] click:', rawId, '→', id);
+    var id = card.getAttribute('data-game');
+    console.log('[cards] click:', id);
     startGame(id);
   }, false);
 }
 
-/* -------- Loader -------- */
+/* -------- loader -------- */
 function loadDeck(gameId){
   var path = FILES[gameId];
-  if (!path) return Promise.reject(new Error('No data file for deck: '+gameId));
+  if (!path) throw new Error('No file mapping for deck id: '+gameId);
+  console.log('[cards] loading', gameId, '→', path);
   return fetch(path, {cache:'no-store'})
     .then(function(res){
       if (!res.ok) throw new Error('HTTP '+res.status+' for '+path);
       return res.text();
     })
     .then(function(txt){
-      // Basic line parsing; ignore comments and empties
-      var lines = txt.split(/\r?\n/).map(function(s){return s.trim();})
-                     .filter(function(s){return s && s[0] !== '#';});
-
-      // All current decks use simple one-line prompts except legacy "unspoken"
-      return lines.map(function(l){
-        return l.split('|')[0].trim();
-      }).filter(Boolean);
+      var lines = txt.split(/\r?\n/).map(function(s){return s.trim();}).filter(function(s){return s && s[0] !== '#';});
+      // All current decks are plain line-per-card
+      return lines;
     });
 }
 
-/* -------- Start a game -------- */
+/* -------- start -------- */
 function startGame(gameId){
   stopTimer();
 
-  // Swap views immediately so runner is visible while loading
+  // swap views quickly so user sees runner
   if (chooser){ chooser.hidden = true; chooser.setAttribute('hidden',''); chooser.style.display = 'none'; }
   if (runner){ runner.hidden = false; runner.removeAttribute('hidden'); runner.style.display = 'block'; }
 
@@ -193,7 +192,7 @@ function startGame(gameId){
   if (panel)   panel.innerHTML =
     '<div class="tool-card" style="gap:8px">' +
       '<div class="tool-title"><i class="ico fas fa-sync fa-spin"></i><span>Loading deck…</span></div>' +
-      '<div style="font-size:14px;color:#666">If this hangs, check /data/*.txt and that you’re on http(s).</div>' +
+      '<div style="font-size:14px;color:#666">If this hangs, check /data files and that you’re on http(s).</div>' +
     '</div>';
 
   loadDeck(gameId)
@@ -201,14 +200,13 @@ function startGame(gameId){
       if (!deck.length) throw new Error('Empty deck: '+gameId);
       state.game = gameId;
       state.deck = deck;
-      state.idx = 0; state.history = []; state.passesLeft = 3; state.answered = 0;
 
-      if (gameId === 'spy')            renderSpySetup();
-      else if (gameId === 'values')    renderValues();
-      else if (gameId === 'psy')       renderPsy();
+      if (gameId === 'spy') renderSpySetup();
+      else if (gameId === 'values' || gameId === 'unspoken') renderValues();
+      else if (gameId === 'psy') renderPsy();
       else if (gameId === 'pantomime') renderPantomimeSetup();
-      else if (gameId === 'knowme')    renderKnowMe();
-      else                             showErrorCard('Unknown game: '+gameId);
+      else if (gameId === 'knowme') renderKnowMe();
+      else showErrorCard('Unknown game: '+gameId);
 
       try { runner.scrollIntoView({behavior:'smooth', block:'start'}); } catch(_){}
       console.log('[cards] deck ready:', gameId, '('+deck.length+' cards)');
@@ -219,7 +217,7 @@ function startGame(gameId){
     });
 }
 
-/* -------- Error card -------- */
+/* -------- error card -------- */
 function showErrorCard(msg){
   if (!panel) return;
   panel.innerHTML =
@@ -231,11 +229,12 @@ function showErrorCard(msg){
   var b = $('#back-to-games-inline'); if (b) b.addEventListener('click', toChooser);
 }
 
-/* -------- Titles -------- */
+/* -------- titles -------- */
 function gameTitle(id){
   switch(id){
     case 'spy':        return 'Spy';
-    case 'values':     return 'Values (Under Pressure)';
+    case 'values':     return 'Values Under Pressure';
+    case 'unspoken':   return 'Values Under Pressure';
     case 'psy':        return 'Psychedelic Mix';
     case 'pantomime':  return 'Pantomime';
     case 'knowme':     return 'How Well Do You Know Me';
@@ -244,84 +243,116 @@ function gameTitle(id){
 }
 
 /* =========================
-   VALUES (Under Pressure)
+   VALUES UNDER PRESSURE
    ========================= */
-
-function parseTension(line){
-  // Split on first " vs. " (case-insensitive), leave the rest as context (e.g., "when …")
-  var m = line.split(/ *vs\.? */i);
-  if (m.length >= 2) {
-    var left  = (m[0]||'').trim();
-    var rest  = m.slice(1).join(' vs. ').trim(); // in case "vs" occurs in context
-    // If rest still contains " when ..." keep context; otherwise treat as right only
-    var ctxIdx = rest.toLowerCase().indexOf(' when ');
-    if (ctxIdx >= 0) {
-      return { left:left, right:rest.slice(0, ctxIdx).trim(), context:rest.slice(ctxIdx+1).trim() };
-    }
-    return { left:left, right:rest, context:'' };
-  }
-  return { left:'', right:'', context:'', raw:line };
-}
-
-function renderValues(){ drawValues(); }
+function renderValues(){ state.idx=0; state.history=[]; state.passesLeft=3; state.answered=0; drawValues(); }
 function drawValues(showIndex){
   if (typeof showIndex === 'number') state.idx = clamp(showIndex,0,state.deck.length-1);
   var raw = state.deck[state.idx];
-  var t = parseTension(raw);
+  var parts = parseVS(raw);
 
-  // Fallback if not parseable
-  var pairHtml = t.left && t.right
-    ? ('<strong>'+escapeHtml(t.left)+'</strong> vs. <strong>'+escapeHtml(t.right)+'</strong>')
-    : ('<strong>'+escapeHtml(raw)+'</strong>');
-  var ctxHtml = t.context ? ('<div class="values-context" style="color:#555;margin-top:6px">'+escapeHtml(t.context)+'</div>') : '';
+  state.values.protect = null;
+  state.values.trade = null;
+
+  var ctx = parts.context ? ('<div style="color:#666;font-size:14px;margin-top:4px">'+escapeHTML(parts.context)+'</div>') : '';
 
   panel.innerHTML =
     '<div class="tool-card" style="gap:12px">' +
-      '<div class="tool-title"><i class="ico fas fa-balance-scale"></i><span>Values (Under Pressure)</span></div>' +
-      '<div class="values-q" style="font-size:18px;line-height:1.6">'+ pairHtml + ctxHtml + '</div>' +
-      '<div class="values-instr" style="font-size:14px;color:#666">Pick the value you’d <strong>protect</strong>. The other is what you’d trade — then explain.</div>' +
-      (t.left && t.right
-        ? '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">' +
-            '<button id="protect-left"  class="tool-actions"><i class="ico fas fa-shield-alt"></i>Protect '+escapeHtml(t.left)+'</button>' +
-            '<button id="protect-right" class="tool-actions"><i class="ico fas fa-shield-alt"></i>Protect '+escapeHtml(t.right)+'</button>' +
-          '</div>'
-        : ''
-      ) +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
+      '<div class="tool-title"><i class="ico fas fa-scale-balanced"></i><span>Values Under Pressure</span></div>' +
+
+      '<div style="font-size:18px;line-height:1.5">' +
+        '<strong>'+ escapeHTML(parts.left || 'Value A') +'</strong>' +
+        ' <span style="opacity:.7">vs.</span> ' +
+        '<strong>'+ escapeHTML(parts.right || 'Value B') +'</strong>' +
+      '</div>' + ctx +
+
+      '<div style="display:grid;gap:10px;margin-top:8px">' +
+        '<div><span style="font-weight:700">Protect:</span> ' +
+          buttonChip('protect', 'left',  parts.left) + ' ' +
+          buttonChip('protect', 'right', parts.right) +
+        '</div>' +
+        '<div><span style="font-weight:700">Trade:</span> ' +
+          buttonChip('trade', 'left',  parts.left) + ' ' +
+          buttonChip('trade', 'right', parts.right) +
+        '</div>' +
+      '</div>' +
+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">' +
+        '<button id="btn-lock" class="tool-actions" disabled><i class="ico fas fa-check"></i>Lock Choice</button>' +
+        '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Pass ('+state.passesLeft+' left)</button>' +
         '<button id="btn-back" class="tool-actions"><i class="ico fas fa-undo"></i>Back</button>' +
         '<button id="btn-next" class="tool-actions"><i class="ico fas fa-step-forward"></i>Next</button>' +
-        '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Skip ('+state.passesLeft+' left)</button>' +
-        '<button id="btn-shuffle" class="tool-actions"><i class="ico fas fa-random"></i>Shuffle</button>' +
       '</div>' +
+
       '<div style="font-size:14px;color:#666;margin-top:4px">Card '+(state.idx+1)+' / '+state.deck.length+' • Answered: '+state.answered+'</div>' +
     '</div>';
 
-  function nextIdx(){ return (state.idx + 1) % state.deck.length; }
+  function onPick(kind, side){
+    state.values[kind] = side;
+    updateButtonStates();
+  }
+  function updateButtonStates(){
+    // highlight selection chips
+    $$('#panel .chip').forEach(function(b){
+      var k = b.getAttribute('data-kind');
+      var s = b.getAttribute('data-side');
+      var active = (state.values[k] === s);
+      b.classList.toggle('active', active);
+      b.style.background = active ? '#111' : '#f2f2f2';
+      b.style.color      = active ? '#fff' : '#222';
+    });
+    // enable lock when both chosen and different
+    var canLock = state.values.protect && state.values.trade && (state.values.protect !== state.values.trade);
+    var lockBtn = $('#btn-lock');
+    if (lockBtn) lockBtn.disabled = !canLock;
+  }
 
-  var leftBtn  = $('#protect-left');
-  var rightBtn = $('#protect-right');
-  if (leftBtn)  leftBtn.addEventListener('click', function(){ state.answered++; state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
-  if (rightBtn) rightBtn.addEventListener('click', function(){ state.answered++; state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
+  $$('#panel .chip').forEach(function(b){
+    b.addEventListener('click', function(){
+      var k = b.getAttribute('data-kind');
+      var s = b.getAttribute('data-side');
+      onPick(k, s);
+    });
+  });
 
-  $('#btn-next').addEventListener('click', function(){ state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
-  $('#btn-back').addEventListener('click', function(){ var prev = state.history.pop(); if (typeof prev === 'number') drawValues(prev); });
-  $('#btn-pass').addEventListener('click', function(){ if (state.passesLeft<=0) return; state.passesLeft--; state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
-  $('#btn-shuffle').addEventListener('click', function(){
-    state.deck = shuffle(state.deck.slice());
-    state.idx = 0; state.history = [];
+  $('#btn-lock').addEventListener('click', function(){
+    state.answered++;
+    state.history.push(state.idx);
+    state.idx = (state.idx + 1) % state.deck.length;
+    drawValues();
+  });
+  $('#btn-pass').addEventListener('click', function(){
+    if (state.passesLeft<=0) return;
+    state.passesLeft--;
+    state.history.push(state.idx);
+    state.idx = (state.idx + 1) % state.deck.length;
+    drawValues();
+  });
+  $('#btn-back').addEventListener('click', function(){
+    var prev = state.history.pop();
+    if (typeof prev === 'number') drawValues(prev);
+  });
+  $('#btn-next').addEventListener('click', function(){
+    state.history.push(state.idx);
+    state.idx = (state.idx + 1) % state.deck.length;
     drawValues();
   });
 }
 
-/* Escaper for innerHTML bits we author */
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g,function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+function buttonChip(kind, side, label){
+  var safe = escapeHTML(label || (side==='left'?'Left':'Right'));
+  return '<button class="chip" data-kind="'+kind+'" data-side="'+side+'" style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 10px;border:1px solid #ddd;background:#f2f2f2;color:#222;cursor:pointer">'+ safe +'</button>';
+}
+
+/* tiny escape util (prevent HTML injection from deck lines) */
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
   });
 }
 
 /* =========================
-   Spy
+   SPY
    ========================= */
 function renderSpySetup(){
   state.spy.players = 5; state.spy.spies = 1;
@@ -388,7 +419,7 @@ function renderSpyDiscussionStart(){
 }
 
 /* =========================
-   Psychedelic Mix (prompts)
+   PSYCHEDELIC MIX
    ========================= */
 function renderPsy(){ state.idx=0; state.history=[]; state.passesLeft=3; state.answered=0; drawPsy(); }
 function drawPsy(showIndex){
@@ -398,7 +429,7 @@ function drawPsy(showIndex){
   panel.innerHTML =
     '<div class="tool-card" style="gap:10px">' +
       '<div class="tool-title"><i class="ico fas fa-brain"></i><span>Psychedelic Prompt</span></div>' +
-      '<div style="font-size:18px;line-height:1.6">'+ escapeHtml(prompt) +'</div>' +
+      '<div style="font-size:18px;line-height:1.6">'+ escapeHTML(prompt) +'</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
         '<button id="btn-answer" class="tool-actions"><i class="ico fas fa-check"></i>Answer</button>' +
         '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Pass ('+state.passesLeft+' left)</button>' +
@@ -416,7 +447,7 @@ function drawPsy(showIndex){
 }
 
 /* =========================
-   How Well Do You Know Me
+   HOW WELL DO YOU KNOW ME
    ========================= */
 function renderKnowMe(){ state.idx=0; state.history=[]; state.passesLeft=3; state.answered=0; drawKnowMe(); }
 function drawKnowMe(showIndex){
@@ -426,7 +457,7 @@ function drawKnowMe(showIndex){
   panel.innerHTML =
     '<div class="tool-card" style="gap:10px">' +
       '<div class="tool-title"><i class="ico fas fa-heart"></i><span>How Well Do You Know Me</span></div>' +
-      '<div style="font-size:18px;line-height:1.6">'+ escapeHtml(q) +'</div>' +
+      '<div style="font-size:18px;line-height:1.6">'+ escapeHTML(q) +'</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
         '<button id="btn-answer" class="tool-actions"><i class="ico fas fa-check"></i>Answered</button>' +
         '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Pass ('+state.passesLeft+' left)</button>' +
@@ -444,7 +475,7 @@ function drawKnowMe(showIndex){
 }
 
 /* =========================
-   Pantomime
+   PANTOMIME
    ========================= */
 function renderPantomimeSetup(){
   panel.innerHTML =
@@ -470,7 +501,7 @@ function renderPantomimeRound(){
   panel.innerHTML =
     '<div class="tool-card" style="gap:12px">' +
       '<div class="tool-title"><i class="ico fas fa-theater-masks"></i><span>Act this</span></div>' +
-      '<div style="font-size:20px">'+ escapeHtml(prompt) +'</div>' +
+      '<div style="font-size:20px">'+ escapeHTML(prompt) +'</div>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
         '<div id="timer" style="font-weight:700">'+ state.timeLeft +'s</div>' +
         '<button id="start-timer" class="tool-actions"><i class="ico fas fa-play"></i>Start</button>' +
@@ -491,7 +522,7 @@ function renderPantomimeRound(){
   $('#change-time').addEventListener('click', renderPantomimeSetup);
 }
 
-/* -------- Timer -------- */
+/* -------- timer -------- */
 function startTimer(onTick){
   state.timeLeft = Math.max(0, parseInt(state.timeLeft,10) || 60);
   state.timer = setInterval(function(){
