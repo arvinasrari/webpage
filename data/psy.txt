@@ -1,5 +1,29 @@
-If colors had temperatures you could feel, what would blue say about your morning?
-When a shadow separates from its object for one night, where does yours go first?
-What shape does silence take when it sits beside you?
-What pattern keeps repeating until you name it out loud?
-The universe offers you a patch note—what tiny fix changes everything?
+Trolley Problem — A runaway trolley is heading toward five workers. You can pull a lever to send it to a side track with one worker. Do you pull the lever?
+
+Prisoner’s Dilemma — You and a partner are questioned separately. If both stay silent, both get a light penalty. If one betrays and the other stays silent, the betrayer walks free and the other gets a heavy penalty. If both betray, both get a medium penalty. Do you betray or stay silent?
+
+Monty Hall Problem — You pick one of three doors for a prize. The host opens a different door and shows a goat, then asks if you want to switch to the last unopened door. Do you switch or stay?
+
+Experience Machine — A perfect machine can give you a lifetime of joy and success. If you plug in, you won’t remember choosing. Do you plug in, or stay in real life?
+
+Ship of Theseus — A ship has its parts replaced one by one until none of the original parts remain. Is it still the same ship? If someone rebuilds the ship from the old parts, which one is the “real” ship?
+
+Sorites Paradox — One grain of sand is not a heap. Adding one grain to something that isn’t a heap still seems not a heap. At which exact grain does it become a heap?
+
+Omnipotence Paradox — Can an all-powerful being make a stone so heavy it cannot lift it? If yes, it cannot lift it; if no, it cannot make it. Is “all-powerful” even a coherent idea?
+
+Zeno’s Dichotomy — To reach the door, you must go halfway first, then half of the remainder, and so on without end. If there are infinitely many steps, how do you ever arrive?
+
+Gettier Case (Stopped Clock) — You look at a clock that says 2:30 and believe it is 2:30. By luck, it really is 2:30, but the clock is broken and stuck. Do you truly “know” the time?
+
+Liar Paradox — “This sentence is false.” Is the sentence true or false?
+
+Chinese Room — A person who doesn’t know Chinese follows a rulebook to answer Chinese messages perfectly. Does the person (or the room) actually understand Chinese?
+
+Brain in a Vat — If a brain is fed perfect signals that create a full fake world, could it tell the difference? How do you know you are not such a brain?
+
+Teleporter (Parfit) — A teleporter scans you, destroys your body, and builds a perfect copy elsewhere. Is the person who appears still you?
+
+Newcomb’s Problem — A highly accurate predictor put $1,000,000 in a closed box if it predicted you will take only that box; there is also a clear box with $1,000 you can take as well. Do you take one box, or both?
+
+The Repugnant Conclusion — Option A: fewer people with very high quality of life. Option B: many more people with lives barely worth living, but more total happiness overall. Which world is better?

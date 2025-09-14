@@ -52,4 +52,8 @@ What’s my karaoke power move?
 What’s a hill I’ll jokingly die on?
 Am I more planner or improviser?
 What’s my favorite snack combo?
+<<<<<<< HEAD
 What compliment lands best with me—and why?
+=======
+What compliment lands best with me—and why?
+>>>>>>> f394491 (move values deck into /data)

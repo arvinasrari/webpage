@@ -47,4 +47,8 @@ honesty vs. tact in performance reviews
 efficiency vs. learning when training slows the sprint
 clarity vs. flexibility in scope creep
 trust vs. verification when handoffs happen
+<<<<<<< HEAD
 fun vs. focus at an offsite with deliverables
+=======
+fun vs. focus at an offsite with deliverables
+>>>>>>> f394491 (move values deck into /data)

@@ -1,8 +1,12 @@
-/* cards.js — minimal, resilient, single-delegated binding */
+/* cards.js — minimal, resilient, single-delegated binding
+   Decks: spy, knowme, values, psy, pantomime
+*/
 
-/* polyfills */
+/* -------- Polyfills (old Safari/IE11 quirks) -------- */
 if (!Element.prototype.matches) {
-  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+  Element.prototype.matches =
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.webkitMatchesSelector;
 }
 if (!Element.prototype.closest) {
   Element.prototype.closest = function (s) {
@@ -15,33 +19,36 @@ if (!Element.prototype.closest) {
   };
 }
 
-/* helpers */
+/* -------- Helpers -------- */
 function $(s, r){ return (r||document).querySelector(s); }
 function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ return a.map(function(v){return [Math.random(),v];}).sort(function(x,y){return x[0]-y[0];}).map(function(p){return p[1];}); }
 function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
 
-/* state */
+/* -------- Global state -------- */
 var state = {
   game:null, deck:[], idx:0, history:[], passesLeft:3, answered:0,
   timer:null, timeLeft:0,
   spy:{ players:5, spies:1, roles:[], revealIndex:0, secret:'' }
 };
 
-/* elements */
+/* -------- Elements (filled in init) -------- */
 var chooser, runner, panel, titleEl, metaEl;
 
-/* data files */
+/* -------- Data files -------- */
 var FILES = {
-  spy: 'data/spy.txt',
-  knowme: 'data/knowme.txt',
-  unspoken: 'data/unspoken.txt',
-  psy: 'data/psy.txt',
-  pantomime: 'data/pantomime.txt'
+  spy:        'data/spy.txt',
+  knowme:     'data/knowme.txt',
+  values:     'data/values.txt',  // <- NEW
+  psy:        'data/psy.txt',
+  pantomime:  'data/pantomime.txt'
 };
 
-/* boot */
+/* Back-compat aliases (old links/buttons) */
+var ALIASES = { unspoken: 'values' };
+
+/* -------- Boot -------- */
 (function boot(){
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init, {once:true});
@@ -62,7 +69,7 @@ function init(){
   console.log('[cards] ready');
 }
 
-/* navbar */
+/* -------- Navbar (works with your current HTML) -------- */
 function setupNavbar(){
   var menuBtn = $('#mobile-menu');
   var navList = $('#primary-nav ul');
@@ -78,25 +85,40 @@ function setupNavbar(){
 
   if (dd) {
     var closeTimer = 0;
-    var trigger  = dd.querySelector('a[aria-haspopup="true"]');
+    var trigger =
+      dd.querySelector(':scope > a') ||
+      dd.querySelector(':scope > button') ||
+      dd.querySelector('a') ||
+      dd.querySelector('button');
     var dropdown = dd.querySelector('.dropdown');
 
-    function openDD(){ clearTimeout(closeTimer); dd.classList.add('open'); if (trigger) trigger.setAttribute('aria-expanded','true'); }
-    function shutDD(){ dd.classList.remove('open'); if (trigger) trigger.setAttribute('aria-expanded','false'); }
+    function isMobile(){
+      return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+    }
+    function openDD(){
+      clearTimeout(closeTimer);
+      dd.classList.add('open');
+      if (trigger) trigger.setAttribute('aria-expanded','true');
+    }
+    function shutDD(){
+      dd.classList.remove('open');
+      if (trigger) trigger.setAttribute('aria-expanded','false');
+    }
 
-    dd.addEventListener('mouseenter', openDD);
-    dd.addEventListener('mouseleave', function(){ clearTimeout(closeTimer); closeTimer = setTimeout(shutDD, 220); });
+    dd.addEventListener('mouseenter', function(){ if (!isMobile()) openDD(); });
+    dd.addEventListener('mouseleave', function(){
+      if (!isMobile()) { clearTimeout(closeTimer); closeTimer = setTimeout(shutDD, 220); }
+    });
 
     if (trigger) {
       trigger.addEventListener('click', function(e){
-        e.preventDefault();
-        if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+        // On mobile, click toggles; on desktop, keep hover open
+        if (isMobile()) {
+          e.preventDefault();
           dd.classList.toggle('open');
           trigger.setAttribute('aria-expanded', String(dd.classList.contains('open')));
-        } else openDD();
+        }
       });
-      trigger.addEventListener('pointerdown', openDD);
-      if (dropdown) dropdown.addEventListener('pointerenter', openDD);
     }
 
     document.addEventListener('click', function(e){
@@ -105,7 +127,7 @@ function setupNavbar(){
   }
 }
 
-/* back */
+/* -------- Back to chooser -------- */
 function setupBack(){
   var back = $('#back-to-games');
   if (!back) return;
@@ -123,45 +145,46 @@ function toChooser(){
   console.log('[cards] back to chooser');
 }
 
-/* single delegated binder */
+/* -------- One delegated click for chooser -------- */
 function bindChooserOnce(){
   if (!chooser) return;
   chooser.addEventListener('click', function(e){
     var card = e.target.closest && e.target.closest('.game-card[data-game]');
     if (!card) return;
     e.preventDefault();
-    var id = card.getAttribute('data-game');
-    console.log('[cards] click:', id);
+    var rawId = card.getAttribute('data-game');
+    var id = ALIASES[rawId] || rawId;
+    console.log('[cards] click:', rawId, '→', id);
     startGame(id);
   }, false);
 }
 
-/* loader */
+/* -------- Loader -------- */
 function loadDeck(gameId){
   var path = FILES[gameId];
+  if (!path) return Promise.reject(new Error('No data file for deck: '+gameId));
   return fetch(path, {cache:'no-store'})
     .then(function(res){
       if (!res.ok) throw new Error('HTTP '+res.status+' for '+path);
       return res.text();
     })
     .then(function(txt){
-      var lines = txt.split('\n').map(function(s){return s.trim();}).filter(function(s){return s && s[0] !== '#';});
-      if (gameId === 'unspoken') {
-        return lines.map(function(l){
-          var p = l.split('|'); var target=(p[0]||'').trim(); var forb=(p[1]||'').trim();
-          var forbid = forb ? forb.split(',').map(function(x){return x.trim();}).filter(Boolean) : [];
-          return target ? {target:target, forbid:forbid} : null;
-        }).filter(Boolean);
-      }
-      return lines.map(function(l){ return l.split('|')[0].trim(); }).filter(Boolean);
+      // Basic line parsing; ignore comments and empties
+      var lines = txt.split(/\r?\n/).map(function(s){return s.trim();})
+                     .filter(function(s){return s && s[0] !== '#';});
+
+      // All current decks use simple one-line prompts except legacy "unspoken"
+      return lines.map(function(l){
+        return l.split('|')[0].trim();
+      }).filter(Boolean);
     });
 }
 
-/* start a game */
+/* -------- Start a game -------- */
 function startGame(gameId){
   stopTimer();
 
-  /* force swap views so you SEE the runner immediately */
+  // Swap views immediately so runner is visible while loading
   if (chooser){ chooser.hidden = true; chooser.setAttribute('hidden',''); chooser.style.display = 'none'; }
   if (runner){ runner.hidden = false; runner.removeAttribute('hidden'); runner.style.display = 'block'; }
 
@@ -178,12 +201,14 @@ function startGame(gameId){
       if (!deck.length) throw new Error('Empty deck: '+gameId);
       state.game = gameId;
       state.deck = deck;
+      state.idx = 0; state.history = []; state.passesLeft = 3; state.answered = 0;
 
-      if (gameId === 'spy') renderSpySetup();
-      else if (gameId === 'unspoken') renderUnspoken();
-      else if (gameId === 'psy') renderPsy();
+      if (gameId === 'spy')            renderSpySetup();
+      else if (gameId === 'values')    renderValues();
+      else if (gameId === 'psy')       renderPsy();
       else if (gameId === 'pantomime') renderPantomimeSetup();
-      else if (gameId === 'knowme') renderKnowMe();
+      else if (gameId === 'knowme')    renderKnowMe();
+      else                             showErrorCard('Unknown game: '+gameId);
 
       try { runner.scrollIntoView({behavior:'smooth', block:'start'}); } catch(_){}
       console.log('[cards] deck ready:', gameId, '('+deck.length+' cards)');
@@ -194,7 +219,7 @@ function startGame(gameId){
     });
 }
 
-/* error card */
+/* -------- Error card -------- */
 function showErrorCard(msg){
   if (!panel) return;
   panel.innerHTML =
@@ -206,19 +231,98 @@ function showErrorCard(msg){
   var b = $('#back-to-games-inline'); if (b) b.addEventListener('click', toChooser);
 }
 
-/* titles */
+/* -------- Titles -------- */
 function gameTitle(id){
   switch(id){
-    case 'spy': return 'Spy';
-    case 'unspoken': return 'The Unspoken';
-    case 'psy': return 'Psychedelic Mix';
-    case 'pantomime': return 'Pantomime';
-    case 'knowme': return 'How Well Do You Know Me';
-    default: return 'Cards';
+    case 'spy':        return 'Spy';
+    case 'values':     return 'Values (Under Pressure)';
+    case 'psy':        return 'Psychedelic Mix';
+    case 'pantomime':  return 'Pantomime';
+    case 'knowme':     return 'How Well Do You Know Me';
+    default:           return 'Cards';
   }
 }
 
-/* Spy */
+/* =========================
+   VALUES (Under Pressure)
+   ========================= */
+
+function parseTension(line){
+  // Split on first " vs. " (case-insensitive), leave the rest as context (e.g., "when …")
+  var m = line.split(/ *vs\.? */i);
+  if (m.length >= 2) {
+    var left  = (m[0]||'').trim();
+    var rest  = m.slice(1).join(' vs. ').trim(); // in case "vs" occurs in context
+    // If rest still contains " when ..." keep context; otherwise treat as right only
+    var ctxIdx = rest.toLowerCase().indexOf(' when ');
+    if (ctxIdx >= 0) {
+      return { left:left, right:rest.slice(0, ctxIdx).trim(), context:rest.slice(ctxIdx+1).trim() };
+    }
+    return { left:left, right:rest, context:'' };
+  }
+  return { left:'', right:'', context:'', raw:line };
+}
+
+function renderValues(){ drawValues(); }
+function drawValues(showIndex){
+  if (typeof showIndex === 'number') state.idx = clamp(showIndex,0,state.deck.length-1);
+  var raw = state.deck[state.idx];
+  var t = parseTension(raw);
+
+  // Fallback if not parseable
+  var pairHtml = t.left && t.right
+    ? ('<strong>'+escapeHtml(t.left)+'</strong> vs. <strong>'+escapeHtml(t.right)+'</strong>')
+    : ('<strong>'+escapeHtml(raw)+'</strong>');
+  var ctxHtml = t.context ? ('<div class="values-context" style="color:#555;margin-top:6px">'+escapeHtml(t.context)+'</div>') : '';
+
+  panel.innerHTML =
+    '<div class="tool-card" style="gap:12px">' +
+      '<div class="tool-title"><i class="ico fas fa-balance-scale"></i><span>Values (Under Pressure)</span></div>' +
+      '<div class="values-q" style="font-size:18px;line-height:1.6">'+ pairHtml + ctxHtml + '</div>' +
+      '<div class="values-instr" style="font-size:14px;color:#666">Pick the value you’d <strong>protect</strong>. The other is what you’d trade — then explain.</div>' +
+      (t.left && t.right
+        ? '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">' +
+            '<button id="protect-left"  class="tool-actions"><i class="ico fas fa-shield-alt"></i>Protect '+escapeHtml(t.left)+'</button>' +
+            '<button id="protect-right" class="tool-actions"><i class="ico fas fa-shield-alt"></i>Protect '+escapeHtml(t.right)+'</button>' +
+          '</div>'
+        : ''
+      ) +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
+        '<button id="btn-back" class="tool-actions"><i class="ico fas fa-undo"></i>Back</button>' +
+        '<button id="btn-next" class="tool-actions"><i class="ico fas fa-step-forward"></i>Next</button>' +
+        '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Skip ('+state.passesLeft+' left)</button>' +
+        '<button id="btn-shuffle" class="tool-actions"><i class="ico fas fa-random"></i>Shuffle</button>' +
+      '</div>' +
+      '<div style="font-size:14px;color:#666;margin-top:4px">Card '+(state.idx+1)+' / '+state.deck.length+' • Answered: '+state.answered+'</div>' +
+    '</div>';
+
+  function nextIdx(){ return (state.idx + 1) % state.deck.length; }
+
+  var leftBtn  = $('#protect-left');
+  var rightBtn = $('#protect-right');
+  if (leftBtn)  leftBtn.addEventListener('click', function(){ state.answered++; state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
+  if (rightBtn) rightBtn.addEventListener('click', function(){ state.answered++; state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
+
+  $('#btn-next').addEventListener('click', function(){ state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
+  $('#btn-back').addEventListener('click', function(){ var prev = state.history.pop(); if (typeof prev === 'number') drawValues(prev); });
+  $('#btn-pass').addEventListener('click', function(){ if (state.passesLeft<=0) return; state.passesLeft--; state.history.push(state.idx); state.idx = nextIdx(); drawValues(); });
+  $('#btn-shuffle').addEventListener('click', function(){
+    state.deck = shuffle(state.deck.slice());
+    state.idx = 0; state.history = [];
+    drawValues();
+  });
+}
+
+/* Escaper for innerHTML bits we author */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+/* =========================
+   Spy
+   ========================= */
 function renderSpySetup(){
   state.spy.players = 5; state.spy.spies = 1;
   panel.innerHTML =
@@ -283,37 +387,9 @@ function renderSpyDiscussionStart(){
   $('#spy-new-round').addEventListener('click', renderSpySetup);
 }
 
-/* The Unspoken */
-function renderUnspoken(){ state.idx=0; state.history=[]; state.passesLeft=3; state.answered=0; drawUnspoken(); }
-function drawUnspoken(showIndex){
-  var cardObj;
-  if (typeof showIndex === 'number') { state.idx = clamp(showIndex,0,state.deck.length-1); cardObj = state.deck[state.idx]; }
-  else { cardObj = state.deck[state.idx] || state.deck[0]; }
-  var forbidList = cardObj.forbid.map(function(f){
-    return '<span style="background:#f2f2f2;border-radius:8px;padding:4px 8px;margin:2px;display:inline-block">'+f+'</span>';
-  }).join(' ');
-
-  panel.innerHTML =
-    '<div class="tool-card" style="gap:10px">' +
-      '<div class="tool-title"><i class="ico fas fa-comment-slash"></i><span>'+ cardObj.target +'</span></div>' +
-      '<div>'+ forbidList +'</div>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
-        '<button id="btn-answer" class="tool-actions"><i class="ico fas fa-check"></i>Answer</button>' +
-        '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Pass ('+state.passesLeft+' left)</button>' +
-        '<button id="btn-back" class="tool-actions"><i class="ico fas fa-undo"></i>Back</button>' +
-        '<button id="btn-next" class="tool-actions"><i class="ico fas fa-step-forward"></i>Next</button>' +
-      '</div>' +
-      '<div style="font-size:14px;color:#666;margin-top:4px">Card '+(state.idx+1)+' / '+state.deck.length+' • Answered: '+state.answered+'</div>' +
-    '</div>';
-
-  function nextIdx(){ return (state.idx + 1) % state.deck.length; }
-  $('#btn-answer').addEventListener('click', function(){ state.answered++; state.history.push(state.idx); state.idx = nextIdx(); drawUnspoken(); });
-  $('#btn-pass').addEventListener('click', function(){ if (state.passesLeft<=0) return; state.passesLeft--; state.history.push(state.idx); state.idx = nextIdx(); drawUnspoken(); });
-  $('#btn-back').addEventListener('click', function(){ var prev = state.history.pop(); if (typeof prev === 'number') drawUnspoken(prev); });
-  $('#btn-next').addEventListener('click', function(){ state.history.push(state.idx); state.idx = nextIdx(); drawUnspoken(); });
-}
-
-/* Psychedelic Mix */
+/* =========================
+   Psychedelic Mix (prompts)
+   ========================= */
 function renderPsy(){ state.idx=0; state.history=[]; state.passesLeft=3; state.answered=0; drawPsy(); }
 function drawPsy(showIndex){
   if (typeof showIndex === 'number') state.idx = clamp(showIndex,0,state.deck.length-1);
@@ -322,7 +398,7 @@ function drawPsy(showIndex){
   panel.innerHTML =
     '<div class="tool-card" style="gap:10px">' +
       '<div class="tool-title"><i class="ico fas fa-brain"></i><span>Psychedelic Prompt</span></div>' +
-      '<div style="font-size:18px;line-height:1.6">'+ prompt +'</div>' +
+      '<div style="font-size:18px;line-height:1.6">'+ escapeHtml(prompt) +'</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
         '<button id="btn-answer" class="tool-actions"><i class="ico fas fa-check"></i>Answer</button>' +
         '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Pass ('+state.passesLeft+' left)</button>' +
@@ -339,7 +415,9 @@ function drawPsy(showIndex){
   $('#btn-next').addEventListener('click', function(){ state.history.push(state.idx); state.idx = nextIdx(); drawPsy(); });
 }
 
-/* How Well Do You Know Me */
+/* =========================
+   How Well Do You Know Me
+   ========================= */
 function renderKnowMe(){ state.idx=0; state.history=[]; state.passesLeft=3; state.answered=0; drawKnowMe(); }
 function drawKnowMe(showIndex){
   if (typeof showIndex === 'number') state.idx = clamp(showIndex,0,state.deck.length-1);
@@ -348,7 +426,7 @@ function drawKnowMe(showIndex){
   panel.innerHTML =
     '<div class="tool-card" style="gap:10px">' +
       '<div class="tool-title"><i class="ico fas fa-heart"></i><span>How Well Do You Know Me</span></div>' +
-      '<div style="font-size:18px;line-height:1.6">'+ q +'</div>' +
+      '<div style="font-size:18px;line-height:1.6">'+ escapeHtml(q) +'</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">' +
         '<button id="btn-answer" class="tool-actions"><i class="ico fas fa-check"></i>Answered</button>' +
         '<button id="btn-pass" class="tool-actions" '+(state.passesLeft<=0?'disabled':'')+'><i class="ico fas fa-forward"></i>Pass ('+state.passesLeft+' left)</button>' +
@@ -365,7 +443,9 @@ function drawKnowMe(showIndex){
   $('#btn-next').addEventListener('click', function(){ state.history.push(state.idx); state.idx = nextIdx(); drawKnowMe(); });
 }
 
-/* Pantomime */
+/* =========================
+   Pantomime
+   ========================= */
 function renderPantomimeSetup(){
   panel.innerHTML =
     '<div class="tool-card" style="gap:10px">' +
@@ -390,7 +470,7 @@ function renderPantomimeRound(){
   panel.innerHTML =
     '<div class="tool-card" style="gap:12px">' +
       '<div class="tool-title"><i class="ico fas fa-theater-masks"></i><span>Act this</span></div>' +
-      '<div style="font-size:20px">'+ prompt +'</div>' +
+      '<div style="font-size:20px">'+ escapeHtml(prompt) +'</div>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
         '<div id="timer" style="font-weight:700">'+ state.timeLeft +'s</div>' +
         '<button id="start-timer" class="tool-actions"><i class="ico fas fa-play"></i>Start</button>' +
@@ -411,7 +491,7 @@ function renderPantomimeRound(){
   $('#change-time').addEventListener('click', renderPantomimeSetup);
 }
 
-/* timer */
+/* -------- Timer -------- */
 function startTimer(onTick){
   state.timeLeft = Math.max(0, parseInt(state.timeLeft,10) || 60);
   state.timer = setInterval(function(){
