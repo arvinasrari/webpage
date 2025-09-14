@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Pirate’s Log — a playful note from the site’s resident pirate." />
+  <title>Pirate’s Log</title>
+
+  <!-- Fonts & Icons (match your site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-scoped flair -->
+  <style>
+    body.page-standalone { background: var(--bg); }
+    .pirate-hero{
+      margin-top:var(--nav-h);
+      min-height:calc(100svh - var(--nav-h));
+      display:flex;align-items:center;justify-content:center;padding:24px;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(255,152,0,.16), transparent 60%),
+        radial-gradient(1000px 600px at 100% 0%, rgba(0,0,0,.06), transparent 50%),
+        var(--bg);
+    }
+    .pirate-card{
+      width:min(100%, 960px);
+      background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);
+      padding:22px;display:grid;gap:14px;position:relative;overflow:hidden;
+    }
+    .pirate-banner{
+      display:flex;align-items:center;gap:12px;
+      font-weight:800;font-size:22px;letter-spacing:.2px;color:#111;
+    }
+    .pirate-banner .flag{font-size:28px}
+    .note{
+      font-size:17px;line-height:1.8;color:#222;
+      background: #fff7ec; /* parchment-y */
+      border:1px dashed rgba(0,0,0,.12);
+      border-radius:12px;padding:16px;
+    }
+    .aside{
+      font-size:14px;color:#666
+    }
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;border:0;cursor:pointer;
+      padding:10px 12px;border-radius:12px;background:#111;color:#fff;
+      text-decoration:none;font-weight:600;box-shadow:var(--shadow-md)
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-ghost{
+      background:#f2f2f2;color:#222;font-weight:600;
+      box-shadow:var(--shadow-sm)
+    }
+    .divider{
+      height:1px;background:rgba(0,0,0,.08);margin:4px 0
+    }
+    .list{
+      display:grid;gap:8px;margin-top:4px
+    }
+    .list-item{
+      display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#333
+    }
+    .list-item i{color:#111;opacity:.9;margin-top:3px}
+  </style>
+</head>
+<body class="page-standalone">
+  <!-- Mobile menu button -->
+  <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </button>
+
+  <!-- Primary Navigation -->
+  <nav id="primary-nav" aria-label="Primary">
+    <ul>
+      <li><a href="index.html#about"><i class="nav-ico fas fa-user"></i>About</a></li>
+
+      <li class="has-dropdown">
+        <a href="#tools" aria-haspopup="true" aria-expanded="false"><i class="nav-ico fas fa-toolbox"></i>Tools</a>
+        <div class="dropdown" role="menu" aria-label="Tools menu">
+          <a href="flip-coin.html"><span class="ico fas fa-coins"></span>Coin</a>
+          <a href="linux.html"><span class="ico fab fa-linux"></span>Linux</a>
+          <a href="cards.html"><span class="ico fas fa-th-large"></span>Cards</a>
+          <a href="todo.html"><span class="ico fas fa-check-square"></span>To-Do List</a>
+          <a href="pirate.html"><span class="ico fas fa-skull-crossbones"></span>Pirate</a>
+        </div>
+      </li>
+
+      <li><a href="index.html#education"><i class="nav-ico fas fa-graduation-cap"></i>Education</a></li>
+      <li><a href="index.html#projects"><i class="nav-ico fas fa-folder-open"></i>Projects</a></li>
+      <li><a href="index.html#experience"><i class="nav-ico fas fa-briefcase"></i>Experience</a></li>
+      <li><a href="index.html#participations"><i class="nav-ico fas fa-award"></i>Participations</a></li>
+      <li><a href="index.html#languages"><i class="nav-ico fas fa-language"></i>Languages</a></li>
+      <li><a href="index.html#contact"><i class="nav-ico fas fa-envelope"></i>Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="pirate-hero">
+    <section class="pirate-card" aria-labelledby="pirate-title">
+      <header class="pirate-banner">
+        <span class="flag" aria-hidden="true">🏴‍☠️</span>
+        <h1 id="pirate-title">Pirate’s Log</h1>
+      </header>
+
+      <p class="note">
+        Ahoy, traveler. So ye found me hidden cove. What winds blew ye here? 
+        I was a great pirate once—fast ships, sharper crew. But the sea’s a fickle friend.  
+        Me crew mutinied and vanished with the <em>Night’s Echo</em>, and even me old crow flew off with the map.  
+        I’m here, patchin’ sails and scribblin’ notes while the tide mocks me boots.
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="list" aria-label="Captain’s scribbles">
+        <div class="list-item">
+          <i class="fas fa-pen-fancy" aria-hidden="true"></i>
+          <div><strong>Why ye here?</strong> Maybe curiosity, maybe fate. Either way—welcome.</div>
+        </div>
+        <div class="list-item">
+          <i class="fas fa-scroll" aria-hidden="true"></i>
+          <div><strong>These are notes, not treasures.</strong> Just rough logs and musings, nothing for plunder.</div>
+        </div>
+        <div class="list-item">
+          <i class="fas fa-ship" aria-hidden="true"></i>
+          <div><strong>Ship stolen, pride dented.</strong> I’ll sail again… with a little wind (and maybe a coffee).</div>
+        </div>
+      </div>
+
+      <div class="btn-row" role="group" aria-label="Actions">
+        <!-- Replace the href with your real BuyMeACoffee/Ko-fi URL -->
+        <a class="btn" href="https://buymeacoffee.com/arvinasrari" target="_blank" rel="noopener noreferrer">
+          <i class="fas fa-mug-hot" aria-hidden="true"></i>
+          Buy the captain a coffee
+        </a>
+
+        <a class="btn btn-ghost" href="index.html#tools">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i>
+          Back to tools
+        </a>
+      </div>
+
+      <p class="aside">
+        P.S. If a gull delivers this page to ye twice, blame the wind. Or the dev console. Either works.
+      </p>
+    </section>
+  </main>
+
+  <script src="main.js" defer></script>
+</body>
+</html>
