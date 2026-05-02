@@ -6,17 +6,15 @@
   <meta name="description" content="Party Card Games – Spy, How Well Do You Know Me, Values (Under Pressure), Psychedelic Mix, Pantomime" />
   <title>Cards</title>
 
-  <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <!-- FA5 to match existing icons used in JS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 
-  <!-- Site-wide styles (your main theme) -->
+  
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-scoped styles (layout + cards UI) -->
+  
   <style>
     :root{
       --bg:#f7f7f7;
@@ -24,7 +22,7 @@
       --text:#333;
       --muted:#666;
       --accent:#ff9800;
-      --nav-h:64px;              /* fallback; main site JS can overwrite */
+      --nav-h:64px;             
       --shadow-md:0 4px 10px rgba(0,0,0,.1);
       --shadow-lg:0 12px 30px rgba(0,0,0,.18);
     }
@@ -127,7 +125,7 @@
     #runner-head .meta{font-size:13px;color:#666}
     #back-to-games{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#f2f2f2;border:0;cursor:pointer}
 
-    /* Reusable card look for panel content (games) */
+    
     #panel{display:grid;gap:12px}
     .tool-card{
       background:#fff;border-radius:12px;box-shadow:var(--shadow-md);padding:16px;
@@ -142,8 +140,7 @@
   <noscript style="display:block;padding:12px;background:#fff3cd;color:#7a5c00;text-align:center">
     This page needs JavaScript enabled to run the games.
   </noscript>
-
-  <!-- Mobile menu button -->
+  
   <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav">
     <span class="bar"></span><span class="bar"></span><span class="bar"></span>
   </button>
@@ -241,7 +238,7 @@
     </section>
   </main>
 
-  <!-- Page logic -->
+  
   <script src="cards.js" defer></script>
 </body>
 </html>
