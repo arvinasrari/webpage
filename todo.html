@@ -248,18 +248,20 @@
       }
     })();
 
-    var FALLBACK = [
-      { "title":"CC cert","desc":"Certification completed.","tags":["Certification"],"progress":100,"status":"done","icon":"fas fa-certificate" },
-      { "title":"Website update","desc":"Portfolio/site refresh wrapped up.","tags":["Web"],"progress":100,"status":"done","icon":"fas fa-globe" },
-      { "title":"Personal VPN","desc":"Self-hosted VPN stack set up and verified.","tags":["Security","Infra"],"progress":100,"status":"done","icon":"fas fa-shield-alt" },
+var FALLBACK = [
+  { "title":"CC cert","desc":"Certification completed.","tags":["Certification"],"progress":100,"status":"done","icon":"fas fa-certificate" },
+  { "title":"Website update","desc":"Portfolio/site refresh wrapped up.","tags":["Web"],"progress":100,"status":"done","icon":"fas fa-globe" },
+  { "title":"Personal VPN","desc":"Self-hosted VPN stack set up and verified.","tags":["Security","Infra"],"progress":100,"status":"done","icon":"fas fa-shield-alt" },
+  { "title":"Master Thesis","desc":"Research write-up, experiments, and thesis completion.","tags":["Research"],"progress":100,"status":"done","icon":"fas fa-scroll" },
 
-      { "title":"Sec+","desc":"Study plan, practice exams, and labs.","tags":["Certification"],"progress":45,"status":"ongoing","icon":"fas fa-book" },
-      { "title":"Thesis","desc":"Research write-up and experiments.","tags":["Research"],"progress":35,"status":"ongoing","icon":"fas fa-scroll" },
-      { "title":"Ruberyduck board","desc":"USB HID scripting board build & payloads.","tags":["Hardware","Security"],"progress":50,"status":"ongoing","icon":"fas fa-microchip" },
-      { "title":"Access point board","desc":"Custom AP board bring-up and testing.","tags":["Hardware","Wi-Fi"],"progress":40,"status":"ongoing","icon":"fas fa-wifi" },
-      { "title":"Android app for VPN","desc":"Client app UI & tunnel integration.","tags":["Android","Security"],"progress":30,"status":"ongoing","icon":"fas fa-mobile-alt" },
-      { "title":"Lock picking","desc":"Skill practice & lock set progression.","tags":["Practice"],"progress":20,"status":"ongoing","icon":"fas fa-key" }
-    ];
+  { "title":"Sec+","desc":"Study plan, practice exams, and labs.","tags":["Certification"],"progress":45,"status":"ongoing","due":"2026-04-10","icon":"fas fa-book" },
+  { "title":"AZ-900","desc":"Microsoft Azure Fundamentals certification preparation.","tags":["Certification","Cloud"],"progress":0,"status":"ongoing","due":"2026-04-24","icon":"fab fa-microsoft" },
+  { "title":"LeetCode Top 150 Challenge","desc":"Solving the LeetCode Top 150 interview questions. Completed 40 out of 150 so far.","tags":["Coding","Interview Prep"],"progress":27,"status":"ongoing","due":"2026-07-19","icon":"fas fa-code" },
+  { "title":"Ruberyduck board","desc":"USB HID scripting board build & payloads.","tags":["Hardware","Security"],"progress":50,"status":"ongoing","icon":"fas fa-microchip" },
+  { "title":"Access point board","desc":"Custom AP board bring-up and testing.","tags":["Hardware","Wi-Fi"],"progress":40,"status":"ongoing","icon":"fas fa-wifi" },
+  { "title":"Android app for VPN","desc":"Client app UI & tunnel integration.","tags":["Android","Security"],"progress":30,"status":"ongoing","icon":"fas fa-mobile-alt" },
+  { "title":"Lock picking","desc":"Skill practice & lock set progression.","tags":["Practice"],"progress":20,"status":"ongoing","icon":"fas fa-key" }
+];
 
     function loadProjects(){
       return fetch('data/projects.json', { cache:'no-store' })
@@ -281,7 +283,9 @@
       if (isDone(p)) pct = 100;
       var ico = p.icon ? p.icon : (kind==='done' ? 'fas fa-check-circle' : 'fas fa-folder-open');
       var tags = (p.tags||[]).map(function(t){ return '<span class="chip">'+t+'</span>'; }).join(' ');
-      var due  = p.due ? formatDate(p.due) : 'TBD';
+      var dueHTML = p.due
+  ? '<span class="due"><i class="fas fa-calendar" aria-hidden="true"></i> '+ formatDate(p.due) +'</span>'
+  : (kind === 'done' ? '' : '<span class="due"><i class="fas fa-calendar" aria-hidden="true"></i> TBD</span>');
       return ''+
       '<article class="proj-card is-'+ (kind==='done' ? 'done' : 'in') +'" data-title="'+escapeAttr(p.title||'')+'" data-tags="'+escapeAttr((p.tags||[]).join(' '))+'">'+
         '<div class="proj-head">'+
@@ -290,8 +294,8 @@
         '</div>'+
         (p.desc ? '<div class="proj-desc">'+ p.desc +'</div>' : '')+
         '<div class="meta-row">'+
-          '<span class="due"><i class="fas fa-calendar" aria-hidden="true"></i> '+ due +'</span>'+
-          (tags ? tags : '')+
+        dueHTML +
+        (tags ? tags : '')+
         '</div>'+
         '<div class="progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+ pct +'"><span style="width:'+ pct +'%"></span></div>'+
       '</article>';
