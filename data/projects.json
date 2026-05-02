@@ -25,21 +25,31 @@
   },
 
   {
-    "title": "CompTIA Security+ (Sec+) Prep",
-    "desc": "Active study plan with labs and practice exams—focus on risk management, network security, identity, and crypto basics.",
-    "tags": ["Certification", "Study"],
-    "progress": 45,
-    "status": "ongoing",
-    "icon": "fas fa-book"
+    "title": "CompTIA Security+ (Sec+)",
+  "desc": "Study plan, practice exams, and labs.",
+  "tags": ["Certification"],
+  "progress": 80,
+  "status": "ongoing",
+  "due": "2026-04-10",
+  "icon": "fas fa-book"
   },
+{
+  "title": "Master’s Thesis — Blockchain for Wind Farm Coordination",
+  "desc": "Completed thesis project on blockchain-based coordination and integrity for wind farm telemetry.",
+  "tags": ["Research", "Blockchain", "Wind Farm"],
+  "progress": 100,
+  "status": "done",
+  "icon": "fas fa-scroll"
+},
   {
-    "title": "Master’s Thesis — Blockchain for Wind Farm Coordination",
-    "desc": "Exploring permissioned blockchain to coordinate wind turbine operations and energy dispatch: smart contracts for bidding/settlement, telemetry integrity for turbines/SCADA, and secure provenance for maintenance data.",
-    "tags": ["Research", "Blockchain", "Energy", "Smart Grid", "IoT", "Renewables"],
-    "progress": 35,
-    "status": "ongoing",
-    "icon": "fas fa-wind"
-  },
+  "title": "AZ-900",
+  "desc": "Microsoft Azure Fundamentals certification preparation.",
+  "tags": ["Certification", "Cloud"],
+  "progress": 40,
+  "status": "ongoing",
+  "due": "2026-04-24",
+  "icon": "fab fa-microsoft"
+},
   {
     "title": "USB HID Automation Board (Rubber Ducky-style)",
     "desc": "Designing a microcontroller-based HID board and crafting scripted payloads; testing in controlled, permissioned environments.",
