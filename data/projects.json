@@ -81,5 +81,14 @@
     "progress": 20,
     "status": "ongoing",
     "icon": "fas fa-key"
-  }
+  },
+  {
+  "title": "LeetCode Top 150 Challenge",
+  "desc": "Solving the LeetCode Top 150 interview questions. Completed 40 out of 150 so far.",
+  "tags": ["Coding", "Interview Prep"],
+  "progress": 27,
+  "status": "ongoing",
+  "due": "2026-07-19",
+  "icon": "fas fa-code"
+}
 ]
